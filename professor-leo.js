@@ -10,9 +10,9 @@ const root=document.createElement('aside');
 root.className='leo-widget';
 root.innerHTML=`<button type="button" class="leo-launch" aria-expanded="false" aria-controls="leo-panel">🎓 Conversar com Professor Leo</button>
 <section id="leo-panel" class="leo-panel" hidden aria-label="Professor Leo — demonstração">
-<header class="leo-top"><div><strong>🎓 Professor Leo</strong><small>Tutor demonstrativo • sem IA conectada</small></div><button type="button" class="leo-close" aria-label="Fechar Professor Leo">×</button></header>
-<div class="leo-body"><p class="leo-message">Olá! Vamos estudar juntos? Escolha uma matéria e faremos uma explicação e um exercício. Esta é uma demonstração com respostas preparadas, não um chat com inteligência artificial.</p><p class="leo-recommend" aria-live="polite"></p><label for="leo-area">Escolha uma área de estudo</label><select id="leo-area"></select><div class="leo-lesson" aria-live="polite"></div></div>
-<footer class="leo-bottom"><small>Não digite dados pessoais. O tutor com IA e o WhatsApp ainda estão em desenvolvimento.</small></footer>
+<header class="leo-top"><div><strong>🎓 Professor Leo</strong><small>Tutor em teste • IA disponível</small></div><button type="button" class="leo-close" aria-label="Fechar Professor Leo">×</button></header>
+<div class="leo-body"><p class="leo-message">Olá! Vamos estudar juntos? Escolha uma matéria e faremos uma explicação e um exercício. Você pode praticar com os exercícios demonstrativos ou fazer uma pergunta à IA.</p><p class="leo-recommend" aria-live="polite"></p><label for="leo-area">Escolha uma área de estudo</label><select id="leo-area"></select><div class="leo-lesson" aria-live="polite"></div><div class="leo-chat"><label for="leo-question-input">Pergunte ao Professor Leo (IA em teste)</label><textarea id="leo-question-input" rows="3" maxlength="700" placeholder="Ex.: Pode me explicar porcentagem com um exemplo do ENEM?"></textarea><button type="button" class="leo-ask">Enviar pergunta</button><p class="leo-ai-status" role="status" aria-live="polite"></p><p class="leo-ai-answer"></p></div></div>
+<footer class="leo-bottom"><small>Não envie dados pessoais. IA em teste: confira informações importantes. WhatsApp ainda não disponível.</small></footer>
 </section>`;
 document.body.append(root);
 const launch=root.querySelector('.leo-launch');
@@ -56,3 +56,33 @@ function renderLesson(){
 launch.addEventListener('click',()=>{panel.hidden=!panel.hidden;launch.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden){recommend();renderLesson();selector.focus();}});
 root.querySelector('.leo-close').addEventListener('click',()=>{panel.hidden=true;launch.setAttribute('aria-expanded','false');launch.focus();});
 selector.addEventListener('change',renderLesson);
+
+// Integração segura: a chave da OpenAI permanece somente no Cloudflare Worker.
+const leoAsk=root.querySelector('.leo-ask');
+const leoInput=root.querySelector('#leo-question-input');
+const leoAiStatus=root.querySelector('.leo-ai-status');
+const leoAiAnswer=root.querySelector('.leo-ai-answer');
+let leoBusy=false;
+let leoLastRequest=0;
+leoAsk.addEventListener('click',async()=>{
+  const question=leoInput.value.trim();
+  if(!question){leoAiStatus.textContent='Escreva sua dúvida antes de enviar.';return;}
+  if(leoBusy)return;
+  if(Date.now()-leoLastRequest<15000){leoAiStatus.textContent='Aguarde alguns segundos antes de enviar outra pergunta.';return;}
+  leoBusy=true;leoLastRequest=Date.now();leoAsk.disabled=true;
+  leoAiAnswer.textContent='';leoAiStatus.textContent='Professor Leo está preparando a explicação…';
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),25000);
+    let response;
+    try{response=await fetch('https://professor-leo-api.ricardocustodio-rc1.workers.dev/chat',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:question,mensagem:question}),signal:controller.signal
+    });}finally{clearTimeout(timer);}
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||'Não foi possível obter uma resposta.');
+    const answer=data.answer||data.resposta||data.reply||data.message;
+    if(typeof answer!=='string'||!answer.trim())throw new Error('A resposta veio vazia.');
+    leoAiAnswer.textContent=answer;leoAiStatus.textContent='Resposta do Professor Leo:';
+  }catch(error){leoAiStatus.textContent='A IA ainda não conseguiu responder: '+(error.name==='AbortError'?'tempo de espera esgotado':error.message)+'. Você pode continuar usando os exercícios acima.';}
+  finally{leoBusy=false;leoAsk.disabled=false;}
+});
