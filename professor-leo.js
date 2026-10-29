@@ -53,6 +53,71 @@ function renderLesson(){
   });
   lessonBox.append(title,explanation,question,options,hint,status);
 }
+// Treino demonstrativo de Matemática: correção e progresso locais, sem chamadas à API.
+const leoPracticeQuestions=[
+  {topic:'Porcentagem',question:'Quanto é 25% de 200?',choices:['25','50','75'],correct:1,explanation:'25% é um quarto. 200 ÷ 4 = 50.'},
+  {topic:'Porcentagem',question:'Um produto de R$ 80 teve desconto de 10%. Qual é o novo preço?',choices:['R$ 72','R$ 70','R$ 78'],correct:0,explanation:'10% de 80 = 8. O novo preço é 80 − 8 = R$ 72.'},
+  {topic:'Porcentagem',question:'Em uma turma de 40 alunos, 30% faltaram. Quantos faltaram?',choices:['10','12','14'],correct:1,explanation:'30 ÷ 100 × 40 = 12 alunos.'},
+  {topic:'Porcentagem',question:'Uma conta de R$ 150 aumentou 20%. Qual é o valor final?',choices:['R$ 170','R$ 180','R$ 200'],correct:1,explanation:'20% de 150 = 30. Valor final: 150 + 30 = R$ 180.'}
+];
+const leoPracticeKey='decola-vestibular:leo-math-practice:v1';
+function readLeoPractice(){
+  try{
+    const data=JSON.parse(localStorage.getItem(leoPracticeKey)||'null');
+    if(data&&Array.isArray(data.answers)&&data.answers.length===leoPracticeQuestions.length&&data.answers.every(x=>x===null||x===true||x===false))return data.answers;
+  }catch{}
+  return Array(leoPracticeQuestions.length).fill(null);
+}
+let leoPracticeAnswers=readLeoPractice();
+let leoPracticeIndex=leoPracticeAnswers.findIndex(x=>x===null);
+if(leoPracticeIndex<0)leoPracticeIndex=0;
+const leoPractice=document.createElement('section');
+leoPractice.className='leo-practice';
+leoPractice.setAttribute('aria-label','Treino de Matemática');
+lessonBox.after(leoPractice);
+function renderLeoPractice(){
+  leoPractice.replaceChildren();
+  if(selector.value!=='0'){leoPractice.hidden=true;return;}
+  leoPractice.hidden=false;
+  const heading=document.createElement('h3');heading.textContent='🧮 Treino de Matemática';
+  const count=leoPracticeAnswers.filter(x=>x!==null).length;
+  const correct=leoPracticeAnswers.filter(x=>x===true).length;
+  const progress=document.createElement('p');progress.className='leo-practice-progress';
+  progress.textContent='Seu progresso neste navegador: '+correct+' acerto(s) em '+count+' questão(ões) respondida(s).';
+  const item=leoPracticeQuestions[leoPracticeIndex];
+  const question=document.createElement('p');question.className='leo-question';
+  question.textContent='Questão '+(leoPracticeIndex+1)+' de '+leoPracticeQuestions.length+': '+item.question;
+  const choices=document.createElement('div');choices.className='leo-choices';
+  const feedback=document.createElement('p');feedback.className='leo-practice-feedback';feedback.setAttribute('role','status');
+  const answered=leoPracticeAnswers[leoPracticeIndex]!==null;
+  item.choices.forEach((choice,i)=>{
+    const btn=document.createElement('button');btn.type='button';btn.textContent=choice;btn.disabled=answered;
+    btn.addEventListener('click',()=>{
+      if(leoPracticeAnswers[leoPracticeIndex]!==null)return;
+      leoPracticeAnswers[leoPracticeIndex]=(i===item.correct);
+      try{localStorage.setItem(leoPracticeKey,JSON.stringify({answers:leoPracticeAnswers}));}catch{}
+      renderLeoPractice();
+    });
+    choices.append(btn);
+  });
+  if(answered)feedback.textContent=(leoPracticeAnswers[leoPracticeIndex]?'Muito bem! ':'Vamos aprender com essa tentativa. ')+item.explanation;
+  const controls=document.createElement('div');controls.className='leo-practice-actions';
+  const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
+  next.disabled=!answered;
+  next.addEventListener('click',()=>{leoPracticeIndex=(leoPracticeIndex+1)%leoPracticeQuestions.length;renderLeoPractice();});
+  const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
+  restart.addEventListener('click',()=>{
+    leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
+    leoPracticeIndex=0;
+    try{localStorage.removeItem(leoPracticeKey);}catch{}
+    renderLeoPractice();
+  });
+  controls.append(next,restart);
+  const note=document.createElement('small');note.textContent='Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.';
+  leoPractice.append(heading,progress,question,choices,feedback,controls,note);
+}
+renderLeoPractice();
+selector.addEventListener('change',renderLeoPractice);
 launch.addEventListener('click',()=>{panel.hidden=!panel.hidden;launch.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden){recommend();renderLesson();selector.focus();}});
 root.querySelector('.leo-close').addEventListener('click',()=>{panel.hidden=true;launch.setAttribute('aria-expanded','false');launch.focus();});
 selector.addEventListener('change',renderLesson);
