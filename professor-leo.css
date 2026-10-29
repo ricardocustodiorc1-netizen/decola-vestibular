@@ -35,3 +35,13 @@
 .leo-practice-actions button{border:1px solid #b9cafa;border-radius:8px;padding:9px;background:#eaf0ff;color:#1744c3;font-weight:700}
 .leo-practice-actions button:disabled{opacity:.5}
 .leo-practice small{color:#53627c;line-height:1.5}
+
+/* Feedback imediato e plano de recuperação do Professor Leo */
+.leo-practice-feedback{padding:11px 12px;border-radius:9px}
+.leo-practice-feedback strong{display:block;margin-bottom:6px}
+.leo-feedback-correct{color:#116332;background:#e5f7eb;border:1px solid #9cdbb2}
+.leo-feedback-wrong{color:#9c2020;background:#fff0f0;border:1px solid #f0b0b0}
+.leo-score-track{height:13px;background:#e4eaf6;border-radius:99px;overflow:hidden;margin:10px 0 15px}
+.leo-score-fill{height:100%;background:#197f4c;border-radius:99px;transition:width .2s}
+.leo-practice-report ol{padding-left:20px;line-height:1.5}
+.leo-practice-report li{margin:8px 0}
