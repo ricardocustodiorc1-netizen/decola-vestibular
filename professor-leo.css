@@ -14,3 +14,5 @@
 .leo-choices button:hover,.leo-hint:hover{background:#e4edff}.leo-hint{margin-top:10px;color:#1744c3}
 .leo-status{min-height:24px;font-weight:600}.leo-bottom{padding:12px 18px;border-top:1px solid #e4eaf4;background:#f9fbff}.leo-bottom small{color:#53627c}
 @media(max-width:700px){.leo-widget{right:10px;bottom:10px}.leo-launch{font-size:12px;padding:12px}.leo-panel{bottom:55px;width:calc(100vw - 20px)}}
+
+.leo-chat{margin-top:20px;padding-top:14px;border-top:1px solid #d9e2f5}.leo-chat textarea{width:100%;box-sizing:border-box;resize:vertical;border:1px solid #aebddd;border-radius:8px;padding:10px;font:inherit;font-size:13px}.leo-ask{margin-top:8px;background:#1744c3;color:white;border:0;border-radius:8px;padding:10px 14px;font-weight:700}.leo-ask:disabled{opacity:.6}.leo-ai-answer{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f5ff;padding:12px;border-radius:10px}.leo-ai-answer:empty{display:none}.leo-ai-status{color:#53627c}
