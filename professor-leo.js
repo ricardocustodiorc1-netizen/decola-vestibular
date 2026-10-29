@@ -68,6 +68,13 @@ const leoReinforcement=[
  {steps:'Aumento é soma, não desconto. Calcule 20% do valor e acrescente ao original.',question:'Uma mensalidade de R$ 100 aumentou 20%. Qual o novo valor?',choices:['R$ 80','R$ 110','R$ 120'],correct:2,explanation:'20% de 100 é 20. Valor final: 100 + 20 = R$ 120.'}
 ];
 let leoReinforcementAnswers={};
+// Desafios progressivos demonstrativos, escolhidos conforme a pontuação da rodada.
+const leoChallenges=[
+ {level:'Fácil',question:'Quanto é 10% de 90?',choices:['9','19','90'],correct:0,explanation:'10% é um décimo: 90 ÷ 10 = 9.'},
+ {level:'Médio',question:'Um tênis de R$ 240 recebeu desconto de 15%. Quanto custa agora?',choices:['R$ 204','R$ 225','R$ 216'],correct:0,explanation:'15% de 240 = 36. Preço final: 240 − 36 = R$ 204.'},
+ {level:'Difícil',question:'Um produto aumentou 20% e depois teve desconto de 20%. Em relação ao preço inicial, o valor final:',choices:['Ficou igual','Caiu 4%','Subiu 4%'],correct:1,explanation:'Se custava 100, sobe para 120 e cai 20% de 120 (=24): termina em 96, 4% abaixo do inicial.'}
+];
+let leoChallengeResult=null;
 const leoPracticeKey='decola-vestibular:leo-math-practice:v1';
 function readLeoPractice(){
   try{
@@ -174,6 +181,7 @@ function renderLeoPractice(){
   restart.addEventListener('click',()=>{
     leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
     leoReinforcementAnswers={};
+    leoChallengeResult=null;
     leoRoundRecorded=false;
     leoPracticeIndex=0;
     try{localStorage.removeItem(leoPracticeKey);}catch{}
@@ -205,6 +213,28 @@ function renderLeoPractice(){
       report.append(title,score,bar,guidance,heading,list,tip);
     }else{report.append(title,score,bar,guidance);}
   }
+  if(finished){
+    const level=correct<=1?0:correct<=3?1:2;
+    const challenge=leoChallenges[level];
+    const box=document.createElement('section');box.className='leo-adaptive';
+    const title=document.createElement('h4');title.textContent='🎯 Próximo desafio: nível '+challenge.level;
+    const intro=document.createElement('p');intro.textContent=level===0?'Vamos fortalecer a base antes de avançar.':level===1?'Você está evoluindo! Agora pratique um problema intermediário.':'Excelente resultado! Que tal um desafio mais elaborado?';
+    const prompt=document.createElement('p');prompt.className='leo-question';prompt.textContent=challenge.question;
+    const options=document.createElement('div');options.className='leo-choices';
+    const status=document.createElement('p');status.setAttribute('role','status');
+    challenge.choices.forEach((choice,i)=>{
+      const button=document.createElement('button');button.type='button';button.textContent=choice;button.disabled=leoChallengeResult!==null;
+      button.addEventListener('click',()=>{if(leoChallengeResult!==null)return;leoChallengeResult=i===challenge.correct;renderLeoPractice();});
+      options.append(button);
+    });
+    if(leoChallengeResult!==null){
+      status.className='leo-practice-feedback '+(leoChallengeResult?'leo-feedback-correct':'leo-feedback-wrong');
+      status.textContent=(leoChallengeResult?'✓ VOCÊ ACERTOU! Parabéns! ':'✗ VOCÊ ERROU. Vamos revisar com calma. ')+challenge.explanation;
+    }
+    const note=document.createElement('small');note.textContent='Desafio extra demonstrativo, sem alterar a nota da rodada.';
+    box.append(title,intro,prompt,options,status,note);
+    report.append(box);
+  }
   const history=document.createElement('p');
   history.className='leo-practice-history';
   const totalAttempts=leoPracticeHistory.reduce((sum,x)=>sum+x.total,0);
@@ -218,8 +248,8 @@ function renderLeoPractice(){
 }
 renderLeoPractice();
 selector.addEventListener('change',renderLeoPractice);
-launch.addEventListener('click',()=>{panel.hidden=!panel.hidden;launch.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden){recommend();renderLesson();selector.focus();}});
-root.querySelector('.leo-close').addEventListener('click',()=>{panel.hidden=true;launch.setAttribute('aria-expanded','false');launch.focus();});
+launch.addEventListener('click',()=>{panel.hidden=false;launch.hidden=true;launch.setAttribute('aria-expanded','true');recommend();renderLesson();root.querySelector('.leo-close').focus();});
+root.querySelector('.leo-close').addEventListener('click',()=>{panel.hidden=true;launch.hidden=false;launch.setAttribute('aria-expanded','false');launch.focus();});
 selector.addEventListener('change',renderLesson);
 
 // Integração segura: a chave da OpenAI permanece somente no Cloudflare Worker.
