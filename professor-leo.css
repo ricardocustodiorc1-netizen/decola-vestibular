@@ -45,3 +45,25 @@
 .leo-score-fill{height:100%;background:#197f4c;border-radius:99px;transition:width .2s}
 .leo-practice-report ol{padding-left:20px;line-height:1.5}
 .leo-practice-report li{margin:8px 0}
+
+/* Navegação aprimorada: painel amplo, cabeçalho sempre visível e rolagem interna. */
+.leo-panel{width:min(480px,calc(100vw - 32px));max-height:min(760px,calc(100dvh - 96px));display:flex;flex-direction:column;overflow:hidden}
+.leo-top{flex:0 0 auto;position:relative;z-index:1;gap:12px}
+.leo-close{cursor:pointer;min-width:42px;min-height:42px;border-radius:8px}
+.leo-close:hover{background:#ffffff22}
+.leo-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:18px 20px}
+.leo-bottom{flex:0 0 auto}
+.leo-choices button,.leo-practice-actions button,.leo-ask,.leo-new-question,.leo-hint{cursor:pointer;min-height:42px;line-height:1.4}
+.leo-choices button:focus-visible,.leo-practice-actions button:focus-visible,.leo-ask:focus-visible,.leo-hint:focus-visible,.leo-launch:focus-visible,.leo-close:focus-visible{outline:3px solid #e7a72e;outline-offset:2px}
+.leo-reinforcement{border-top:1px solid #d9e2f5;margin-top:16px;padding-top:8px}
+.leo-reinforcement .leo-choices{margin:12px 0}
+.leo-practice-report{border-top:1px solid #d9e2f5;margin-top:16px;padding-top:10px}
+.leo-chat textarea{min-height:84px}
+@media(max-width:700px){
+ .leo-widget{right:10px;bottom:10px;left:10px;display:flex;justify-content:flex-end;pointer-events:none}
+ .leo-widget>*{pointer-events:auto}
+ .leo-panel{position:fixed;left:10px;right:10px;top:10px;bottom:70px;width:auto;max-height:none;border-radius:14px}
+ .leo-body{padding:14px}
+ .leo-launch{max-width:calc(100vw - 20px)}
+}
+@media(max-height:520px) and (min-width:701px){.leo-panel{max-height:calc(100dvh - 80px)}}
