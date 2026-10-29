@@ -60,6 +60,14 @@ const leoPracticeQuestions=[
   {topic:'Porcentagem',question:'Em uma turma de 40 alunos, 30% faltaram. Quantos faltaram?',choices:['10','12','14'],correct:1,explanation:'30 ÷ 100 × 40 = 12 alunos.'},
   {topic:'Porcentagem',question:'Uma conta de R$ 150 aumentou 20%. Qual é o valor final?',choices:['R$ 170','R$ 180','R$ 200'],correct:1,explanation:'20% de 150 = 30. Valor final: 150 + 30 = R$ 180.'}
 ];
+// Reforço imediato: uma questão semelhante, sem alterar a pontuação da rodada.
+const leoReinforcement=[
+ {steps:'25% significa um quarto. Divida o total por 4.',question:'Quanto é 25% de 120?',choices:['20','30','40'],correct:1,explanation:'120 ÷ 4 = 30. Portanto, 25% de 120 é 30.'},
+ {steps:'Primeiro calcule 10% do preço dividindo por 10. Depois subtraia o desconto do preço original.',question:'Uma camiseta de R$ 60 teve desconto de 10%. Quanto custa agora?',choices:['R$ 54','R$ 50','R$ 56'],correct:0,explanation:'10% de 60 é 6; 60 − 6 = R$ 54.'},
+ {steps:'Para encontrar 30%, calcule 10% dividindo por 10 e multiplique o resultado por 3.',question:'Em uma turma de 50 alunos, 30% faltaram. Quantos faltaram?',choices:['10','15','20'],correct:1,explanation:'10% de 50 é 5. Três vezes 5 = 15 alunos.'},
+ {steps:'Aumento é soma, não desconto. Calcule 20% do valor e acrescente ao original.',question:'Uma mensalidade de R$ 100 aumentou 20%. Qual o novo valor?',choices:['R$ 80','R$ 110','R$ 120'],correct:2,explanation:'20% de 100 é 20. Valor final: 100 + 20 = R$ 120.'}
+];
+let leoReinforcementAnswers={};
 const leoPracticeKey='decola-vestibular:leo-math-practice:v1';
 function readLeoPractice(){
   try{
@@ -132,6 +140,32 @@ function renderLeoPractice(){
     detail.textContent=(hit?' Parabéns! Excelente raciocínio. Continue assim, você está avançando rumo à aprovação! ':'Opa! Precisa prestar mais atenção! No vestibular, cada detalhe faz diferença. Vamos entender e aprender com esse erro. ')+item.explanation;
     feedback.append(label,detail);
   }
+  let reinforcementBox=null;
+  if(answered && leoPracticeAnswers[leoPracticeIndex]===false){
+    const exercise=leoReinforcement[leoPracticeIndex];
+    reinforcementBox=document.createElement('section');reinforcementBox.className='leo-reinforcement';
+    const title=document.createElement('h4');title.textContent='📘 Reforço imediato com o Professor Leo';
+    const steps=document.createElement('p');steps.textContent='Vamos revisar juntos: '+exercise.steps;
+    const prompt=document.createElement('p');prompt.className='leo-question';prompt.textContent='Agora tente uma parecida: '+exercise.question;
+    const options=document.createElement('div');options.className='leo-choices';
+    const result=document.createElement('p');result.setAttribute('role','status');
+    const current=leoReinforcementAnswers[leoPracticeIndex];
+    exercise.choices.forEach((choice,i)=>{
+      const button=document.createElement('button');button.type='button';button.textContent=choice;button.disabled=current!==undefined;
+      button.addEventListener('click',()=>{
+        if(leoReinforcementAnswers[leoPracticeIndex]!==undefined)return;
+        leoReinforcementAnswers[leoPracticeIndex]=i===exercise.correct;
+        renderLeoPractice();
+      });
+      options.append(button);
+    });
+    if(current!==undefined){
+      result.className=current?'leo-feedback-correct':'leo-feedback-wrong';
+      result.textContent=(current?'✓ VOCÊ ACERTOU O REFORÇO! Parabéns! ':'✗ AINDA NÃO. Não desista: reveja o cálculo e pratique novamente. ')+exercise.explanation;
+    }
+    const note=document.createElement('small');note.textContent='Questão extra de aprendizagem: não altera a nota do treino.';
+    reinforcementBox.append(title,steps,prompt,options,result,note);
+  }
   const controls=document.createElement('div');controls.className='leo-practice-actions';
   const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
   next.disabled=!answered;
@@ -139,6 +173,7 @@ function renderLeoPractice(){
   const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
   restart.addEventListener('click',()=>{
     leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
+    leoReinforcementAnswers={};
     leoRoundRecorded=false;
     leoPracticeIndex=0;
     try{localStorage.removeItem(leoPracticeKey);}catch{}
@@ -177,7 +212,9 @@ function renderLeoPractice(){
   history.textContent='Histórico geral: '+leoPracticeHistory.length+' rodada(s) concluída(s), '+totalCorrect+' acerto(s) em '+totalAttempts+' respostas. Salvo somente neste navegador.';
   report.append(history);
   const note=document.createElement('small');note.textContent='Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.';
-  leoPractice.append(heading,progress,question,choices,feedback,controls,report,note);
+  leoPractice.append(heading,progress,question,choices,feedback);
+  if(reinforcementBox)leoPractice.append(reinforcementBox);
+  leoPractice.append(controls,report,note);
 }
 renderLeoPractice();
 selector.addEventListener('change',renderLeoPractice);
