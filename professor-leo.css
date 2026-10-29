@@ -74,3 +74,8 @@
 .leo-adaptive h4{margin:0 0 8px;color:#1744c3}
 .leo-adaptive .leo-choices{margin:12px 0}
 .leo-adaptive .leo-practice-feedback{margin-top:12px}
+
+/* Painel mais espaçoso em desktops, sem ultrapassar a janela. */
+@media(min-width:701px){.leo-panel{width:min(560px,calc(100vw - 36px));max-height:min(820px,calc(100dvh - 92px))}}
+.leo-reinforcement-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.leo-reinforcement-actions button{border:1px solid #b9cafa;border-radius:8px;padding:10px;background:#eaf0ff;color:#1744c3;font-weight:700;cursor:pointer;min-height:42px}
