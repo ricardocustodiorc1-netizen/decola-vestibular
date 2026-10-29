@@ -23,3 +23,15 @@
 .leo-new-question{background:#f0f5ff;color:#1744c3;border:1px solid #b9cafa;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
 .leo-new-question:hover{background:#e2ebff}
 .leo-new-question:focus-visible{outline:3px solid #e7a72e;outline-offset:2px}
+
+/* Treino de Matemática do Professor Leo */
+.leo-practice{margin-top:18px;padding:14px;border:1px solid #cbd8f2;border-radius:12px;background:#f9fbff}
+.leo-practice[hidden]{display:none}
+.leo-practice h3{margin:0 0 10px;font-size:17px}
+.leo-practice-progress{color:#1744c3;font-weight:700}
+.leo-practice .leo-choices button:disabled{opacity:.7;cursor:default}
+.leo-practice-feedback{font-weight:600;line-height:1.5}
+.leo-practice-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.leo-practice-actions button{border:1px solid #b9cafa;border-radius:8px;padding:9px;background:#eaf0ff;color:#1744c3;font-weight:700}
+.leo-practice-actions button:disabled{opacity:.5}
+.leo-practice small{color:#53627c;line-height:1.5}
