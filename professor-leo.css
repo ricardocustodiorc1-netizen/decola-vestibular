@@ -67,3 +67,10 @@
  .leo-launch{max-width:calc(100vw - 20px)}
 }
 @media(max-height:520px) and (min-width:701px){.leo-panel{max-height:calc(100dvh - 80px)}}
+
+/* Desafio adaptativo após a rodada e botão oculto com o painel aberto. */
+.leo-launch[hidden]{display:none}
+.leo-adaptive{margin:18px 0;padding:14px;border:1px solid #b9cafa;border-radius:12px;background:#f0f5ff}
+.leo-adaptive h4{margin:0 0 8px;color:#1744c3}
+.leo-adaptive .leo-choices{margin:12px 0}
+.leo-adaptive .leo-practice-feedback{margin-top:12px}
