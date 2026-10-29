@@ -147,6 +147,39 @@ function renderLeoPractice(){
     detail.textContent=(hit?' Parabéns! Excelente raciocínio. Continue assim, você está avançando rumo à aprovação! ':'Opa! Precisa prestar mais atenção! No vestibular, cada detalhe faz diferença. Vamos entender e aprender com esse erro. ')+item.explanation;
     feedback.append(label,detail);
   }
+  // Ações ficam imediatamente após a correção, sem exigir rolagem até o fim do reforço.
+  const controls=document.createElement('div');controls.className='leo-practice-actions';
+  const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
+  next.disabled=!answered;
+  next.addEventListener('click',()=>{
+    leoPracticeIndex=(leoPracticeIndex+1)%leoPracticeQuestions.length;
+    renderLeoPractice();
+    leoPractice.querySelector('.leo-question')?.scrollIntoView({block:'nearest',behavior:'smooth'});
+  });
+  const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
+  restart.addEventListener('click',()=>{
+    leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
+    leoReinforcementAnswers={};
+    leoChallengeResult=null;
+    leoRoundRecorded=false;
+    leoPracticeIndex=0;
+    try{localStorage.removeItem(leoPracticeKey);}catch{}
+    renderLeoPractice();
+  });
+  if(answered && leoPracticeAnswers[leoPracticeIndex]===false){
+    const askTeacher=document.createElement('button');
+    askTeacher.type='button';
+    askTeacher.textContent='🎓 Professor Leo, me explique melhor';
+    askTeacher.addEventListener('click',()=>{
+      const input=root.querySelector('#leo-question-input');
+      input.value='Errei esta questão: '+item.question+' Pode explicar passo a passo, com uma dica para eu aprender?';
+      root.querySelector('.leo-ai-status').textContent='Sua dúvida está pronta. Clique em Enviar pergunta para conversar com a IA.';
+      input.scrollIntoView({block:'center',behavior:'smooth'});
+      input.focus({preventScroll:true});
+    });
+    controls.append(askTeacher);
+  }
+  controls.append(next,restart);
   let reinforcementBox=null;
   if(answered && leoPracticeAnswers[leoPracticeIndex]===false){
     const exercise=leoReinforcement[leoPracticeIndex];
@@ -173,21 +206,6 @@ function renderLeoPractice(){
     const note=document.createElement('small');note.textContent='Questão extra de aprendizagem: não altera a nota do treino.';
     reinforcementBox.append(title,steps,prompt,options,result,note);
   }
-  const controls=document.createElement('div');controls.className='leo-practice-actions';
-  const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
-  next.disabled=!answered;
-  next.addEventListener('click',()=>{leoPracticeIndex=(leoPracticeIndex+1)%leoPracticeQuestions.length;renderLeoPractice();});
-  const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
-  restart.addEventListener('click',()=>{
-    leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
-    leoReinforcementAnswers={};
-    leoChallengeResult=null;
-    leoRoundRecorded=false;
-    leoPracticeIndex=0;
-    try{localStorage.removeItem(leoPracticeKey);}catch{}
-    renderLeoPractice();
-  });
-  controls.append(next,restart);
   const report=document.createElement('section');
   report.className='leo-practice-report';
   report.setAttribute('aria-live','polite');
@@ -242,9 +260,9 @@ function renderLeoPractice(){
   history.textContent='Histórico geral: '+leoPracticeHistory.length+' rodada(s) concluída(s), '+totalCorrect+' acerto(s) em '+totalAttempts+' respostas. Salvo somente neste navegador.';
   report.append(history);
   const note=document.createElement('small');note.textContent='Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.';
-  leoPractice.append(heading,progress,question,choices,feedback);
+  leoPractice.append(heading,progress,question,choices,feedback,controls);
   if(reinforcementBox)leoPractice.append(reinforcementBox);
-  leoPractice.append(controls,report,note);
+  leoPractice.append(report,note);
 }
 renderLeoPractice();
 selector.addEventListener('change',renderLeoPractice);
