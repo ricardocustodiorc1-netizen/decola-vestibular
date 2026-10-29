@@ -123,7 +123,15 @@ function renderLeoPractice(){
     });
     choices.append(btn);
   });
-  if(answered)feedback.textContent=(leoPracticeAnswers[leoPracticeIndex]?'Muito bem! ':'Vamos aprender com essa tentativa. ')+item.explanation;
+  if(answered){
+    const hit=leoPracticeAnswers[leoPracticeIndex];
+    feedback.classList.add(hit?'leo-feedback-correct':'leo-feedback-wrong');
+    const label=document.createElement('strong');
+    label.textContent=hit?'✓ VOCÊ ACERTOU! 🎉':'✗ VOCÊ ERROU! 📚';
+    const detail=document.createElement('span');
+    detail.textContent=(hit?' Parabéns! Excelente raciocínio. Continue assim, você está avançando rumo à aprovação! ':'Opa! Precisa prestar mais atenção! No vestibular, cada detalhe faz diferença. Vamos entender e aprender com esse erro. ')+item.explanation;
+    feedback.append(label,detail);
+  }
   const controls=document.createElement('div');controls.className='leo-practice-actions';
   const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
   next.disabled=!answered;
@@ -145,7 +153,22 @@ function renderLeoPractice(){
     const score=document.createElement('p');score.textContent=correct+' de '+leoPracticeQuestions.length+' acertos ('+Math.round(correct/leoPracticeQuestions.length*100)+'%).';
     const guidance=document.createElement('p');
     guidance.textContent=correct===leoPracticeQuestions.length?'Parabéns! Você acertou todas. Continue praticando novos desafios.':'Revisão recomendada: porcentagem, especialmente cálculos com descontos, aumentos e situações do cotidiano. Releia as explicações e tente outra rodada.';
-    report.append(title,score,guidance);
+    const bar=document.createElement('div');
+    bar.className='leo-score-track';bar.setAttribute('role','progressbar');
+    bar.setAttribute('aria-label','Acertos nesta rodada');
+    bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax','100');
+    bar.setAttribute('aria-valuenow',String(Math.round(correct/leoPracticeQuestions.length*100)));
+    const fill=document.createElement('div');fill.className='leo-score-fill';
+    fill.style.width=Math.round(correct/leoPracticeQuestions.length*100)+'%';
+    bar.append(fill);
+    const missed=leoPracticeQuestions.filter((q,i)=>leoPracticeAnswers[i]===false);
+    if(missed.length){
+      const heading=document.createElement('strong');heading.textContent='Seu plano de reforço:';
+      const list=document.createElement('ol');
+      missed.forEach(q=>{const li=document.createElement('li');li.textContent=q.question+' Revise: '+q.explanation;list.append(li);});
+      const tip=document.createElement('p');tip.textContent='Leia as explicações com calma e clique em Recomeçar treino para praticar novamente.';
+      report.append(title,score,bar,guidance,heading,list,tip);
+    }else{report.append(title,score,bar,guidance);}
   }
   const history=document.createElement('p');
   history.className='leo-practice-history';
