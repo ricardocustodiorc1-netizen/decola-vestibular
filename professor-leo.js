@@ -204,7 +204,12 @@ function renderLeoPractice(){
       result.textContent=(current?'✓ VOCÊ ACERTOU O REFORÇO! Parabéns! ':'✗ AINDA NÃO. Não desista: reveja o cálculo e pratique novamente. ')+exercise.explanation;
     }
     const note=document.createElement('small');note.textContent='Questão extra de aprendizagem: não altera a nota do treino.';
-    reinforcementBox.append(title,steps,prompt,options,result,note);
+    const reinforcementActions=document.createElement('div');reinforcementActions.className='leo-reinforcement-actions';
+    const continueButton=document.createElement('button');continueButton.type='button';
+    continueButton.textContent='Continuar treino →';
+    continueButton.addEventListener('click',()=>next.click());
+    reinforcementActions.append(continueButton);
+    reinforcementBox.append(title,steps,prompt,options,result,note,reinforcementActions);
   }
   const report=document.createElement('section');
   report.className='leo-practice-report';
