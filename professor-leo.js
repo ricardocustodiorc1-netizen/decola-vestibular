@@ -167,6 +167,19 @@ function renderLeoPractice(){
     renderLeoPractice();
   });
   if(answered && leoPracticeAnswers[leoPracticeIndex]===false){
+    const practiceMore=document.createElement('button');
+    practiceMore.type='button';
+    practiceMore.textContent='📘 Quero praticar mais';
+    practiceMore.addEventListener('click',()=>{
+      const box=leoPractice.querySelector('.leo-reinforcement');
+      if(box){
+        box.hidden=false;
+        practiceMore.disabled=true;
+        practiceMore.textContent='📘 Exercício de reforço aberto';
+        box.scrollIntoView({block:'nearest',behavior:'smooth'});
+      }
+    });
+    controls.append(practiceMore);
     const askTeacher=document.createElement('button');
     askTeacher.type='button';
     askTeacher.textContent='🎓 Professor Leo, me explique melhor';
@@ -184,6 +197,7 @@ function renderLeoPractice(){
   if(answered && leoPracticeAnswers[leoPracticeIndex]===false){
     const exercise=leoReinforcement[leoPracticeIndex];
     reinforcementBox=document.createElement('section');reinforcementBox.className='leo-reinforcement';
+    reinforcementBox.hidden=true;
     const title=document.createElement('h4');title.textContent='📘 Reforço imediato com o Professor Leo';
     const steps=document.createElement('p');steps.textContent='Vamos revisar juntos: '+exercise.steps;
     const prompt=document.createElement('p');prompt.className='leo-question';prompt.textContent='Agora tente uma parecida: '+exercise.question;
@@ -210,6 +224,7 @@ function renderLeoPractice(){
     continueButton.addEventListener('click',()=>next.click());
     reinforcementActions.append(continueButton);
     reinforcementBox.append(title,steps,prompt,options,result,note,reinforcementActions);
+    // O reforço só aparece quando o aluno escolhe praticar mais.
   }
   const report=document.createElement('section');
   report.className='leo-practice-report';
