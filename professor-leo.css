@@ -1,0 +1,16 @@
+/* Professor Leo — demonstração acessível e isolada do aplicativo principal */
+.leo-widget{position:fixed;bottom:18px;right:18px;z-index:40;font-family:Arial,Helvetica,sans-serif;color:#14254c}
+.leo-launch{border:0;border-radius:40px;background:#1744c3;color:#fff;padding:15px 19px;font-size:14px;font-weight:700;box-shadow:0 8px 26px #14254c40}
+.leo-panel{position:absolute;right:0;bottom:65px;width:min(390px,calc(100vw - 36px));max-height:min(650px,calc(100dvh - 105px));overflow:auto;background:#fff;border:1px solid #d9e2f5;border-radius:16px;box-shadow:0 20px 60px #14254c45}
+.leo-panel[hidden]{display:none}
+.leo-top{background:#1744c3;color:#fff;padding:16px;display:flex;justify-content:space-between;align-items:center}
+.leo-top strong,.leo-top small{display:block}.leo-top small{font-size:11px;color:#e1eaff;margin-top:4px}
+.leo-close{font-size:25px;background:transparent;border:0;color:#fff}
+.leo-body{padding:18px}.leo-body p,.leo-bottom small{font-size:13px;line-height:1.6}.leo-message{background:#f0f5ff;padding:12px;border-radius:12px}
+.leo-recommend{color:#1744c3}.leo-body label{font-size:12px;font-weight:700;display:block;margin:14px 0 6px}
+.leo-body select{width:100%;padding:10px;border:1px solid #aebddd;border-radius:8px;background:#fff}
+.leo-lesson h3{font-size:18px;margin:18px 0 8px}.leo-question{font-weight:700}
+.leo-choices{display:grid;gap:8px}.leo-choices button,.leo-hint{background:#f4f7fe;border:1px solid #bdcdef;border-radius:8px;padding:10px;text-align:left;color:#14254c;font-size:13px}
+.leo-choices button:hover,.leo-hint:hover{background:#e4edff}.leo-hint{margin-top:10px;color:#1744c3}
+.leo-status{min-height:24px;font-weight:600}.leo-bottom{padding:12px 18px;border-top:1px solid #e4eaf4;background:#f9fbff}.leo-bottom small{color:#53627c}
+@media(max-width:700px){.leo-widget{right:10px;bottom:10px}.leo-launch{font-size:12px;padding:12px}.leo-panel{bottom:55px;width:calc(100vw - 20px)}}
