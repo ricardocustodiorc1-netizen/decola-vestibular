@@ -68,7 +68,28 @@ function readLeoPractice(){
   }catch{}
   return Array(leoPracticeQuestions.length).fill(null);
 }
+const leoHistoryKey='decola-vestibular:leo-math-history:v1';
+function readLeoHistory(){
+  try{
+    const history=JSON.parse(localStorage.getItem(leoHistoryKey)||'[]');
+    if(Array.isArray(history))return history.filter(x=>x&&Number.isInteger(x.correct)&&x.correct>=0&&x.correct<=leoPracticeQuestions.length).slice(-20);
+  }catch{}
+  return [];
+}
+let leoPracticeHistory=readLeoHistory();
 let leoPracticeAnswers=readLeoPractice();
+let leoRoundRecorded=false;
+function saveLeoHistory(){
+  if(leoRoundRecorded||leoPracticeAnswers.some(x=>x===null))return;
+  leoRoundRecorded=true;
+  leoPracticeHistory.push({correct:leoPracticeAnswers.filter(Boolean).length,total:leoPracticeQuestions.length,date:new Date().toISOString()});
+  leoPracticeHistory=leoPracticeHistory.slice(-20);
+  try{localStorage.setItem(leoHistoryKey,JSON.stringify(leoPracticeHistory));}catch{}
+}
+if(leoPracticeAnswers.every(x=>x!==null)){
+  // Rodadas anteriores à atualização não são incluídas retroativamente no histórico.
+  leoRoundRecorded=true;
+}
 let leoPracticeIndex=leoPracticeAnswers.findIndex(x=>x===null);
 if(leoPracticeIndex<0)leoPracticeIndex=0;
 const leoPractice=document.createElement('section');
@@ -83,7 +104,9 @@ function renderLeoPractice(){
   const count=leoPracticeAnswers.filter(x=>x!==null).length;
   const correct=leoPracticeAnswers.filter(x=>x===true).length;
   const progress=document.createElement('p');progress.className='leo-practice-progress';
-  progress.textContent='Seu progresso neste navegador: '+correct+' acerto(s) em '+count+' questão(ões) respondida(s).';
+  progress.textContent='Nesta rodada: '+correct+' acerto(s) em '+count+' questão(ões) respondida(s).';
+  saveLeoHistory();
+  const finished=count===leoPracticeQuestions.length;
   const item=leoPracticeQuestions[leoPracticeIndex];
   const question=document.createElement('p');question.className='leo-question';
   question.textContent='Questão '+(leoPracticeIndex+1)+' de '+leoPracticeQuestions.length+': '+item.question;
@@ -108,13 +131,30 @@ function renderLeoPractice(){
   const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
   restart.addEventListener('click',()=>{
     leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
+    leoRoundRecorded=false;
     leoPracticeIndex=0;
     try{localStorage.removeItem(leoPracticeKey);}catch{}
     renderLeoPractice();
   });
   controls.append(next,restart);
+  const report=document.createElement('section');
+  report.className='leo-practice-report';
+  report.setAttribute('aria-live','polite');
+  if(finished){
+    const title=document.createElement('h4');title.textContent='📊 Relatório desta rodada';
+    const score=document.createElement('p');score.textContent=correct+' de '+leoPracticeQuestions.length+' acertos ('+Math.round(correct/leoPracticeQuestions.length*100)+'%).';
+    const guidance=document.createElement('p');
+    guidance.textContent=correct===leoPracticeQuestions.length?'Parabéns! Você acertou todas. Continue praticando novos desafios.':'Revisão recomendada: porcentagem, especialmente cálculos com descontos, aumentos e situações do cotidiano. Releia as explicações e tente outra rodada.';
+    report.append(title,score,guidance);
+  }
+  const history=document.createElement('p');
+  history.className='leo-practice-history';
+  const totalAttempts=leoPracticeHistory.reduce((sum,x)=>sum+x.total,0);
+  const totalCorrect=leoPracticeHistory.reduce((sum,x)=>sum+x.correct,0);
+  history.textContent='Histórico geral: '+leoPracticeHistory.length+' rodada(s) concluída(s), '+totalCorrect+' acerto(s) em '+totalAttempts+' respostas. Salvo somente neste navegador.';
+  report.append(history);
   const note=document.createElement('small');note.textContent='Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.';
-  leoPractice.append(heading,progress,question,choices,feedback,controls,note);
+  leoPractice.append(heading,progress,question,choices,feedback,controls,report,note);
 }
 renderLeoPractice();
 selector.addEventListener('change',renderLeoPractice);
