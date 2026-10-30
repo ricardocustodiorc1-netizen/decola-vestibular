@@ -1348,7 +1348,7 @@ function leoSpacedRenderCard(card,index){
     feedback.textContent=(correct?'✓ Muito bem! ':'Vamos revisar: ')+exercise.why;host.append(feedback);
     if(correct){
      record.attempts.push({at:Date.now(),correct:true});leoSpacedSave();
-     const next=document.createElement('button');next.type='button';next.textContent='Atualizar meu painel';next.addEventListener('click',()=>leoShowView('evolucao'));host.append(next);
+     const next=document.createElement('button');next.type='button';next.textContent='Atualizar meu painel';next.addEventListener('click',()=>leoShowView('dashboard'));host.append(next);
     }else{
      const retry=document.createElement('button');retry.type='button';retry.textContent='Tentar novamente';retry.addEventListener('click',()=>{host.replaceChildren();trigger.click();});host.append(retry);
     }
