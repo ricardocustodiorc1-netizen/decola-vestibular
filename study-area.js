@@ -21,11 +21,40 @@
   if(menuBack)menuBack.click();
   // Fallback: mantém o menu de módulos disponível, sem perder o acesso.
  }
+ const mathTopics=[
+  {title:'Porcentagem',summary:'Descontos, aumentos e proporções.',explanation:'Porcentagem é uma razão com base 100. Para calcular 25% de um valor, multiplique por 25 e divida por 100.',example:'25% de 200 = 200 × 25 ÷ 100 = 50.',question:'Quanto é 20% de 150?',choices:['20','30','35'],correct:1,feedback:'20% de 150 = 150 × 0,20 = 30.'},
+  {title:'Frações',summary:'Partes de um todo e operações.',explanation:'Uma fração representa partes iguais de um todo. O numerador indica quantas partes consideramos; o denominador, em quantas partes o todo foi dividido.',example:'3/4 de 20 = 20 ÷ 4 × 3 = 15.',question:'Quanto é 1/2 de 36?',choices:['12','18','24'],correct:1,feedback:'Metade de 36 é 36 ÷ 2 = 18.'},
+  {title:'Equações',summary:'Descubra o valor da incógnita.',explanation:'Resolver uma equação significa encontrar o valor que torna a igualdade verdadeira. Faça a mesma operação nos dois lados para isolar a incógnita.',example:'2x + 6 = 16 → 2x = 10 → x = 5.',question:'Se 3x + 2 = 17, quanto vale x?',choices:['3','5','7'],correct:1,feedback:'3x = 15, portanto x = 5.'},
+  {title:'Geometria',summary:'Áreas, perímetros e formas.',explanation:'O perímetro é a soma dos lados de uma figura. A área mede sua superfície. Para um retângulo, área = base × altura.',example:'Retângulo de 8 m por 3 m: área = 24 m².',question:'Qual a área de um retângulo de 6 m por 4 m?',choices:['10 m²','20 m²','24 m²'],correct:2,feedback:'Área = 6 × 4 = 24 m².'},
+  {title:'Estatística',summary:'Média e interpretação de dados.',explanation:'A média aritmética simples é a soma dos valores dividida pela quantidade de valores. Ela ajuda a resumir conjuntos de dados.',example:'Média de 4, 6 e 8 = (4 + 6 + 8) ÷ 3 = 6.',question:'Qual a média de 5, 7 e 9?',choices:['6','7','8'],correct:1,feedback:'(5 + 7 + 9) ÷ 3 = 7.'}
+ ];
+ function showMathLesson(dashboard,topic){
+  dashboard.replaceChildren();
+  const back=document.createElement('button');back.className='study-dashboard-all';back.type='button';back.textContent='← Voltar aos assuntos';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const title=document.createElement('h2');title.textContent='📘 '+topic.title;
+  const intro=document.createElement('p');intro.textContent=topic.explanation;
+  const example=document.createElement('div');example.className='study-topic-example';example.textContent='Exemplo resolvido: '+topic.example;
+  const question=document.createElement('h3');question.textContent='Agora é sua vez: '+topic.question;
+  const answers=document.createElement('div');answers.className='study-topic-answers';
+  const result=document.createElement('p');result.setAttribute('role','status');result.setAttribute('aria-live','polite');
+  topic.choices.forEach((choice,index)=>{const b=document.createElement('button');b.type='button';b.textContent=choice;b.addEventListener('click',()=>{result.textContent=(index===topic.correct?'✅ Correto! ':'🔎 Vamos revisar. ')+topic.feedback;});answers.append(b);});
+  const help=document.createElement('button');help.type='button';help.className='study-dashboard-all';help.textContent='🎓 Pedir ajuda ao Professor Leo';help.addEventListener('click',()=>{dashboard.hidden=true;openModule(cards[3]);});
+  dashboard.append(back,title,intro,example,question,answers,result,help);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+ }
+ function showMathTopics(dashboard){
+  dashboard.replaceChildren();
+  const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar às matérias';back.addEventListener('click',()=>showSubjects(dashboard));
+  const heading=document.createElement('h2');heading.textContent='∑ Matemática';
+  const intro=document.createElement('p');intro.textContent='Escolha um assunto. Cada aula tem explicação, exemplo e exercício de fixação.';
+  const grid=document.createElement('div');grid.className='study-dashboard-grid';
+  mathTopics.forEach((topic,i)=>{const b=document.createElement('button');b.type='button';b.className='study-dashboard-card study-topic-card';const name=document.createElement('strong');name.textContent=(i+1)+'. '+topic.title;const detail=document.createElement('small');detail.textContent=topic.summary;const action=document.createElement('span');action.className='study-subject-action';action.textContent='Estudar agora →';b.append(name,detail,action);b.addEventListener('click',()=>showMathLesson(dashboard,topic));grid.append(b);});
+  dashboard.append(back,heading,intro,grid);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+ }
  function showSubjects(dashboard){
   dashboard.replaceChildren();
   const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.addEventListener('click',()=>{dashboard.remove();showDashboard();});
   const heading=document.createElement('h2');heading.textContent='📚 Escolha sua matéria';
-  const intro=document.createElement('p');intro.textContent='Selecione uma área do ENEM para abrir a aula introdutória.';
+  const intro=document.createElement('p');intro.textContent='Escolha uma área do ENEM para explorar os conteúdos.';
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
   const subjects=[
    {name:'Matemática',icon:'∑',subtitle:'Números, lógica e resolução de problemas',tone:'math'},
