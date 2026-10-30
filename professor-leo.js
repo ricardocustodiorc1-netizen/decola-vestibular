@@ -864,6 +864,72 @@ function leoRenderDashboard(){
     if(pending.length&&!recommended)recommended={area:area.name,topic:area.name==='Matemática'?'Porcentagem e resolução de problemas':area.name==='Humanas'?'Cidadania e sociedade':'Interpretação de texto',view:area.name==='Matemática'?'practice':area.name==='Humanas'?'humanas':'portuguese'};
   });
   leoDashboard.append(cards);
+  // Gráficos acessíveis por disciplina: apenas rodadas efetivamente registradas.
+  const performance=document.createElement('section');
+  performance.className='leo-dashboard-next leo-performance-panel';
+  const performanceTitle=document.createElement('h4');
+  performanceTitle.textContent='📈 Desempenho por matéria';
+  const performanceIntro=document.createElement('p');
+  performanceIntro.textContent='Compare seus acertos nas últimas rodadas. Cada barra representa uma rodada concluída; a meta de referência é 70%.';
+  performance.append(performanceTitle,performanceIntro);
+  const performanceGrid=document.createElement('div');
+  performanceGrid.className='leo-performance-grid';
+  [
+    {name:'Matemática',history:leoPracticeHistory},
+    {name:'Português',history:leoPtHistory},
+    {name:'Ciências Humanas',history:leoHuHistory}
+  ].forEach(area=>{
+    const card=document.createElement('div');
+    card.className='leo-performance-card';
+    const label=document.createElement('strong');
+    label.textContent=area.name;
+    card.append(label);
+    const entries=area.history.filter(item=>item&&Number.isFinite(item.correct)&&Number.isFinite(item.total)&&item.total>0).slice(-8);
+    if(!entries.length){
+      const empty=document.createElement('p');
+      empty.textContent='Sem rodadas concluídas. Faça um treino para começar o gráfico.';
+      card.append(empty);
+    }else{
+      const first=Math.round(entries[0].correct/entries[0].total*100);
+      const last=Math.round(entries[entries.length-1].correct/entries[entries.length-1].total*100);
+      const average=Math.round(entries.reduce((sum,item)=>sum+item.correct/item.total*100,0)/entries.length);
+      const metrics=document.createElement('p');
+      metrics.textContent='Última: '+last+'% · Média: '+average+'% · '+entries.length+' rodada(s)';
+      card.append(metrics);
+      const graph=document.createElement('div');
+      graph.className='leo-performance-bars';
+      graph.setAttribute('role','img');
+      graph.setAttribute('aria-label',area.name+': '+entries.map((item,i)=>'rodada '+(i+1)+', '+Math.round(item.correct/item.total*100)+'%').join('; '));
+      entries.forEach((item,i)=>{
+        const percent=Math.max(0,Math.min(100,Math.round(item.correct/item.total*100)));
+        const column=document.createElement('div');
+        column.className='leo-performance-column';
+        const value=document.createElement('span');
+        value.textContent=percent+'%';
+        const track=document.createElement('div');
+        track.className='leo-performance-track';
+        const fill=document.createElement('div');
+        fill.className='leo-performance-fill';
+        fill.style.height=percent+'%';
+        if(percent>=70)fill.classList.add('leo-performance-good');
+        track.append(fill);
+        const number=document.createElement('small');
+        number.textContent=String(i+1);
+        column.append(value,track,number);
+        graph.append(column);
+      });
+      card.append(graph);
+      const trend=document.createElement('p');
+      trend.textContent=entries.length<2?'Primeira rodada registrada. Continue praticando para acompanhar a evolução.':last>first?'📈 Evolução positiva desde a primeira rodada exibida.':last<first?'📚 A última rodada ficou abaixo da primeira. Revise os conteúdos com calma.':'📊 Resultado estável entre a primeira e a última rodada exibidas.';
+      card.append(trend);
+    }
+    performanceGrid.append(card);
+  });
+  performance.append(performanceGrid);
+  const performanceNote=document.createElement('small');
+  performanceNote.textContent='Gráficos demonstrativos com histórico local de até 8 rodadas por matéria. Não representam previsão de nota no ENEM.';
+  performance.append(performanceNote);
+  leoDashboard.append(performance);
   // Mapa de domínio por conteúdo, independente da nota da rodada.
   const mastery=document.createElement('section');
   mastery.className='leo-dashboard-next';
