@@ -115,6 +115,7 @@ function leoMarkMathTopicRecovered(index){
   if(leoPracticeAnswers[index]!==false)return;
   const indices=Array.from(new Set([...leoReadMathRecoveryTopics(),index]));
   try{localStorage.setItem(leoMathRecoveryTopicsKey,JSON.stringify({signature:leoRoundSignature(),indices}));}catch(_error){}
+  leoMissionRecoverySucceeded('practice',index);
 }
 function leoSaveRecoveryProgress(mastered,total){
   const value={signature:leoRoundSignature(),mastered,total,completedAt:new Date().toISOString()};
@@ -522,6 +523,23 @@ const leoPtRecovery=[
  ['Fato é verificável; opinião expressa avaliação pessoal.','O museu abre às nove. É o lugar mais bonito da cidade.','Qual trecho é opinião?',['Abre às nove','É o lugar mais bonito','O museu tem horário'],1,'Mais bonito é uma avaliação subjetiva.'],
  ['Um pronome pode retomar um termo já mencionado.','Lia comprou uma caneta e a guardou na mochila.','O pronome "a" retoma:',['A caneta','A mochila','Lia'],0,'O pronome substitui caneta.']
 ];
+// Missão diária: só conclui automaticamente após uma recuperação correta da atividade iniciada.
+const leoMissionStorageKey='decola-vestibular:leo:daily-mission:v1';
+function leoMissionToday(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
+function leoMissionRead(){try{return JSON.parse(localStorage.getItem(leoMissionStorageKey)||'null');}catch(_error){return null;}}
+function leoMissionSave(record){try{localStorage.setItem(leoMissionStorageKey,JSON.stringify(record));}catch(_error){}}
+function leoMissionRecoverySucceeded(view,index){
+  const record=leoMissionRead();
+  if(!record||record.date!==leoMissionToday()||!record.started||record.completed||record.view!==view||record.index!==index)return;
+  leoMissionSave({...record,completed:true,automatic:true,completedAt:new Date().toISOString()});
+  const host=view==='portuguese'?leoPtBox:view==='humanas'?leoHuBox:leoPractice;
+  const notice=document.createElement('p');
+  notice.className='leo-practice-feedback leo-feedback-correct';
+  notice.setAttribute('role','status');
+  notice.textContent='🎉 Missão do dia concluída! Você superou uma dificuldade e deu mais um passo rumo à sua aprovação!';
+  host.prepend(notice);
+}
+
 const leoPtRecoveryKey='decola-vestibular:leo-portugues-recovery:v1';
 let leoPtRecoveryDone=leoPtRead(leoPtRecoveryKey,{});
 if(!leoPtRecoveryDone||typeof leoPtRecoveryDone!=='object'||Array.isArray(leoPtRecoveryDone))leoPtRecoveryDone={};
@@ -542,7 +560,7 @@ function leoPtRecoveryPanel(index){
    button.disabled=leoPtRecoveryDone[index]===true;
    button.addEventListener('click',()=>{
     if(leoPtRecoveryDone[index])return;
-    if(i===correct){leoPtRecoveryDone[index]=true;leoPtSaveRecovery();feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='✓ Conteúdo recuperado! '+why;}
+    if(i===correct){leoPtRecoveryDone[index]=true;leoPtSaveRecovery();leoMissionRecoverySucceeded('portuguese',index);feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='✓ Conteúdo recuperado! '+why;}
     else{feedback.className='leo-practice-feedback leo-feedback-wrong';feedback.textContent='Vamos tentar de novo. '+lesson;}
     renderChoices();
    });choices.append(button);
@@ -661,7 +679,7 @@ function leoHuRender(){
         btn.disabled=leoHuRecovery[leoHuIndex]===true;
         btn.addEventListener('click',()=>{
           if(leoHuRecovery[leoHuIndex])return;
-          if(i===review.correct){leoHuRecovery[leoHuIndex]=true;leoHuSaveRecovery();leoHuRender();}
+          if(i===review.correct){leoHuRecovery[leoHuIndex]=true;leoHuSaveRecovery();leoHuRender();leoMissionRecoverySucceeded('humanas',leoHuIndex);}
           else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Vamos pensar novamente. '+review.why;}
         });opts.append(btn);
       });
@@ -808,40 +826,45 @@ function leoRenderDashboard(){
   const missionDate=new Date();
   const localDate=[missionDate.getFullYear(),String(missionDate.getMonth()+1).padStart(2,'0'),String(missionDate.getDate()).padStart(2,'0')].join('-');
   const missionKey='decola-vestibular:leo:daily-mission:v1';
+  const existingMission=leoMissionRead();
   const missionTarget=adaptiveTarget;
   const missionId=missionTarget?(missionTarget.view+':'+(missionTarget.name||missionTarget.topic||missionTarget.index)):'practice:explorar';
   let missionCompleted=false;
   try{
     const record=JSON.parse(localStorage.getItem(missionKey)||'null');
-    missionCompleted=!!(record&&record.date===localDate&&record.id===missionId&&record.completed===true);
+    missionCompleted=!!(record&&record.date===localDate&&record.completed===true&&(record.started||record.id===missionId));
   }catch(_error){}
   const missionText=document.createElement('p');
   missionText.textContent=missionTarget?'Missão: revisar '+(missionTarget.name||missionTarget.topic)+' em '+missionTarget.area+'. Reserve 15 minutos para estudar e resolver uma questão.':'Missão: pratique Matemática por 15 minutos e identifique um conteúdo para reforçar.';
   mission.append(missionText);
   const missionStatus=document.createElement('p');
   missionStatus.setAttribute('aria-live','polite');
-  missionStatus.textContent=missionCompleted?'✅ Missão marcada como concluída hoje. Parabéns!':'⏳ Missão de hoje ainda não concluída.';
+  missionStatus.textContent=missionCompleted?(existingMission&&existingMission.automatic?'🎉 Missão do dia concluída automaticamente! Parabéns!':'✅ Missão marcada como concluída hoje. Parabéns!'):(existingMission&&existingMission.started?'📖 Missão iniciada. Conclua a recuperação para finalizar automaticamente.':'⏳ Missão de hoje ainda não concluída.');
   mission.append(missionStatus);
   const missionActions=document.createElement('div');
   missionActions.className='leo-dashboard-actions';
   const missionStart=document.createElement('button');
   missionStart.type='button';
   missionStart.textContent='Começar missão';
-  missionStart.addEventListener('click',()=>missionTarget?(missionTarget.index!==undefined?leoOpenTopic(missionTarget.view,missionTarget.index):leoShowView(missionTarget.view)):leoShowView('practice'));
+  missionStart.addEventListener('click',()=>{
+    const target=missionTarget||{view:'practice'};
+    leoMissionSave({date:localDate,id:missionId,view:target.view,index:target.index===undefined?null:target.index,started:true,completed:false});
+    if(target.index!==undefined)leoOpenTopic(target.view,target.index);else leoShowView(target.view);
+  });
   missionActions.append(missionStart);
   const missionFinish=document.createElement('button');
   missionFinish.type='button';
   missionFinish.textContent=missionCompleted?'Desmarcar conclusão':'Marcar como concluída';
   missionFinish.addEventListener('click',()=>{
     missionCompleted=!missionCompleted;
-    try{localStorage.setItem(missionKey,JSON.stringify({date:localDate,id:missionId,completed:missionCompleted}));}catch(_error){}
+    leoMissionSave({date:localDate,id:missionId,view:missionTarget?missionTarget.view:'practice',index:missionTarget&&missionTarget.index!==undefined?missionTarget.index:null,started:false,completed:missionCompleted,automatic:false});
     missionStatus.textContent=missionCompleted?'✅ Missão marcada como concluída hoje. Parabéns!':'⏳ Missão de hoje ainda não concluída.';
     missionFinish.textContent=missionCompleted?'Desmarcar conclusão':'Marcar como concluída';
   });
   missionActions.append(missionFinish);
   mission.append(missionActions);
   const missionNote=document.createElement('p');
-  missionNote.textContent='A conclusão é informada pelo aluno e salva apenas neste navegador. Não altera notas nem marca dias do plano semanal como concluídos.';
+  missionNote.textContent='Ao começar, a missão é concluída automaticamente após acertar a recuperação da questão indicada. Você também pode marcar manualmente. Tudo fica neste navegador, sem alterar notas ou dias do plano semanal.';
   missionNote.style.fontSize='12px';
   mission.append(missionNote);
   leoDashboard.append(mission);
