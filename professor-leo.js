@@ -1231,11 +1231,44 @@ const leoMockQuestions=[
  {area:'Matemática',topic:'Média aritmética',q:'Qual é a média das notas 6, 8 e 10?',choices:['7','9','8','10'],correct:2,why:'(6 + 8 + 10) ÷ 3 = 24 ÷ 3 = 8.'},
  {area:'Português',topic:'Argumentação',q:'Qual frase apresenta uma tese que pode ser defendida em uma redação?',choices:['Que horas são?','Ontem choveu.','O livro está na mesa.','É necessário ampliar o acesso à leitura nas escolas.'],correct:3,why:'Uma tese apresenta um posicionamento que pode ser sustentado com argumentos.'}
 ];
+const leoMockRecoveryQuestions=[
+ {q:'Um produto de R$ 80 teve desconto de 25%. Qual é o novo preço?',choices:['R$ 60','R$ 65','R$ 70'],correct:0,why:'25% de 80 é 20. Portanto, 80 − 20 = R$ 60.'},
+ {q:'Na frase “Embora estivesse chovendo, saímos”, a palavra “embora” expressa:',choices:['Causa','Concessão','Tempo'],correct:1,why:'A chuva não impediu a saída: isso é concessão.'},
+ {q:'Qual atitude favorece a participação democrática?',choices:['Proibir assembleias','Ignorar debates públicos','Participar de reuniões comunitárias'],correct:2,why:'Reuniões comunitárias permitem que as pessoas participem das decisões.'},
+ {q:'Qual exemplo é uma mudança física?',choices:['Água congelando','Madeira queimando','Ferro enferrujando'],correct:0,why:'Congelar muda o estado físico da água, sem formar outra substância.'},
+ {q:'Se 4 lápis custam R$ 12, quanto custam 7 lápis iguais?',choices:['R$ 18','R$ 21','R$ 24'],correct:1,why:'Cada lápis custa R$ 3. Então, 7 × 3 = R$ 21.'},
+ {q:'Em “Ele treinou, portanto melhorou”, “portanto” indica:',choices:['Oposição','Dúvida','Conclusão'],correct:2,why:'“Portanto” apresenta a conclusão da ideia anterior.'},
+ {q:'Qual ação ajuda a reduzir a quantidade de lixo?',choices:['Usar garrafas reutilizáveis','Jogar pilhas no lixo comum','Queimar resíduos'],correct:0,why:'Reutilizar garrafas reduz a geração de resíduos.'},
+ {q:'Bairros sem acesso adequado a transporte e saúde revelam:',choices:['Igualdade de serviços','Desigualdade socioespacial','Ausência de cidades'],correct:1,why:'A distribuição desigual dos serviços evidencia desigualdade socioespacial.'},
+ {q:'Qual é a média de 4, 6 e 8?',choices:['5','7','6'],correct:2,why:'Somamos 4 + 6 + 8 = 18 e dividimos por 3: média 6.'},
+ {q:'Qual frase apresenta uma tese argumentativa?',choices:['A escola deve incentivar a leitura diária.','O livro está na mesa.','Hoje é sexta-feira.'],correct:0,why:'A primeira frase apresenta um posicionamento que pode ser defendido com argumentos.'}
+];
+const leoMockRecoveryKey='decola-vestibular:simulado-recuperacao-v1';
+let leoMockRecovery={};
+try{const saved=JSON.parse(localStorage.getItem(leoMockRecoveryKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))leoMockRecovery=saved;}catch(_error){}
+function leoMockRecoverySave(){try{localStorage.setItem(leoMockRecoveryKey,JSON.stringify(leoMockRecovery));}catch(_error){}}
+function leoMockRecoveryRender(parent,index){
+ const original=leoMockQuestions[index],exercise=leoMockRecoveryQuestions[index];
+ const section=document.createElement('section');section.className='leo-dashboard-next';section.style.marginTop='10px';
+ const heading=document.createElement('h4');heading.textContent='📖 Aprender com meu erro · '+original.topic;section.append(heading);
+ const explanation=document.createElement('p');explanation.textContent='Professor Leo explica: '+original.why;section.append(explanation);
+ const prompt=document.createElement('p');prompt.textContent='Agora tente uma questão semelhante: '+exercise.q;section.append(prompt);
+ const choices=document.createElement('div');choices.className='leo-choices leo-humanas-choices';
+ const selected=leoMockRecovery[index];
+ exercise.choices.forEach((option,i)=>{const button=document.createElement('button');button.type='button';button.textContent=String.fromCharCode(65+i)+') '+option;button.disabled=Number.isInteger(selected);button.setAttribute('aria-pressed',String(selected===i));button.addEventListener('click',()=>{if(Number.isInteger(leoMockRecovery[index]))return;leoMockRecovery[index]=i;leoMockRecoverySave();leoMockRender();});choices.append(button);});
+ section.append(choices);
+ if(Number.isInteger(selected)){
+  const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(selected===exercise.correct?'leo-feedback-correct':'leo-feedback-wrong');feedback.textContent=(selected===exercise.correct?'✓ Você acertou a recuperação! ':'Ainda precisa revisar. ')+exercise.why+' Sua nota original permanece a mesma.';section.append(feedback);
+  if(selected!==exercise.correct){const retry=document.createElement('button');retry.type='button';retry.textContent='Tentar novamente';retry.addEventListener('click',()=>{delete leoMockRecovery[index];leoMockRecoverySave();leoMockRender();});section.append(retry);}
+ }
+ parent.append(section);
+}
 const leoMockKey='decola-vestibular:simulado-enem-v1';
 let leoMockState={answers:Array(leoMockQuestions.length).fill(null),index:0,finished:false};
 try{const saved=JSON.parse(localStorage.getItem(leoMockKey)||'null');if(saved&&Array.isArray(saved.answers)&&saved.answers.length===leoMockQuestions.length){leoMockState={answers:saved.answers.map((v,i)=>Number.isInteger(v)&&v>=0&&v<leoMockQuestions[i].choices.length?v:null),index:Number.isInteger(saved.index)?Math.max(0,Math.min(saved.index,leoMockQuestions.length-1)):0,finished:saved.finished===true};}}catch(_error){}
 function leoMockSave(){try{localStorage.setItem(leoMockKey,JSON.stringify(leoMockState));}catch(_error){}}
 const leoMockBox=document.createElement('section');leoMockBox.className='leo-practice leo-simulado';leoMockBox.setAttribute('aria-label','Simulado inteligente do ENEM');leoDashboard.after(leoMockBox);
+let leoMockRecoveryOpen=null;
 function leoMockRender(){
  leoMockBox.replaceChildren();
  const heading=document.createElement('h3');heading.textContent='📝 Simulado Inteligente do ENEM';leoMockBox.append(heading);
@@ -1256,11 +1289,11 @@ function leoMockRender(){
   const recommendation=document.createElement('section');recommendation.className='leo-dashboard-next';
   const h=document.createElement('h4');h.textContent=errors.length?'🎯 Seu plano de revisão':'🎉 Parabéns!';recommendation.append(h);
   const summary=document.createElement('p');summary.textContent=errors.length?'Revise primeiro os conteúdos abaixo. As explicações são comentadas pelo Professor Leo e não alteram sua pontuação.':'Você acertou todas as questões! Continue praticando com outros exercícios.';recommendation.append(summary);
-  errors.forEach(({q,i})=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+q.area+' — '+q.topic+': '+q.why;recommendation.append(p);});
+  errors.forEach(({q,i})=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+q.area+' — '+q.topic+': '+q.why;recommendation.append(p);const button=document.createElement('button');button.type='button';button.textContent='📖 Aprender com meu erro · Questão '+(i+1);button.style.margin='4px 8px 8px 0';button.addEventListener('click',()=>{leoMockRecoveryOpen=leoMockRecoveryOpen===i?null:i;leoMockRender();});recommendation.append(button);if(leoMockRecoveryOpen===i)leoMockRecoveryRender(recommendation,i);});
   leoMockBox.append(recommendation);
   const review=document.createElement('h4');review.textContent='📖 Gabarito comentado';leoMockBox.append(review);
   leoMockQuestions.forEach((q,i)=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+(leoMockState.answers[i]===q.correct?'✓ Acertou':'✗ Revise')+' — '+q.q+' Resposta: '+q.choices[q.correct]+'. '+q.why;leoMockBox.append(p);});
-  const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
+  const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockRecovery={};leoMockRecoveryOpen=null;leoMockRecoverySave();leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
  }
  const index=leoMockState.index,q=leoMockQuestions[index];
  const subtitle=document.createElement('h4');subtitle.textContent='Questão '+(index+1)+' de 10 · '+q.area;leoMockBox.append(subtitle);
