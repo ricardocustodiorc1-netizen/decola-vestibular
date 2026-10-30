@@ -172,6 +172,43 @@ const leoPractice=document.createElement('section');
 leoPractice.className='leo-practice';
 leoPractice.setAttribute('aria-label','Treino de Matemática');
 lessonBox.after(leoPractice);
+// Histórico real das rodadas de Matemática, salvo localmente (até 20).
+function leoLearningHistoryPanel(){
+  const section=document.createElement('section');section.className='leo-learning-history';
+  const title=document.createElement('h4');title.textContent='📚 Histórico de aprendizagem · Matemática';
+  section.append(title);
+  const entries=leoPracticeHistory.filter(x=>x&&Number.isInteger(x.correct)&&Number.isInteger(x.total)&&x.total>0).slice(-20);
+  if(!entries.length){
+    const empty=document.createElement('p');empty.textContent='Conclua uma rodada para começar a acompanhar seu progresso em Matemática.';
+    section.append(empty);return section;
+  }
+  const latest=entries[entries.length-1];
+  const first=entries[0];
+  const percentage=x=>Math.round(100*x.correct/x.total);
+  const metrics=document.createElement('p');metrics.className='leo-learning-summary';
+  metrics.textContent=entries.length+' rodada(s) registrada(s) · Primeira: '+percentage(first)+'% · Última: '+percentage(latest)+'%.';
+  section.append(metrics);
+  const chart=document.createElement('div');chart.className='leo-learning-chart';
+  chart.setAttribute('role','img');
+  chart.setAttribute('aria-label','Acertos por rodada: '+entries.map((x,i)=>'rodada '+(i+1)+', '+percentage(x)+'%').join('; '));
+  entries.forEach((x,i)=>{
+    const col=document.createElement('div');col.className='leo-learning-column';
+    const value=document.createElement('span');value.className='leo-learning-value';value.textContent=percentage(x)+'%';
+    const track=document.createElement('div');track.className='leo-learning-bar-track';
+    const bar=document.createElement('div');bar.className='leo-learning-bar';bar.style.height=percentage(x)+'%';
+    track.append(bar);
+    const label=document.createElement('small');label.textContent=String(i+1);label.title='Rodada '+(i+1)+' · '+new Date(x.date).toLocaleDateString('pt-BR');
+    col.append(value,track,label);chart.append(col);
+  });
+  section.append(chart);
+  const hint=document.createElement('p');hint.className='leo-learning-note';
+  hint.textContent='Cada barra representa uma rodada de Matemática. O número abaixo indica a ordem da rodada; a porcentagem mostra os acertos. O histórico é demonstrativo, fica apenas neste navegador e mantém as 20 rodadas mais recentes.';
+  section.append(hint);
+  const other=document.createElement('p');other.className='leo-learning-note';
+  other.textContent='Outras matérias aparecerão aqui quando tiverem exercícios avaliados; não há resultados dessas áreas para mostrar ainda.';
+  section.append(other);
+  return section;
+}
 function renderLeoPractice(){
   leoPractice.replaceChildren();
   if(selector.value!=='0'){leoPractice.hidden=true;return;}
@@ -437,6 +474,7 @@ function renderLeoPractice(){
   const totalCorrect=leoPracticeHistory.reduce((sum,x)=>sum+x.correct,0);
   history.textContent='Histórico geral: '+leoPracticeHistory.length+' rodada(s) concluída(s), '+totalCorrect+' acerto(s) em '+totalAttempts+' respostas. Salvo somente neste navegador.';
   report.append(history);
+  report.append(leoLearningHistoryPanel());
   const note=document.createElement('small');note.textContent='Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.';
   leoPractice.append(heading,progress,question,choices,feedback,controls);
   if(reinforcementBox)leoPractice.append(reinforcementBox);
