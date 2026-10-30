@@ -1782,7 +1782,7 @@ leoViews.forEach(([view,label,description])=>{
   const title=document.createElement('strong');title.textContent=label;
   const detail=document.createElement('small');detail.textContent=description;
   button.append(title,detail);
-  button.addEventListener('click',()=>{if(view==='lesson'){root.dispatchEvent(new CustomEvent('decola:choose-subject',{bubbles:true}));return;}leoShowView(view);});
+  button.addEventListener('click',()=>{if(view==='lesson'&&root.dataset.decolaLegacyLesson!=='true'){root.dispatchEvent(new CustomEvent('decola:choose-subject',{bubbles:true}));return;}leoShowView(view);});
   leoMenu.append(button);
 });
 leoBody.prepend(leoMenu);
