@@ -43,3 +43,15 @@ body.leo-study-open{overflow:hidden}
 .study-dashboard-all{margin-top:22px;padding:12px 18px;border-radius:10px;border:1px solid #b8c9f1;background:#e9f0ff;color:#1744c3;font-weight:700;cursor:pointer}
 .leo-body:has(>.study-dashboard:not([hidden]))>*:not(.study-dashboard){display:none!important}
 @media(max-width:600px){.study-dashboard-grid{grid-template-columns:1fr;gap:12px}.study-dashboard-card{min-height:115px;padding:18px}}
+
+/* Cartões ilustrados das matérias: identidade visual, foco e leitura rápida. */
+.study-subject-card{min-height:210px;gap:10px;position:relative;overflow:hidden;justify-content:flex-start}
+.study-subject-art{width:76px;height:76px;display:grid;place-items:center;border-radius:22px;font-size:43px;line-height:1;background:var(--subject-bg);color:var(--subject-ink);box-shadow:inset 0 0 0 1px #ffffffb0}
+.study-subject-card strong{font-size:21px}.study-subject-card small{font-size:14px;max-width:360px}
+.study-subject-action{margin-top:auto;color:#1744c3;font-weight:700;font-size:13px}
+.study-subject-math{--subject-bg:#e7edff;--subject-ink:#2350cf}
+.study-subject-language{--subject-bg:#f1e5ff;--subject-ink:#7c3fc2}
+.study-subject-human{--subject-bg:#fff0e3;--subject-ink:#c76c2e}
+.study-subject-nature{--subject-bg:#ddf7ed;--subject-ink:#167c61}
+.study-subject-writing{--subject-bg:#fff4cd;--subject-ink:#9b6d0c}
+@media(max-width:600px){.study-subject-card{min-height:165px}.study-subject-art{width:60px;height:60px;font-size:34px}}
