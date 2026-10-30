@@ -260,3 +260,16 @@
 .leo-humanas .leo-reinforcement h4{margin:0 0 8px;color:#173c9c}
 .leo-humanas .leo-humanas-hint{font-weight:600;color:#1744c3}
 @media(max-width:520px){.leo-humanas .leo-humanas-choices{grid-template-columns:1fr}}
+
+/* Calendário de missões: acompanha as conquistas locais, sem modificar notas. */
+.leo-calendar{margin-top:14px;padding:12px;border:1px solid #c7d5ff;border-radius:12px;background:#fff}
+.leo-calendar-next{font-weight:600;color:#1943b7;margin:12px 0 4px}
+.leo-calendar-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;text-transform:capitalize;color:#142b60}
+.leo-calendar-controls button{border:1px solid #c7d5ff;background:#f2f6ff;color:#1943b7;border-radius:8px;min-width:34px;min-height:32px;cursor:pointer;font-size:20px}
+.leo-calendar-controls button:disabled{opacity:.35;cursor:default}
+.leo-calendar-weekdays,.leo-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}
+.leo-calendar-weekdays{font-size:11px;font-weight:700;color:#516184;margin-bottom:7px}
+.leo-calendar-day{display:flex;align-items:center;justify-content:center;min-width:0;aspect-ratio:1;border-radius:7px;background:#f1f4fb;color:#344360;font-size:12px}
+.leo-calendar-day.leo-calendar-done{background:#d9f7e5;color:#11643a;font-weight:800;border:1px solid #3aa46e}
+.leo-calendar-day.leo-calendar-today{outline:2px solid #1943b7;outline-offset:1px}
+.leo-calendar-legend{font-size:11px;color:#516184;margin:10px 0 0}
