@@ -21,6 +21,22 @@
   if(menuBack)menuBack.click();
   // Fallback: mantém o menu de módulos disponível, sem perder o acesso.
  }
+ function showSubjects(dashboard){
+  dashboard.replaceChildren();
+  const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.addEventListener('click',()=>{dashboard.remove();showDashboard();});
+  const heading=document.createElement('h2');heading.textContent='📚 Escolha sua matéria';
+  const intro=document.createElement('p');intro.textContent='Selecione uma área do ENEM para abrir a aula introdutória.';
+  const grid=document.createElement('div');grid.className='study-dashboard-grid';
+  ['Matemática','Linguagens','Ciências Humanas','Ciências da Natureza','Redação'].forEach((name,index)=>{
+   const button=document.createElement('button');button.type='button';button.className='study-dashboard-card';button.textContent=name;
+   button.addEventListener('click',()=>{
+    const p=panel();const option=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Aprender uma matéria'));
+    if(!option)return;
+    dashboard.hidden=true;option.click();
+    const select=p.querySelector('#leo-area');if(select){select.value=String(index);select.dispatchEvent(new Event('change',{bubbles:true}));}
+   });grid.append(button);
+  });dashboard.append(back,heading,intro,grid);dashboard.hidden=false;
+ }
  function showDashboard(){
   const p=openPanel();if(!p)return;
   let dashboard=p.querySelector('.study-dashboard');
@@ -35,7 +51,7 @@
     const icon=document.createElement('span');icon.className='study-dashboard-icon';icon.textContent=card.icon;
     const title=document.createElement('strong');title.textContent=card.title;
     const description=document.createElement('small');description.textContent=card.detail;
-    button.append(icon,title,description);button.addEventListener('click',()=>{dashboard.hidden=true;openModule(card);});
+    button.append(icon,title,description);button.addEventListener('click',()=>{if(card.title==='Matérias'){showSubjects(dashboard);return;}dashboard.hidden=true;openModule(card);});
     grid.append(button);
    });
    const all=document.createElement('button');all.type='button';all.className='study-dashboard-all';all.textContent='Ver todas as ferramentas de estudo →';
