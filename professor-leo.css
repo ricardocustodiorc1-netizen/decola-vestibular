@@ -279,3 +279,18 @@
 .leo-calendar-stat span{font-size:10px;color:#52648b}
 .leo-calendar-stat strong{font-size:12px;color:#1742ba;overflow-wrap:anywhere}
 @media(max-width:420px){.leo-calendar-summary{grid-template-columns:1fr}.leo-calendar-stat{padding:7px}}
+
+/* Metas semanais: ações e aviso em linhas distintas, inclusive em telas pequenas. */
+.leo-dashboard-next[aria-label="Painel de metas semanais"]>button{display:inline-flex;align-items:center;margin:8px 6px 8px 0;vertical-align:middle}
+.leo-dashboard-next[aria-label="Painel de metas semanais"]>small{display:block;clear:both;margin-top:8px;line-height:1.55;color:#52648b}
+.leo-dashboard-next[aria-label="Painel de metas semanais"] .leo-dashboard-actions{display:flex;flex-wrap:wrap;gap:4px;margin:9px 0}
+.leo-performance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+.leo-performance-card{min-width:0;padding:12px;background:#fff;border:1px solid #c6d5ff;border-radius:10px}
+.leo-performance-card>strong{display:block;color:#173d9b}
+.leo-performance-card p{font-size:12px;line-height:1.5}
+.leo-performance-bars{display:flex;align-items:end;justify-content:space-around;gap:5px;min-height:130px;margin:12px 0 6px}
+.leo-performance-column{display:flex;flex:1;min-width:0;max-width:38px;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:#2445a2}
+.leo-performance-track{position:relative;width:100%;height:92px;border-radius:5px 5px 0 0;background:#e4eaf7;overflow:hidden}
+.leo-performance-fill{position:absolute;bottom:0;left:0;right:0;background:#2450c5;border-radius:4px 4px 0 0}
+.leo-performance-fill.leo-performance-good{background:#18865b}
+.leo-performance-panel>small{display:block;color:#52648b;font-size:11px;line-height:1.5}
