@@ -67,6 +67,25 @@ const leoReinforcement=[
  {steps:'Para encontrar 30%, calcule 10% dividindo por 10 e multiplique o resultado por 3.',question:'Em uma turma de 50 alunos, 30% faltaram. Quantos faltaram?',choices:['10','15','20'],correct:1,explanation:'10% de 50 é 5. Três vezes 5 = 15 alunos.'},
  {steps:'Aumento é soma, não desconto. Calcule 20% do valor e acrescente ao original.',question:'Uma mensalidade de R$ 100 aumentou 20%. Qual o novo valor?',choices:['R$ 80','R$ 110','R$ 120'],correct:2,explanation:'20% de 100 é 20. Valor final: 100 + 20 = R$ 120.'}
 ];
+// Novos exemplos para retomada adaptativa (não repetem o mesmo exercício).
+const leoRecoveryAlternatives=[
+ [
+  {steps:'Pense em quatro partes iguais: 25% é uma delas.',question:'Uma caixa tem 80 lápis. Quantos são 25%?',choices:['15','20','25'],correct:1,explanation:'80 ÷ 4 = 20 lápis.'},
+  {steps:'Uma pizza dividida em quatro partes tem 25% em cada fatia.',question:'Quanto é 25% de 64?',choices:['16','20','24'],correct:0,explanation:'64 ÷ 4 = 16.'}
+ ],
+ [
+  {steps:'Imagine uma etiqueta: primeiro encontre 10% dividindo por dez; depois tire esse valor.',question:'Um livro de R$ 90 tem 10% de desconto. Qual é o preço?',choices:['R$ 81','R$ 80','R$ 89'],correct:0,explanation:'10% de 90 é 9; 90 − 9 = R$ 81.'},
+  {steps:'O desconto reduz o preço. Descubra quanto vale um décimo.',question:'Uma mochila de R$ 120 teve 10% de desconto. Quanto custa?',choices:['R$ 112','R$ 108','R$ 110'],correct:1,explanation:'120 ÷ 10 = 12; 120 − 12 = R$ 108.'}
+ ],
+ [
+  {steps:'Imagine dez grupos iguais. Três grupos representam 30%.',question:'Em um clube com 60 pessoas, 30% são crianças. Quantas crianças?',choices:['18','20','30'],correct:0,explanation:'10% de 60 é 6; 30% são 3 × 6 = 18.'},
+  {steps:'30% são três partes de dez. Divida por 10 e multiplique por 3.',question:'Em uma escola com 70 alunos, 30% usam ônibus. Quantos?',choices:['14','21','30'],correct:1,explanation:'70 ÷ 10 × 3 = 21.'}
+ ],
+ [
+  {steps:'Pense em uma conta que aumentou: some o acréscimo, não subtraia.',question:'Uma conta de R$ 200 aumentou 20%. Qual é o total?',choices:['R$ 220','R$ 240','R$ 180'],correct:1,explanation:'20% de 200 é 40; 200 + 40 = R$ 240.'},
+  {steps:'Um aumento de 20% equivale a acrescentar duas partes de 10%.',question:'Um serviço de R$ 50 aumentou 20%. Quanto custa agora?',choices:['R$ 55','R$ 60','R$ 70'],correct:1,explanation:'10% de 50 é 5; 20% é 10; 50 + 10 = R$ 60.'}
+ ]
+];
 let leoReinforcementAnswers={};
 // Desafios progressivos demonstrativos, escolhidos conforme a pontuação da rodada.
 const leoChallenges=[
@@ -263,30 +282,51 @@ function renderLeoPractice(){
       let recoveryStep=0;
       let recoveryCorrect=0;
       const missedIndices=leoPracticeQuestions.map((q,i)=>leoPracticeAnswers[i]===false?i:-1).filter(i=>i>=0);
+      let pending=missedIndices.slice();
+      let unresolved=[];
+      let attempts={};
+      let mastered=[];
+      let currentIndex=null;
+      let recoveryFinished=false;
       function showRecoveryStep(){
         content.replaceChildren();
-        const stepLabel=document.createElement('p');
-        stepLabel.className='leo-recovery-progress';
-        stepLabel.textContent=recoveryStep>=missedIndices.length?'Etapa final: resultado da recuperação':'Etapa '+(recoveryStep+1)+' de '+missedIndices.length+' · Explicação → Exercício → Correção';
-        content.append(stepLabel);
-        if(recoveryStep>=missedIndices.length){
+        if(!pending.length){
+          recoveryFinished=true;
           leoPractice.classList.remove('leo-recovery-mode');
-          const finish=document.createElement('h4');
-          finish.textContent='🎉 Recuperação concluída!';
+          const heading=document.createElement('h4');
+          heading.textContent=unresolved.length?'📘 Reforço concluído: continue praticando':'🎉 Conteúdos recuperados!';
           const result=document.createElement('p');
-          result.textContent='Você acertou '+recoveryCorrect+' de '+missedIndices.length+' exercícios de reforço. '+(recoveryCorrect===missedIndices.length?'Muito bem! Agora você pode tentar outra rodada.':'Se ainda tiver dúvidas, converse com o Professor Leo e tente novamente.');
-          const retry=document.createElement('button');retry.type='button';retry.textContent='Repetir reforço';
-          retry.addEventListener('click',()=>{recoveryStep=0;recoveryCorrect=0;leoPractice.classList.add('leo-recovery-mode');showRecoveryStep();});
-          content.append(finish,result,retry);
-          const challengeAfter=report.querySelector('.leo-adaptive');
-          if(challengeAfter){const nextNote=document.createElement('p');nextNote.textContent='Agora você pode continuar com o próximo desafio, logo abaixo.';content.append(nextNote);}
+          result.textContent='Você demonstrou domínio em '+mastered.length+' de '+missedIndices.length+' tópico(s). '+(unresolved.length?'Ainda precisa revisar '+unresolved.length+' tópico(s).':'Parabéns! Você pode avançar para novos desafios.');
+          content.append(heading,result);
+          if(unresolved.length){
+            const detail=document.createElement('p');
+            detail.textContent='Para continuar estudando: '+unresolved.map(i=>leoPracticeQuestions[i].question).join(' • ');
+            content.append(detail);
+            const again=document.createElement('button');again.type='button';again.textContent='📖 Tentar novos exemplos dos tópicos difíceis';
+            again.addEventListener('click',()=>{pending=unresolved.slice();unresolved=[];recoveryFinished=false;leoPractice.classList.add('leo-recovery-mode');showRecoveryStep();});
+            content.append(again);
+            const talk=document.createElement('button');talk.type='button';talk.textContent='💬 Pedir outra explicação ao Professor Leo';
+            talk.addEventListener('click',()=>{leoInput.value='Professor Leo, ainda tenho dificuldade com: '+unresolved.map(i=>leoPracticeQuestions[i].question).join('; ')+'. Explique com um exemplo bem simples, passo a passo.';leoInput.focus({preventScroll:true});leoInput.scrollIntoView({block:'nearest'});});
+            content.append(talk);
+          }else{
+            const next=document.createElement('p');next.textContent='O próximo desafio está liberado logo abaixo.';content.append(next);
+          }
+          const choose=document.createElement('button');choose.type='button';choose.textContent='Continuar para outros exercícios';
+          choose.addEventListener('click',()=>{leoPractice.classList.remove('leo-recovery-mode');const challenge=report.querySelector('.leo-adaptive');if(challenge)challenge.scrollIntoView({block:'nearest',behavior:'smooth'});});
+          content.append(choose);
           content.scrollIntoView({block:'nearest',behavior:'smooth'});
           return;
         }
-        const index=missedIndices[recoveryStep];
-        const exercise=leoReinforcement[index];
-        const lesson=document.createElement('h4');lesson.textContent='📖 Mini-aula '+(recoveryStep+1)+' de '+missedIndices.length;
-        const explain=document.createElement('p');explain.textContent=exercise.steps+' Exemplo resolvido: '+leoPracticeQuestions[index].explanation;
+        currentIndex=pending.shift();
+        const index=currentIndex;
+        const attempt=attempts[index]||0;
+        const alternatives=leoRecoveryAlternatives[index];
+        const exercise=attempt===0?leoReinforcement[index]:alternatives[(attempt-1)%alternatives.length];
+        attempts[index]=attempt+1;
+        const stepLabel=document.createElement('p');stepLabel.className='leo-recovery-progress';
+        stepLabel.textContent='Tópico '+(mastered.length+unresolved.length+1)+' de '+missedIndices.length+' · '+(attempt?'Nova explicação':'Mini-aula')+' → Exercício → Correção';
+        const lesson=document.createElement('h4');lesson.textContent='📖 '+(attempt?'Vamos tentar de outro jeito':'Mini-aula de recuperação');
+        const explain=document.createElement('p');explain.textContent=exercise.steps+' Exemplo: '+(attempt?'use a ideia explicada acima para resolver a nova situação.':leoPracticeQuestions[index].explanation);
         const question=document.createElement('p');question.className='leo-question';question.textContent='Agora tente: '+exercise.question;
         const choices=document.createElement('div');choices.className='leo-choices';
         const status=document.createElement('p');status.setAttribute('role','status');
@@ -296,18 +336,23 @@ function renderLeoPractice(){
             if(choices.dataset.answered)return;
             choices.dataset.answered='true';
             const hit=i===exercise.correct;
-            if(hit)recoveryCorrect++;
+            if(hit){recoveryCorrect++;mastered.push(index);}
             status.className=hit?'leo-feedback-correct':'leo-feedback-wrong';
-            status.textContent=(hit?'✓ Muito bem! ':'Vamos revisar: ')+exercise.explanation;
+            status.textContent=(hit?'✓ Muito bem! ':'Ainda não; vamos aprender de outro jeito. ')+exercise.explanation;
             choices.querySelectorAll('button').forEach(b=>b.disabled=true);
+            if(!hit&&attempts[index]<3){
+              pending.unshift(index);
+            }else if(!hit){
+              unresolved.push(index);
+            }
             const next=document.createElement('button');next.type='button';
-            next.textContent=recoveryStep+1===missedIndices.length?'Ver resultado do reforço':'Próxima mini-aula →';
-            next.addEventListener('click',()=>{recoveryStep++;showRecoveryStep();});
+            next.textContent=!hit&&attempts[index]<3?'📖 Nova explicação e outra questão':pending.length?'Próximo tópico →':'Ver resultado da recuperação';
+            next.addEventListener('click',showRecoveryStep);
             content.append(next);
           });
           choices.append(btn);
         });
-        content.append(lesson,explain,question,choices,status);
+        content.append(stepLabel,lesson,explain,question,choices,status);
       }
       start.addEventListener('click',()=>{
         content.hidden=false;start.hidden=true;
