@@ -365,6 +365,18 @@ const leoAsk=root.querySelector('.leo-ask');
 const leoInput=root.querySelector('#leo-question-input');
 const leoAiStatus=root.querySelector('.leo-ai-status');
 const leoAiAnswer=root.querySelector('.leo-ai-answer');
+const leoFollowup=document.createElement('button');
+leoFollowup.type='button';
+leoFollowup.className='leo-new-question';
+leoFollowup.textContent='💬 Fazer outra pergunta';
+leoFollowup.hidden=true;
+leoAiAnswer.insertAdjacentElement('afterend',leoFollowup);
+leoFollowup.addEventListener('click',()=>{
+  leoInput.value='';
+  leoInput.focus();
+  leoAiStatus.textContent='Pode perguntar! Continue sua conversa com o Professor Leo.';
+  leoBody.scrollTop=0;
+});
 root.querySelector('.leo-new-question').addEventListener('click',()=>{
   leoInput.value='';
   leoAiStatus.textContent='Digite sua próxima dúvida. A resposta anterior continua disponível abaixo.';
@@ -378,7 +390,7 @@ leoAsk.addEventListener('click',async()=>{
   if(leoBusy)return;
   if(Date.now()-leoLastRequest<15000){leoAiStatus.textContent='Aguarde alguns segundos antes de enviar outra pergunta.';return;}
   leoBusy=true;leoLastRequest=Date.now();leoAsk.disabled=true;
-  leoAiAnswer.textContent='';leoAiStatus.textContent='Professor Leo está preparando a explicação…';
+  leoAiAnswer.textContent='';leoFollowup.hidden=true;leoAiStatus.textContent='Professor Leo está preparando a explicação…';
   try{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),25000);
@@ -390,7 +402,7 @@ leoAsk.addEventListener('click',async()=>{
     if(!response.ok)throw new Error(data.error||'Não foi possível obter uma resposta.');
     const answer=data.answer||data.resposta||data.reply||data.message;
     if(typeof answer!=='string'||!answer.trim())throw new Error('A resposta veio vazia.');
-    leoAiAnswer.textContent=answer;leoAiStatus.textContent='Resposta do Professor Leo:';
+    leoAiAnswer.textContent=answer;leoAiStatus.textContent='Resposta do Professor Leo:';leoFollowup.hidden=false;
   }catch(error){leoAiStatus.textContent='A IA ainda não conseguiu responder: '+(error.name==='AbortError'?'tempo de espera esgotado':error.message)+'. Você pode continuar usando os exercícios acima.';}
   finally{leoBusy=false;leoAsk.disabled=false;}
 });
