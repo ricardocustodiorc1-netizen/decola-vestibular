@@ -430,6 +430,24 @@ function leoLearningChallenge(question,answer){
   const button=document.createElement('button');button.type='button';button.textContent='Conferir resposta';
   const feedback=document.createElement('p');feedback.setAttribute('role','status');
   const actions=document.createElement('div');actions.className='leo-check-actions';actions.hidden=true;
+  const help=document.createElement('div');help.className='leo-help-options';help.hidden=true;
+  const helpTitle=document.createElement('strong');helpTitle.textContent='Como o Professor Leo pode ajudar?';
+  help.append(helpTitle);
+  const helpChoices=[
+    ['📖 Explique mais simples','Explique de forma mais simples, usando palavras fáceis e uma analogia do cotidiano.'],
+    ['🧮 Passo a passo','Mostre o cálculo passo a passo, explicando cada operação sem pular etapas.'],
+    ['🎯 Outro exemplo','Dê outro exemplo parecido para eu tentar sozinho, sem revelar a resposta antes da minha tentativa.']
+  ];
+  helpChoices.forEach(([label,instruction])=>{
+    const choice=document.createElement('button');choice.type='button';choice.textContent=label;
+    choice.addEventListener('click',()=>{
+      leoInput.value='Estou aprendendo porcentagem. Errei a questão: Quanto é '+example.rate+'% de '+example.total+'? Minha resposta foi '+input.value+'. A resposta correta é '+example.correct+'. '+instruction;
+      leoInput.focus({preventScroll:true});
+      leoAiStatus.textContent='Escolha de ajuda pronta. Clique em Enviar mensagem para receber a explicação do Professor Leo.';
+      leoInput.scrollIntoView({block:'nearest',behavior:'smooth'});
+    });
+    help.append(choice);
+  });
   const again=document.createElement('button');again.type='button';again.textContent='🔄 Praticar outra questão';
   const converse=document.createElement('button');converse.type='button';converse.textContent='💬 Continuar conversando';
   converse.addEventListener('click',()=>{leoInput.focus({preventScroll:true});leoInput.scrollIntoView({block:'nearest'});});
@@ -440,11 +458,11 @@ function leoLearningChallenge(question,answer){
     const correct=Number(input.value.replace(',','.'))===example.correct;
     feedback.className=correct?'leo-feedback-correct':'leo-feedback-wrong';
     feedback.textContent=correct?'✓ VOCÊ ACERTOU! Parabéns! '+example.rate+'% de '+example.total+' = '+example.correct+'.':'✗ AINDA NÃO. '+example.rate+'% = '+example.rate+' ÷ 100. Multiplique pelo total: '+example.total+' × '+example.rate+' ÷ 100 = '+example.correct+'. Você consegue!';
-    button.disabled=true;input.disabled=true;actions.hidden=false;
+    button.disabled=true;input.disabled=true;actions.hidden=false;help.hidden=correct;
     actions.scrollIntoView({block:'nearest',behavior:'smooth'});
   });
   form.append(input,button);
-  box.append(heading,task,form,feedback,actions);
+  box.append(heading,task,form,feedback,help,actions);
   leoThread.append(box);
   box.scrollIntoView({block:'nearest'});
 }
