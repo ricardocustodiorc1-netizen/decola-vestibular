@@ -399,26 +399,54 @@ leoInput.addEventListener('keydown',event=>{
 // Histórico curto enviado ao backend para permitir continuidade, se suportado.
 const leoHistory=[];
 function leoCleanMath(text){
-  return text.replace(/\\\\\[/g,'').replace(/\\\\\]/g,'').replace(/\\\\\(/g,'').replace(/\\\\\)/g,'').replace(/\\\\times/g,'×').replace(/\\\\div/g,'÷').replace(/\\\\cdot/g,'·').replace(/\\\\%/g,'%');
+  // Apresenta fórmulas em texto simples, sem expor comandos LaTeX ao aluno.
+  return String(text)
+    .replace(/\\\\\[|\\\\\]|\\\\\(|\\\\\)/g,'')
+    .replace(/\\\\(?:times|cdot)/g,' × ')
+    .replace(/\\\\(?:div)/g,' ÷ ')
+    .replace(/\\\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g,'($1 ÷ $2)')
+    .replace(/\\\\(?:text|mathrm)\s*\{([^{}]+)\}/g,'$1')
+    .replace(/\\\\%/g,'%')
+    .replace(/\*\*([^*]+)\*\*/g,'$1')
+    .replace(/\\\\/g,'');
 }
+let leoChallengeCount=0;
 function leoLearningChallenge(question,answer){
   const source=question+' '+answer;
   if(!/porcent|\\d+\\s*%/i.test(source))return;
-  const box=document.createElement('div');box.className='leo-bubble leo-bubble-teacher leo-learning-check';
+  const examples=[
+    {rate:15,total:200,correct:30},
+    {rate:20,total:150,correct:30},
+    {rate:10,total:240,correct:24},
+    {rate:25,total:120,correct:30}
+  ];
+  const example=examples[leoChallengeCount++%examples.length];
+  const box=document.createElement('div');
+  box.className='leo-bubble leo-bubble-teacher leo-learning-check';
   const heading=document.createElement('strong');heading.textContent='🎯 Agora é sua vez!';
-  const task=document.createElement('p');task.textContent='Quanto é 15% de 200? Tente calcular antes de ver a resposta.';
-  const input=document.createElement('input');input.type='number';input.placeholder='Sua resposta';input.setAttribute('aria-label','Resposta do exercício de fixação');
+  const task=document.createElement('p');task.textContent='Quanto é '+example.rate+'% de '+example.total+'? Tente calcular antes de ver a resposta.';
+  const form=document.createElement('div');form.className='leo-check-form';
+  const input=document.createElement('input');input.type='number';input.inputMode='decimal';input.placeholder='Digite sua resposta';input.setAttribute('aria-label','Resposta do exercício de fixação');
   const button=document.createElement('button');button.type='button';button.textContent='Conferir resposta';
   const feedback=document.createElement('p');feedback.setAttribute('role','status');
+  const actions=document.createElement('div');actions.className='leo-check-actions';actions.hidden=true;
+  const again=document.createElement('button');again.type='button';again.textContent='🔄 Praticar outra questão';
+  const converse=document.createElement('button');converse.type='button';converse.textContent='💬 Continuar conversando';
+  converse.addEventListener('click',()=>{leoInput.focus({preventScroll:true});leoInput.scrollIntoView({block:'nearest'});});
+  again.addEventListener('click',()=>{leoLearningChallenge('porcentagem','porcentagem');leoThread.scrollTop=leoThread.scrollHeight;});
+  actions.append(again,converse);
   button.addEventListener('click',()=>{
     if(!input.value.trim()){feedback.textContent='Digite sua resposta para conferir.';return;}
-    const correct=Number(input.value)===30;
+    const correct=Number(input.value.replace(',','.'))===example.correct;
     feedback.className=correct?'leo-feedback-correct':'leo-feedback-wrong';
-    feedback.textContent=correct?'✓ VOCÊ ACERTOU! Parabéns! 15% de 200 = 30.':'✗ AINDA NÃO. Revise: 10% de 200 = 20 e 5% = 10; somando, 15% = 30. Você consegue!';
-    button.disabled=true;
+    feedback.textContent=correct?'✓ VOCÊ ACERTOU! Parabéns! '+example.rate+'% de '+example.total+' = '+example.correct+'.':'✗ AINDA NÃO. '+example.rate+'% = '+example.rate+' ÷ 100. Multiplique pelo total: '+example.total+' × '+example.rate+' ÷ 100 = '+example.correct+'. Você consegue!';
+    button.disabled=true;input.disabled=true;actions.hidden=false;
+    actions.scrollIntoView({block:'nearest',behavior:'smooth'});
   });
-  box.append(heading,task,input,button,feedback);
+  form.append(input,button);
+  box.append(heading,task,form,feedback,actions);
   leoThread.append(box);
+  box.scrollIntoView({block:'nearest'});
 }
 let leoBusy=false;
 let leoLastRequest=0;
