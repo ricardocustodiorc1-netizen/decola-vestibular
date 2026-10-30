@@ -365,22 +365,36 @@ const leoAsk=root.querySelector('.leo-ask');
 const leoInput=root.querySelector('#leo-question-input');
 const leoAiStatus=root.querySelector('.leo-ai-status');
 const leoAiAnswer=root.querySelector('.leo-ai-answer');
-const leoFollowup=document.createElement('button');
-leoFollowup.type='button';
-leoFollowup.className='leo-new-question';
-leoFollowup.textContent='💬 Fazer outra pergunta';
-leoFollowup.hidden=true;
-leoAiAnswer.insertAdjacentElement('afterend',leoFollowup);
-leoFollowup.addEventListener('click',()=>{
-  leoInput.value='';
-  leoInput.focus();
-  leoAiStatus.textContent='Pode perguntar! Continue sua conversa com o Professor Leo.';
-  leoBody.scrollTop=0;
-});
-root.querySelector('.leo-new-question').addEventListener('click',()=>{
-  leoInput.value='';
-  leoAiStatus.textContent='Digite sua próxima dúvida. A resposta anterior continua disponível abaixo.';
-  leoInput.focus();
+// Conversa em balões; entrada permanece disponível após cada resposta.
+const leoThread=document.createElement('div');
+leoThread.className='leo-thread';
+leoThread.setAttribute('role','log');
+leoThread.setAttribute('aria-label','Conversa com o Professor Leo');
+leoThread.setAttribute('aria-live','polite');
+leoChat.insertBefore(leoThread,leoInput.previousElementSibling);
+const leoNewQuestion=root.querySelector('.leo-new-question');
+leoNewQuestion.hidden=true;
+leoAiAnswer.hidden=true;
+leoAiStatus.classList.add('leo-chat-status');
+function leoBubble(who,message){
+  const bubble=document.createElement('div');
+  bubble.className='leo-bubble leo-bubble-'+who;
+  const name=document.createElement('strong');
+  name.textContent=who==='student'?'Você':'🎓 Professor Leo';
+  const body=document.createElement('div');
+  body.textContent=message;
+  bubble.append(name,body);
+  leoThread.append(bubble);
+  bubble.scrollIntoView({block:'nearest'});
+}
+leoInput.setAttribute('placeholder','Escreva sua dúvida ou continue a conversa…');
+leoInput.setAttribute('rows','2');
+leoAsk.textContent='Enviar mensagem ➤';
+leoInput.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&!event.shiftKey){
+    event.preventDefault();
+    leoAsk.click();
+  }
 });
 let leoBusy=false;
 let leoLastRequest=0;
@@ -389,8 +403,8 @@ leoAsk.addEventListener('click',async()=>{
   if(!question){leoAiStatus.textContent='Escreva sua dúvida antes de enviar.';return;}
   if(leoBusy)return;
   if(Date.now()-leoLastRequest<15000){leoAiStatus.textContent='Aguarde alguns segundos antes de enviar outra pergunta.';return;}
-  leoBusy=true;leoLastRequest=Date.now();leoAsk.disabled=true;
-  leoAiAnswer.textContent='';leoFollowup.hidden=true;leoAiStatus.textContent='Professor Leo está preparando a explicação…';
+  leoBusy=true;leoLastRequest=Date.now();leoAsk.disabled=true;leoBubble('student',question);leoInput.value='';
+  leoAiStatus.textContent='Professor Leo está preparando a explicação…';
   try{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),25000);
@@ -402,7 +416,7 @@ leoAsk.addEventListener('click',async()=>{
     if(!response.ok)throw new Error(data.error||'Não foi possível obter uma resposta.');
     const answer=data.answer||data.resposta||data.reply||data.message;
     if(typeof answer!=='string'||!answer.trim())throw new Error('A resposta veio vazia.');
-    leoAiAnswer.textContent=answer;leoAiStatus.textContent='Resposta do Professor Leo:';leoFollowup.hidden=false;
-  }catch(error){leoAiStatus.textContent='A IA ainda não conseguiu responder: '+(error.name==='AbortError'?'tempo de espera esgotado':error.message)+'. Você pode continuar usando os exercícios acima.';}
+    leoBubble('teacher',answer);leoAiStatus.textContent='Pode continuar perguntando abaixo.';
+  }catch(error){leoAiStatus.textContent='Não foi possível responder agora. Tente novamente em instantes.';}
   finally{leoBusy=false;leoAsk.disabled=false;}
 });
