@@ -250,6 +250,61 @@ function renderLeoPractice(){
       missed.forEach(q=>{const li=document.createElement('li');li.textContent=q.question+' Revise: '+q.explanation;list.append(li);});
       const tip=document.createElement('p');tip.textContent='Leia as explicações com calma e clique em Recomeçar treino para praticar novamente.';
       report.append(title,score,bar,guidance,heading,list,tip);
+      // Recuperação guiada: apenas os assuntos que o estudante errou.
+      const recovery=document.createElement('section');
+      recovery.className='leo-recovery';
+      const start=document.createElement('button');
+      start.type='button';
+      start.className='leo-recovery-start';
+      start.textContent='📘 Iniciar meu plano de recuperação ('+missed.length+' tópico(s))';
+      const content=document.createElement('div');
+      content.hidden=true;
+      let recoveryStep=0;
+      let recoveryCorrect=0;
+      const missedIndices=leoPracticeQuestions.map((q,i)=>leoPracticeAnswers[i]===false?i:-1).filter(i=>i>=0);
+      function showRecoveryStep(){
+        content.replaceChildren();
+        if(recoveryStep>=missedIndices.length){
+          const finish=document.createElement('h4');
+          finish.textContent='🎉 Recuperação concluída!';
+          const result=document.createElement('p');
+          result.textContent='Você acertou '+recoveryCorrect+' de '+missedIndices.length+' exercícios de reforço. '+(recoveryCorrect===missedIndices.length?'Muito bem! Agora você pode tentar outra rodada.':'Se ainda tiver dúvidas, converse com o Professor Leo e tente novamente.');
+          const retry=document.createElement('button');retry.type='button';retry.textContent='Repetir reforço';
+          retry.addEventListener('click',()=>{recoveryStep=0;recoveryCorrect=0;showRecoveryStep();});
+          content.append(finish,result,retry);return;
+        }
+        const index=missedIndices[recoveryStep];
+        const exercise=leoReinforcement[index];
+        const lesson=document.createElement('h4');lesson.textContent='📖 Mini-aula '+(recoveryStep+1)+' de '+missedIndices.length;
+        const explain=document.createElement('p');explain.textContent=exercise.steps+' Exemplo resolvido: '+leoPracticeQuestions[index].explanation;
+        const question=document.createElement('p');question.className='leo-question';question.textContent='Agora tente: '+exercise.question;
+        const choices=document.createElement('div');choices.className='leo-choices';
+        const status=document.createElement('p');status.setAttribute('role','status');
+        exercise.choices.forEach((choice,i)=>{
+          const btn=document.createElement('button');btn.type='button';btn.textContent=choice;
+          btn.addEventListener('click',()=>{
+            if(choices.dataset.answered)return;
+            choices.dataset.answered='true';
+            const hit=i===exercise.correct;
+            if(hit)recoveryCorrect++;
+            status.className=hit?'leo-feedback-correct':'leo-feedback-wrong';
+            status.textContent=(hit?'✓ Muito bem! ':'Vamos revisar: ')+exercise.explanation;
+            choices.querySelectorAll('button').forEach(b=>b.disabled=true);
+            const next=document.createElement('button');next.type='button';
+            next.textContent=recoveryStep+1===missedIndices.length?'Ver resultado do reforço':'Próxima mini-aula →';
+            next.addEventListener('click',()=>{recoveryStep++;showRecoveryStep();});
+            content.append(next);
+          });
+          choices.append(btn);
+        });
+        content.append(lesson,explain,question,choices,status);
+      }
+      start.addEventListener('click',()=>{
+        content.hidden=false;start.hidden=true;showRecoveryStep();
+        content.scrollIntoView({block:'nearest',behavior:'smooth'});
+      });
+      recovery.append(start,content);
+      report.append(recovery);
     }else{report.append(title,score,bar,guidance);}
   }
   if(finished){
