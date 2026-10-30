@@ -1247,19 +1247,48 @@ const leoMockRecoveryKey='decola-vestibular:simulado-recuperacao-v1';
 let leoMockRecovery={};
 try{const saved=JSON.parse(localStorage.getItem(leoMockRecoveryKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))leoMockRecovery=saved;}catch(_error){}
 function leoMockRecoverySave(){try{localStorage.setItem(leoMockRecoveryKey,JSON.stringify(leoMockRecovery));}catch(_error){}}
+const leoMockProgressiveQuestions=[[{"q":"Um tênis de R$ 200 tem desconto de 10%. Qual o preço final?","choices":["R$ 180","R$ 190","R$ 210"],"correct":0,"why":"10% de 200 = 20; 200 − 20 = R$ 180."},{"q":"Um ingresso de R$ 50 teve aumento de 20%. Quanto custa agora?","choices":["R$ 55","R$ 60","R$ 70"],"correct":1,"why":"20% de 50 = 10; 50 + 10 = R$ 60."}],[{"q":"“Mesmo cansado, estudou.” A expressão indica:","choices":["Concessão","Causa","Conclusão"],"correct":0,"why":"Mesmo cansado expressa uma dificuldade superada."},{"q":"“Ainda que chova, haverá prova.” O sentido é:","choices":["Tempo","Concessão","Finalidade"],"correct":1,"why":"Ainda que apresenta uma condição que não impede a ação."}],[{"q":"Qual instrumento permite decidir diretamente uma questão em votação popular?","choices":["Plebiscito","Censura","Intervenção"],"correct":0,"why":"O plebiscito consulta diretamente a população."},{"q":"Moradores discutem prioridades do bairro em uma assembleia. Isso é:","choices":["Participação cidadã","Proibição política","Censura"],"correct":0,"why":"Assembleias são espaços de participação coletiva."}],[{"q":"Qual processo é uma mudança física?","choices":["Papel queimando","Água evaporando","Ferro oxidando"],"correct":1,"why":"Evaporar muda apenas o estado físico da água."},{"q":"Ao derreter chocolate e resfriá-lo, ocorre principalmente:","choices":["Mudança física","Combustão","Oxidação"],"correct":0,"why":"Derreter e solidificar não formam outra substância."}],[{"q":"Se 3 garrafas custam R$ 15, quanto custam 8?","choices":["R$ 35","R$ 40","R$ 45"],"correct":1,"why":"Cada garrafa custa R$ 5; 8 × 5 = R$ 40."},{"q":"Uma receita para 4 pessoas usa 300 g de arroz. Para 10 pessoas, quanto usar?","choices":["600 g","750 g","900 g"],"correct":1,"why":"300 ÷ 4 = 75 g por pessoa; 75 × 10 = 750 g."}],[{"q":"“Choveu muito; por isso, a rua alagou.” A expressão indica:","choices":["Conclusão/consequência","Oposição","Dúvida"],"correct":0,"why":"Por isso liga o fato à consequência."},{"q":"“Estudou com dedicação; logo, melhorou.” A palavra “logo” indica:","choices":["Comparação","Conclusão","Concessão"],"correct":1,"why":"Logo introduz uma conclusão."}],[{"q":"Qual ação diminui o consumo de recursos?","choices":["Descartar copos sempre","Usar copo reutilizável","Queimar papel"],"correct":1,"why":"Reutilizar reduz a necessidade de novos materiais."},{"q":"Uma escola instala coleta seletiva. O principal benefício é:","choices":["Misturar resíduos","Facilitar a reciclagem","Aumentar descartes"],"correct":1,"why":"Separar materiais facilita a reciclagem."}],[{"q":"A ausência de transporte público em periferias é exemplo de:","choices":["Igualdade territorial","Desigualdade socioespacial","Fim das cidades"],"correct":1,"why":"O acesso desigual a serviços caracteriza desigualdade socioespacial."},{"q":"Duas regiões recebem investimentos muito diferentes em saneamento. Isso revela:","choices":["Desigualdade urbana","Distribuição equilibrada","Ausência de infraestrutura em ambas"],"correct":0,"why":"A distribuição desigual de saneamento revela desigualdade urbana."}],[{"q":"Qual a média de 5, 7 e 9?","choices":["6","7","8"],"correct":1,"why":"5 + 7 + 9 = 21; 21 ÷ 3 = 7."},{"q":"Um aluno tirou 6, 8, 8 e 10. Qual a média?","choices":["7","8","9"],"correct":1,"why":"6 + 8 + 8 + 10 = 32; 32 ÷ 4 = 8."}],[{"q":"Qual frase expressa uma tese?","choices":["A leitura deve ser incentivada nas escolas.","Hoje é terça-feira.","A porta está aberta."],"correct":0,"why":"A primeira defende um ponto de vista."},{"q":"Para uma redação sobre mobilidade urbana, qual tese é defensável?","choices":["Há ônibus na rua.","É necessário ampliar o transporte público acessível.","O ônibus chegou às 8h."],"correct":1,"why":"A segunda é um posicionamento argumentável."}]];
+const leoMockProgressiveKey='decola-vestibular:simulado-dominio-progressivo-v1';
+let leoMockProgressive={};
+try{const data=JSON.parse(localStorage.getItem(leoMockProgressiveKey)||'{}');if(data&&typeof data==='object'&&!Array.isArray(data))leoMockProgressive=data;}catch(_error){}
+function leoMockProgressiveSave(){try{localStorage.setItem(leoMockProgressiveKey,JSON.stringify(leoMockProgressive));}catch(_error){}}
 function leoMockRecoveryRender(parent,index){
- const original=leoMockQuestions[index],exercise=leoMockRecoveryQuestions[index];
+ const original=leoMockQuestions[index];
  const section=document.createElement('section');section.className='leo-dashboard-next';section.style.marginTop='10px';
- const heading=document.createElement('h4');heading.textContent='📖 Aprender com meu erro · '+original.topic;section.append(heading);
+ const heading=document.createElement('h4');heading.textContent='📚 Domínio progressivo · '+original.topic;section.append(heading);
  const explanation=document.createElement('p');explanation.textContent='Professor Leo explica: '+original.why;section.append(explanation);
- const prompt=document.createElement('p');prompt.textContent='Agora tente uma questão semelhante: '+exercise.q;section.append(prompt);
- const choices=document.createElement('div');choices.className='leo-choices leo-humanas-choices';
- const selected=leoMockRecovery[index];
- exercise.choices.forEach((option,i)=>{const button=document.createElement('button');button.type='button';button.textContent=String.fromCharCode(65+i)+') '+option;button.disabled=Number.isInteger(selected);button.setAttribute('aria-pressed',String(selected===i));button.addEventListener('click',()=>{if(Number.isInteger(leoMockRecovery[index]))return;leoMockRecovery[index]=i;leoMockRecoverySave();leoMockRender();});choices.append(button);});
- section.append(choices);
- if(Number.isInteger(selected)){
-  const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(selected===exercise.correct?'leo-feedback-correct':'leo-feedback-wrong');feedback.textContent=(selected===exercise.correct?'✓ Você acertou a recuperação! ':'Ainda precisa revisar. ')+exercise.why+' Sua nota original permanece a mesma.';section.append(feedback);
-  if(selected!==exercise.correct){const retry=document.createElement('button');retry.type='button';retry.textContent='Tentar novamente';retry.addEventListener('click',()=>{delete leoMockRecovery[index];leoMockRecoverySave();leoMockRender();});section.append(retry);}
+ const basic=leoMockRecovery[index];
+ const record=leoMockProgressive[index]&&typeof leoMockProgressive[index]==='object'?leoMockProgressive[index]:{};
+ const stages=[leoMockRecoveryQuestions[index],...leoMockProgressiveQuestions[index]];
+ const stageNames=['Básico','Intermediário','Aplicado ao ENEM'];
+ let completed=0;
+ if(Number.isInteger(basic)&&basic===stages[0].correct)completed=1;
+ if(completed===1&&record['1']===stages[1].correct)completed=2;
+ if(completed===2&&record['2']===stages[2].correct)completed=3;
+ const progress=document.createElement('p');progress.textContent='Etapas concluídas: '+completed+' de 3 · '+(completed===3?'Conteúdo dominado!':'Avance uma etapa por vez.');section.append(progress);
+ const bar=document.createElement('progress');bar.max=3;bar.value=completed;bar.style.width='100%';bar.setAttribute('aria-label','Progresso do domínio progressivo');section.append(bar);
+ if(completed===3){
+  const success=document.createElement('p');success.className='leo-practice-feedback leo-feedback-correct';success.textContent='🏅 Conteúdo dominado! Você acertou os três desafios progressivos. A nota original do simulado permanece inalterada.';section.append(success);
+ }else{
+  const stage=completed,exercise=stages[stage];
+  const label=document.createElement('h4');label.textContent='Desafio '+(stage+1)+' de 3 · '+stageNames[stage];section.append(label);
+  const prompt=document.createElement('p');prompt.textContent=exercise.q;section.append(prompt);
+  const choices=document.createElement('div');choices.className='leo-choices leo-humanas-choices';
+  const selected=stage===0?basic:record[String(stage)];
+  exercise.choices.forEach((option,i)=>{
+   const button=document.createElement('button');button.type='button';button.textContent=String.fromCharCode(65+i)+') '+option;button.disabled=Number.isInteger(selected);button.setAttribute('aria-pressed',String(selected===i));
+   button.addEventListener('click',()=>{
+    if(stage===0){if(Number.isInteger(leoMockRecovery[index]))return;leoMockRecovery[index]=i;leoMockRecoverySave();}
+    else{if(Number.isInteger((leoMockProgressive[index]||{})[String(stage)]))return;leoMockProgressive[index]={...(leoMockProgressive[index]||{}),[String(stage)]:i};leoMockProgressiveSave();}
+    leoMockRender();
+   });choices.append(button);
+  });section.append(choices);
+  if(Number.isInteger(selected)){
+   const hit=selected===exercise.correct;
+   const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(hit?'leo-feedback-correct':'leo-feedback-wrong');
+   feedback.textContent=(hit?'✓ Muito bem! ':'Vamos revisar juntos. ')+exercise.why+' A nota original permanece a mesma.';section.append(feedback);
+   if(!hit){const retry=document.createElement('button');retry.type='button';retry.textContent='Tentar novamente';retry.addEventListener('click',()=>{if(stage===0){delete leoMockRecovery[index];leoMockRecoverySave();}else{delete leoMockProgressive[index][String(stage)];leoMockProgressiveSave();}leoMockRender();});section.append(retry);}
+  }
  }
  parent.append(section);
 }
@@ -1293,7 +1322,7 @@ function leoMockRender(){
   leoMockBox.append(recommendation);
   const review=document.createElement('h4');review.textContent='📖 Gabarito comentado';leoMockBox.append(review);
   leoMockQuestions.forEach((q,i)=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+(leoMockState.answers[i]===q.correct?'✓ Acertou':'✗ Revise')+' — '+q.q+' Resposta: '+q.choices[q.correct]+'. '+q.why;leoMockBox.append(p);});
-  const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockRecovery={};leoMockRecoveryOpen=null;leoMockRecoverySave();leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
+  const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockRecovery={};leoMockProgressive={};leoMockRecoveryOpen=null;leoMockRecoverySave();leoMockProgressiveSave();leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
  }
  const index=leoMockState.index,q=leoMockQuestions[index];
  const subtitle=document.createElement('h4');subtitle.textContent='Questão '+(index+1)+' de 10 · '+q.area;leoMockBox.append(subtitle);
