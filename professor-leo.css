@@ -106,3 +106,12 @@
 .leo-top .leo-talk[hidden]{display:none!important}
 @media(max-width:600px){.leo-top .leo-talk{font-size:11px;padding:6px;margin-right:4px}.leo-top .leo-back{font-size:11px;padding:6px}.leo-top>div small{font-size:9px}}
 @media(max-width:380px){.leo-top .leo-talk{font-size:0}.leo-top .leo-talk::after{content:'💬';font-size:15px}}
+
+/* Chat contínuo em balões, com campo sempre após as mensagens. */
+.leo-thread{display:flex;flex-direction:column;gap:12px;margin:0 0 14px;max-height:230px;overflow-y:auto;padding:8px 4px}
+.leo-bubble{max-width:92%;padding:11px 13px;border-radius:14px;line-height:1.55;overflow-wrap:anywhere;white-space:pre-wrap;font-size:13px}
+.leo-bubble strong{display:block;margin-bottom:5px;font-size:12px}
+.leo-bubble-student{align-self:flex-end;background:#dce9ff;color:#142b63;border-bottom-right-radius:3px}
+.leo-bubble-teacher{align-self:flex-start;background:#eef2f9;color:#14254c;border-bottom-left-radius:3px}
+.leo-chat-status{font-size:12px;color:#52617c;margin:8px 0}
+.leo-chat .leo-new-question[hidden],.leo-chat .leo-ai-answer[hidden]{display:none!important}
