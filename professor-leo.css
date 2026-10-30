@@ -205,3 +205,15 @@
 .leo-evolution .leo-score-track{margin:8px 0}
 .leo-evolution p{font-size:12px;line-height:1.4;margin:8px 0 0}
 @media(max-width:390px){.leo-evolution-metrics{grid-template-columns:1fr}}
+
+/* Histórico de aprendizagem por matéria */
+.leo-learning-history{border:1px solid #cbd8fa;background:#f7f9ff;border-radius:11px;padding:12px;margin:12px 0}
+.leo-learning-history h4{margin:0 0 8px;color:#153d9c}
+.leo-learning-summary{font-size:12px;font-weight:600;margin:5px 0 12px}
+.leo-learning-chart{display:flex;gap:7px;align-items:end;overflow-x:auto;max-width:100%;padding:8px 2px 3px;border-bottom:1px solid #d5dff5}
+.leo-learning-column{display:flex;flex-direction:column;align-items:center;flex:1 0 32px;min-width:32px;max-width:65px;gap:4px}
+.leo-learning-value{font-size:10px;font-weight:700;color:#1b43bb}
+.leo-learning-bar-track{height:92px;width:100%;max-width:35px;background:#e0e8f8;border-radius:5px 5px 0 0;display:flex;align-items:end;overflow:hidden}
+.leo-learning-bar{width:100%;background:#1d49c6;border-radius:5px 5px 0 0;min-height:0}
+.leo-learning-column small{font-size:10px}
+.leo-learning-note{font-size:11px;line-height:1.4;margin:9px 0 0;color:#52617c}
