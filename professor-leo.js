@@ -1217,6 +1217,63 @@ const leoMessage=root.querySelector('.leo-message');
 const leoRecommendation=root.querySelector('.leo-recommend');
 const leoAreaLabel=root.querySelector('label[for="leo-area"]');
 const leoChat=root.querySelector('.leo-chat');
+
+/* Simulado demonstrativo independente das rodadas e do diagnóstico. */
+const leoMockQuestions=[
+ {area:'Matemática',topic:'Porcentagem',q:'Um livro de R$ 120 está com 25% de desconto. Qual é o preço final?',choices:['R$ 90','R$ 95','R$ 100','R$ 80'],correct:0,why:'25% de 120 é 30; 120 − 30 = R$ 90.'},
+ {area:'Português',topic:'Interpretação',q:'Na frase “Embora estivesse cansada, Ana terminou a redação”, “embora” indica:',choices:['Causa','Concessão','Finalidade','Consequência'],correct:1,why:'“Embora” introduz uma dificuldade que não impediu a ação: concessão.'},
+ {area:'Ciências Humanas',topic:'Cidadania',q:'Qual ação é exemplo de participação democrática?',choices:['Impedir debates','Censurar opiniões','Participar de conselhos comunitários','Suspender eleições'],correct:2,why:'Conselhos comunitários permitem participação nas decisões coletivas.'},
+ {area:'Ciências da Natureza',topic:'Transformações',q:'Qual alternativa apresenta uma transformação física?',choices:['Papel queimando','Ferro enferrujando','Leite azedando','Gelo derretendo'],correct:3,why:'O gelo muda de estado físico, mas continua sendo água.'},
+ {area:'Matemática',topic:'Proporção',q:'Se 3 cadernos custam R$ 24, quanto custam 5 cadernos iguais?',choices:['R$ 32','R$ 40','R$ 48','R$ 36'],correct:1,why:'Cada caderno custa R$ 8; cinco custam 5 × 8 = R$ 40.'},
+ {area:'Português',topic:'Coesão textual',q:'Em “Estudou bastante, portanto foi bem na prova”, “portanto” expressa:',choices:['Conclusão','Oposição','Dúvida','Tempo'],correct:0,why:'“Portanto” conecta uma ideia à conclusão decorrente dela.'},
+ {area:'Ciências da Natureza',topic:'Ecologia',q:'Qual prática contribui para reduzir o descarte de resíduos?',choices:['Queimar plástico','Descartar pilhas no solo','Reutilizar embalagens','Misturar lixo reciclável e orgânico'],correct:2,why:'Reutilizar embalagens diminui o consumo de recursos e a geração de resíduos.'},
+ {area:'Ciências Humanas',topic:'Urbanização',q:'A falta de saneamento e transporte em bairros periféricos indica:',choices:['Distribuição igualitária','Desigualdade socioespacial','Fim da urbanização','Ausência de população'],correct:1,why:'O acesso desigual à infraestrutura revela desigualdade socioespacial.'},
+ {area:'Matemática',topic:'Média aritmética',q:'Qual é a média das notas 6, 8 e 10?',choices:['7','9','8','10'],correct:2,why:'(6 + 8 + 10) ÷ 3 = 24 ÷ 3 = 8.'},
+ {area:'Português',topic:'Argumentação',q:'Qual frase apresenta uma tese que pode ser defendida em uma redação?',choices:['Que horas são?','Ontem choveu.','O livro está na mesa.','É necessário ampliar o acesso à leitura nas escolas.'],correct:3,why:'Uma tese apresenta um posicionamento que pode ser sustentado com argumentos.'}
+];
+const leoMockKey='decola-vestibular:simulado-enem-v1';
+let leoMockState={answers:Array(leoMockQuestions.length).fill(null),index:0,finished:false};
+try{const saved=JSON.parse(localStorage.getItem(leoMockKey)||'null');if(saved&&Array.isArray(saved.answers)&&saved.answers.length===leoMockQuestions.length){leoMockState={answers:saved.answers.map((v,i)=>Number.isInteger(v)&&v>=0&&v<leoMockQuestions[i].choices.length?v:null),index:Number.isInteger(saved.index)?Math.max(0,Math.min(saved.index,leoMockQuestions.length-1)):0,finished:saved.finished===true};}}catch(_error){}
+function leoMockSave(){try{localStorage.setItem(leoMockKey,JSON.stringify(leoMockState));}catch(_error){}}
+const leoMockBox=document.createElement('section');leoMockBox.className='leo-practice leo-simulado';leoMockBox.setAttribute('aria-label','Simulado inteligente do ENEM');leoDashboard.after(leoMockBox);
+function leoMockRender(){
+ leoMockBox.replaceChildren();
+ const heading=document.createElement('h3');heading.textContent='📝 Simulado Inteligente do ENEM';leoMockBox.append(heading);
+ const note=document.createElement('p');note.textContent='Simulado demonstrativo com 10 questões autorais, sem tempo limite. Suas respostas ficam apenas neste navegador e não alteram o diagnóstico nem as notas dos treinos.';leoMockBox.append(note);
+ const answered=leoMockState.answers.filter(x=>x!==null).length;
+ const progress=document.createElement('p');progress.textContent='Progresso: '+answered+' de 10 questões respondidas.';leoMockBox.append(progress);
+ const bar=document.createElement('progress');bar.max=10;bar.value=answered;bar.style.width='100%';leoMockBox.append(bar);
+ if(leoMockState.finished){
+  const score=leoMockQuestions.filter((q,i)=>leoMockState.answers[i]===q.correct).length;
+  const title=document.createElement('h4');title.textContent='Resultado: '+score+' de 10 acertos ('+(score*10)+'%)';leoMockBox.append(title);
+  const areas=[...new Set(leoMockQuestions.map(q=>q.area))];
+  areas.forEach(area=>{
+   const items=leoMockQuestions.map((q,i)=>({q,i})).filter(x=>x.q.area===area);
+   const hits=items.filter(x=>leoMockState.answers[x.i]===x.q.correct).length;
+   const p=document.createElement('p');p.textContent=area+': '+hits+' de '+items.length+' acertos.';leoMockBox.append(p);
+  });
+  const errors=leoMockQuestions.map((q,i)=>({q,i})).filter(x=>leoMockState.answers[x.i]!==x.q.correct);
+  const recommendation=document.createElement('section');recommendation.className='leo-dashboard-next';
+  const h=document.createElement('h4');h.textContent=errors.length?'🎯 Seu plano de revisão':'🎉 Parabéns!';recommendation.append(h);
+  const summary=document.createElement('p');summary.textContent=errors.length?'Revise primeiro os conteúdos abaixo. As explicações são comentadas pelo Professor Leo e não alteram sua pontuação.':'Você acertou todas as questões! Continue praticando com outros exercícios.';recommendation.append(summary);
+  errors.forEach(({q,i})=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+q.area+' — '+q.topic+': '+q.why;recommendation.append(p);});
+  leoMockBox.append(recommendation);
+  const review=document.createElement('h4');review.textContent='📖 Gabarito comentado';leoMockBox.append(review);
+  leoMockQuestions.forEach((q,i)=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+(leoMockState.answers[i]===q.correct?'✓ Acertou':'✗ Revise')+' — '+q.q+' Resposta: '+q.choices[q.correct]+'. '+q.why;leoMockBox.append(p);});
+  const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
+ }
+ const index=leoMockState.index,q=leoMockQuestions[index];
+ const subtitle=document.createElement('h4');subtitle.textContent='Questão '+(index+1)+' de 10 · '+q.area;leoMockBox.append(subtitle);
+ const question=document.createElement('p');question.textContent=q.q;question.style.fontWeight='600';leoMockBox.append(question);
+ const options=document.createElement('div');options.className='leo-choices leo-humanas-choices';
+ q.choices.forEach((choice,i)=>{const button=document.createElement('button');button.type='button';button.textContent=String.fromCharCode(65+i)+') '+choice;button.disabled=leoMockState.answers[index]!==null;button.setAttribute('aria-pressed',String(leoMockState.answers[index]===i));button.addEventListener('click',()=>{if(leoMockState.answers[index]!==null)return;leoMockState.answers[index]=i;leoMockSave();leoMockRender();});options.append(button);});leoMockBox.append(options);
+ if(leoMockState.answers[index]!==null){const feedback=document.createElement('p');const hit=leoMockState.answers[index]===q.correct;feedback.className='leo-practice-feedback '+(hit?'leo-feedback-correct':'leo-feedback-wrong');feedback.textContent=(hit?'✓ Muito bem! ':'Vamos revisar juntos. ')+q.why;leoMockBox.append(feedback);}
+ const nav=document.createElement('div');nav.className='leo-choices';
+ const prev=document.createElement('button');prev.type='button';prev.textContent='← Anterior';prev.disabled=index===0;prev.addEventListener('click',()=>{leoMockState.index--;leoMockSave();leoMockRender();});nav.append(prev);
+ const next=document.createElement('button');next.type='button';next.textContent=index===9?'Ver resultado →':'Próxima questão →';next.disabled=leoMockState.answers[index]===null;next.addEventListener('click',()=>{if(index===9){if(leoMockState.answers.some(a=>a===null)){const first=leoMockState.answers.findIndex(a=>a===null);leoMockState.index=first;}else leoMockState.finished=true;}else leoMockState.index++;leoMockSave();leoMockRender();});nav.append(next);leoMockBox.append(nav);
+}
+leoMockRender();
+
 const leoMenu=document.createElement('section');
 leoMenu.className='leo-menu';
 leoMenu.innerHTML='<h3>O que vamos estudar hoje?</h3><p>Escolha como deseja aprender com o Professor Leo.</p>';
@@ -1225,6 +1282,7 @@ const leoViews=[
   ['practice','🧮 Fazer exercícios de Matemática','Treino de Matemática com correção e reforço.'],
    ['portuguese','📖 Exercícios de Português','Interpretação de texto, correção e histórico de acertos.'],
   ['humanas','🌎 Exercícios de Ciências Humanas','Cidadania, história, geografia e movimentos sociais.'],
+  ['simulado','📝 Simulado Inteligente do ENEM','10 questões de diferentes matérias, correção e plano de revisão.'],
   ['chat','💬 Conversar com o Professor Leo','Tire suas dúvidas com a IA em teste.'],
   ['dashboard','📊 Minha evolução','Veja seu desempenho em Matemática e Português e recomendações de estudo.']
 ];
@@ -1273,7 +1331,9 @@ function leoShowView(view){
   leoBack.hidden=menu;
   leoTalk.hidden=view==='chat';
   leoResume.hidden=view!=='chat';
-  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat',isPortuguese=view==='portuguese',isHumanas=view==='humanas',isDashboard=view==='dashboard';
+  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat',isPortuguese=view==='portuguese',isHumanas=view==='humanas',isDashboard=view==='dashboard',isSimulado=view==='simulado';
+   if(isSimulado)leoMockRender();
+   leoMockBox.hidden=!isSimulado;
    if(isDashboard)leoRenderDashboard();
    leoDashboard.hidden=!isDashboard;
   leoMessage.hidden=true;
