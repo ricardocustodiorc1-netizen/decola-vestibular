@@ -571,6 +571,14 @@ const leoHuQuestions=[
  {text:'A urbanização acelerada, sem infraestrutura suficiente, pode provocar:',choices:['Segregação socioespacial e problemas de mobilidade','Distribuição igualitária automática dos serviços','Desaparecimento das periferias'],correct:0,why:'O crescimento urbano desigual pode concentrar serviços em certas áreas e dificultar acesso a transporte e moradia.'},
  {text:'No Brasil, a abolição da escravidão ocorreu em 1888. Qual afirmação é historicamente adequada?',choices:['A abolição não eliminou imediatamente as desigualdades sociais','Todos os ex-escravizados receberam terras e renda','O racismo deixou de existir com a Lei Áurea'],correct:0,why:'A Lei Áurea extinguiu juridicamente a escravidão, mas não garantiu reparação, terras ou inclusão social.'}
 ];
+// Questões equivalentes, mas diferentes das originais, para verificar a aprendizagem.
+const leoHuReview=[
+ {text:'Qual característica da Constituição de 1988 fortaleceu a cidadania?',choices:['Proibição da organização social','Proteção de direitos fundamentais','Fim das eleições diretas'],correct:1,why:'A Constituição de 1988 ampliou a proteção dos direitos e a participação democrática.'},
+ {text:'Antes de decidir sobre uma proposta importante, o governo consulta os eleitores diretamente. Esse mecanismo é:',choices:['Censura','Intervenção militar','Plebiscito'],correct:2,why:'No plebiscito, a população é consultada antes da decisão política.'},
+ {text:'Um grupo de moradores se organiza para reivindicar transporte público melhor. Isso é exemplo de:',choices:['Mobilização social','Proibição de direitos','Isolamento político'],correct:0,why:'A mobilização coletiva reivindica melhorias e participa do debate público.'},
+ {text:'Quando bairros periféricos têm pouco transporte e saneamento, isso evidencia:',choices:['Acesso igual a serviços','Desigualdade socioespacial','Fim da urbanização'],correct:1,why:'A distribuição desigual de infraestrutura e serviços caracteriza desigualdade socioespacial.'},
+ {text:'Após a Lei Áurea, qual desafio permaneceu para a população negra no Brasil?',choices:['A inclusão social e o enfrentamento do racismo','O retorno legal da escravidão','A distribuição imediata de terras para todos'],correct:0,why:'A abolição legal não assegurou condições iguais de trabalho, renda e acesso à terra.'}
+];
 const leoHuKey='decola-vestibular:leo-humanas:v1';
 const leoHuHistoryKey='decola-vestibular:leo-humanas-history:v1';
 let leoHuAnswers=leoPtRead(leoHuKey,Array(leoHuQuestions.length).fill(null));
@@ -595,7 +603,7 @@ function leoHuRender(){
   const q=leoHuQuestions[leoHuIndex];
   const question=document.createElement('p');question.textContent='Questão '+(leoHuIndex+1)+' de '+leoHuQuestions.length+': '+q.text;
   question.style.fontWeight='600';leoHuBox.append(question);
-  const choices=document.createElement('div');choices.className='leo-practice-options';
+  const choices=document.createElement('div');choices.className='leo-choices leo-humanas-choices';
   q.choices.forEach((option,i)=>{
     const button=document.createElement('button');button.type='button';
     button.textContent=String.fromCharCode(65+i)+') '+option;
@@ -616,29 +624,30 @@ function leoHuRender(){
   const answered=leoHuAnswers[leoHuIndex]!==null;
   if(answered){
     const feedback=document.createElement('div');
-    feedback.className='leo-feedback '+(leoHuAnswers[leoHuIndex]?'correct':'incorrect');
+    feedback.className='leo-practice-feedback '+(leoHuAnswers[leoHuIndex]?'leo-feedback-correct':'leo-feedback-wrong');
     feedback.textContent=(leoHuAnswers[leoHuIndex]?'✓ Muito bem! ':'Vamos revisar. ')+q.why;
     leoHuBox.append(feedback);
     if(!leoHuAnswers[leoHuIndex]){
       const help=document.createElement('section');help.className='leo-reinforcement';
       const title=document.createElement('h4');title.textContent='📚 Recuperação personalizada';
       const explain=document.createElement('p');explain.textContent='Entenda: '+q.why;
-      const retry=document.createElement('p');retry.textContent='Agora tente novamente: '+q.text;
-      const opts=document.createElement('div');opts.className='leo-practice-options';
-      q.choices.forEach((option,i)=>{
+      const review=leoHuReview[leoHuIndex];
+      const retry=document.createElement('p');retry.textContent='Agora aplique o que aprendeu em outra situação: '+review.text;
+      const opts=document.createElement('div');opts.className='leo-choices leo-humanas-choices';
+      review.choices.forEach((option,i)=>{
         const btn=document.createElement('button');btn.type='button';btn.textContent=String.fromCharCode(65+i)+') '+option;
         btn.disabled=leoHuRecovery[leoHuIndex]===true;
         btn.addEventListener('click',()=>{
           if(leoHuRecovery[leoHuIndex])return;
-          if(i===q.correct){leoHuRecovery[leoHuIndex]=true;leoHuRender();}
-          else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Ainda não. '+q.why;}
+          if(i===review.correct){leoHuRecovery[leoHuIndex]=true;leoHuRender();}
+          else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Vamos pensar novamente. '+review.why;}
         });opts.append(btn);
       });
       const hint=document.createElement('p');hint.className='leo-humanas-hint';
-      if(leoHuRecovery[leoHuIndex])hint.textContent='✓ Conteúdo recuperado! Você acertou a revisão.';
+      if(leoHuRecovery[leoHuIndex])hint.textContent='✓ Conteúdo recuperado! '+review.why;
       help.append(title,explain,retry,opts,hint);leoHuBox.append(help);
     }
-    const actions=document.createElement('div');actions.className='leo-practice-options';
+    const actions=document.createElement('div');actions.className='leo-choices leo-humanas-choices';
     const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
     next.addEventListener('click',()=>{leoHuIndex=(leoHuIndex+1)%leoHuQuestions.length;leoHuRender();});
     const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
