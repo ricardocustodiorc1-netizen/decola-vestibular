@@ -814,27 +814,32 @@ function leoStudyHint(subject,stage,questionIndex){
 function leoRecoveryLesson(subject,index){
  const lessons={
   portuguese:[
-   'Exemplo: “Embora estivesse chovendo, fomos à escola”. A chuva é um obstáculo, mas a ação aconteceu.',
-   'Exemplo: em um texto sobre leitura, procure a mensagem que reúne todas as ideias, não um detalhe isolado.',
-   'Exemplo: “João pegou o guarda-chuva porque viu nuvens escuras”. Podemos inferir que ele esperava chuva.',
-   'Exemplo: “A escola abriu às 7h” é verificável; “A escola é maravilhosa” expressa opinião.',
-   'Exemplo: em “Maria chegou e ela sorriu”, o pronome “ela” retoma Maria.'
+   'Em “Apesar do frio, Ana saiu para caminhar”, a dificuldade não impediu a ação. Observe a relação entre as ideias.',
+   'Em um texto sobre alimentação saudável, a ideia central reúne o assunto geral; um alimento citado é apenas detalhe.',
+   'Se alguém entra em casa com os sapatos molhados, podemos levantar uma hipótese sobre o tempo, mesmo sem ler que choveu.',
+   '“A biblioteca possui 200 livros” pode ser conferido; “é a melhor biblioteca do mundo” expressa julgamento.',
+   'Em “Pedro encontrou Lucas e o cumprimentou”, o pronome “o” retoma Lucas.'
   ],
   humanas:[
-   'Exemplo: uma constituição cidadã protege a liberdade de expressão, o voto e o acesso a direitos sociais.',
-   'Exemplo: no plebiscito, a população vota diretamente sobre uma proposta antes da decisão política.',
-   'Exemplo: moradores que se organizam para pedir transporte melhor exercem participação coletiva.',
-   'Exemplo: dois bairros com acesso muito diferente a saneamento mostram desigualdade urbana.',
-   'Exemplo: abolir uma lei injusta não elimina automaticamente a desigualdade acumulada ao longo da história.'
+   'Imagine uma escola que garante a todos os estudantes o direito de participar das decisões e ser tratados com igualdade. Reflita sobre o que torna essas regras inclusivas.',
+   'Em uma assembleia de bairro, os moradores discutem propostas e expressam suas preferências. Compare participar pessoalmente com delegar a decisão a representantes.',
+   'Quando estudantes se organizam para melhorar a biblioteca da escola, exercem uma forma de participação coletiva. Observe quem age e com qual objetivo.',
+   'Compare duas regiões: uma possui hospitais e ônibus frequentes; a outra enfrenta longas viagens para atendimento. Pense na distribuição de oportunidades.',
+   'Uma mudança na lei pode reconhecer um direito, mas sua efetivação depende de condições reais de acesso a trabalho, educação e serviços.'
   ]
  };
- return (lessons[subject]||[])[index]||'Pense em uma situação do cotidiano em que esse conceito aparece.';
+ return (lessons[subject]||[])[index]||'Observe o conceito em uma situação diferente e procure a ideia em comum.';
 }
 function leoRecoverySteps(parent,subject,index,reason){
- const step=document.createElement('p');step.textContent='1. Entenda o conceito: '+reason;
- const example=document.createElement('p');example.textContent='2. Exemplo prático: '+leoRecoveryLesson(subject,index).replace(/^Exemplo:\s*/i,'');
- const tryAgain=document.createElement('p');tryAgain.textContent='3. Agora tente uma nova questão. Você pode consultar a dica antes de responder.';
- parent.append(step,example,tryAgain);
+ const concept=document.createElement('p');
+ concept.textContent='1. Compreenda o conceito: '+reason;
+ const example=document.createElement('p');
+ example.textContent='2. Observe outra situação: '+leoRecoveryLesson(subject,index);
+ const bridge=document.createElement('p');
+ bridge.textContent='3. Faça a conexão: qual princípio aparece nos dois contextos? Pense antes de olhar as alternativas.';
+ const attempt=document.createElement('p');
+ attempt.textContent='4. Aplique o que aprendeu na nova questão abaixo. A dica é opcional e não altera sua nota original.';
+ parent.append(concept,example,bridge,attempt);
 }
 function leoPtRecoveryPanel(index){
  const [lesson,passage,question,answers,correct,why]=leoPtRecovery[index];
@@ -853,7 +858,7 @@ function leoPtRecoveryPanel(index){
    button.addEventListener('click',()=>{
     if(leoPtRecoveryDone[index])return;
     if(i===correct){leoPtRecoveryDone[index]=true;leoPtSaveRecovery();leoMissionRecoverySucceeded('portuguese',index);feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='🏅 Parabéns! Você recuperou este conteúdo! '+why+' Sua nota original foi preservada.';}
-    else{feedback.className='leo-practice-feedback leo-feedback-wrong';feedback.textContent='Ainda não foi dessa vez. Releia o exemplo e tente novamente: '+lesson;}
+    else{feedback.className='leo-practice-feedback leo-feedback-wrong';feedback.textContent='Ainda não foi dessa vez. Releia o conceito e procure a pista no texto antes de tentar novamente.';}
     renderChoices();
    });choices.append(button);
   });
@@ -972,7 +977,7 @@ function leoHuRender(){
         btn.addEventListener('click',()=>{
           if(leoHuRecovery[leoHuIndex])return;
           if(i===review.correct){leoHuRecovery[leoHuIndex]=true;leoHuSaveRecovery();leoHuRender();leoMissionRecoverySucceeded('humanas',leoHuIndex);}
-          else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Ainda não foi dessa vez. Volte ao exemplo e tente outra vez. '+review.why;}
+          else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Ainda não foi dessa vez. Releia o conceito e compare as situações antes de tentar novamente.';}
         });opts.append(btn);
       });
       const hint=document.createElement('p');hint.className='leo-humanas-hint';
