@@ -773,13 +773,37 @@ const leoPtRecoveryKey='decola-vestibular:leo-portugues-recovery:v1';
 let leoPtRecoveryDone=leoPtRead(leoPtRecoveryKey,{});
 if(!leoPtRecoveryDone||typeof leoPtRecoveryDone!=='object'||Array.isArray(leoPtRecoveryDone))leoPtRecoveryDone={};
 function leoPtSaveRecovery(){try{localStorage.setItem(leoPtRecoveryKey,JSON.stringify(leoPtRecoveryDone));}catch{}}
+
+// Dicas progressivas e acessíveis, sem antecipar a alternativa correta.
+function leoStudyHint(subject,stage){
+ const hints={
+  portuguese:[
+   'Leia o trecho mais uma vez. Procure a palavra que conecta as ideias e observe se elas se opõem, se explicam ou se completam.',
+   'Compare cada alternativa com o que está escrito no texto. Elimine as que acrescentam informações não mencionadas.'
+  ],
+  humanas:[
+   'Identifique o tema central: direitos, participação, movimentos sociais, urbanização ou desigualdade. Pense no significado do conceito antes de escolher.',
+   'Leia cada alternativa e descarte as afirmações extremas ou que contrariem os direitos e os fatos históricos estudados.'
+  ]
+ };
+ const box=document.createElement('div');box.className='leo-study-hint';
+ const button=document.createElement('button');button.type='button';button.className='leo-study-hint-button';
+ button.textContent='💡 Preciso de uma dica';button.setAttribute('aria-expanded','false');
+ const panel=document.createElement('aside');panel.className='leo-focused-hint';panel.hidden=true;panel.setAttribute('role','note');
+ const title=document.createElement('strong');title.className='leo-focused-hint-title';title.textContent='💡 Dica do Professor Leo';
+ const description=document.createElement('p');description.textContent=hints[subject][stage===1?1:0];
+ const encouragement=document.createElement('p');encouragement.className='leo-focused-hint-prompt';encouragement.textContent='Agora tente responder com calma. Você consegue!';
+ panel.append(title,description,encouragement);
+ button.addEventListener('click',()=>{panel.hidden=false;button.hidden=true;button.setAttribute('aria-expanded','true');});
+ box.append(button,panel);return box;
+}
 function leoPtRecoveryPanel(index){
  const [lesson,passage,question,answers,correct,why]=leoPtRecovery[index];
  const box=document.createElement('section');box.className='leo-portuguese-recovery';
  const heading=document.createElement('h4');heading.textContent='📚 Recuperação personalizada';box.append(heading);
  const explanation=document.createElement('p');explanation.textContent='1. Entenda: '+lesson;box.append(explanation);
  const excerpt=document.createElement('blockquote');excerpt.className='leo-portuguese-passage';excerpt.textContent=passage;box.append(excerpt);
- const prompt=document.createElement('p');prompt.textContent='2. Tente outra questão: '+question;box.append(prompt);
+ const prompt=document.createElement('p');prompt.textContent='2. Tente outra questão: '+question;box.append(prompt);box.append(leoStudyHint('portuguese',1));
  const choices=document.createElement('div');choices.className='leo-choices leo-portuguese-choices';box.append(choices);
  const feedback=document.createElement('p');feedback.setAttribute('role','status');box.append(feedback);
  function renderChoices(){
@@ -814,7 +838,7 @@ function leoPtRender(){
   if(leoPtAnswers.every(x=>x!==null)&&!leoPtRecorded){leoPtRecorded=true;leoPtHistory.push({correct:leoPtAnswers.filter(Boolean).length,total:leoPtQuestions.length,date:new Date().toISOString()});leoPtHistory=leoPtHistory.slice(-20);try{localStorage.setItem(leoPtHistoryKey,JSON.stringify(leoPtHistory));}catch{}}
   leoPtRender();
  });options.append(b);});
- leoPtBox.append(passage,title,options);
+ leoPtBox.append(passage,title);if(!answered)leoPtBox.append(leoStudyHint('portuguese',0));leoPtBox.append(options);
  if(answered){const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(leoPtAnswers[leoPtIndex]?'leo-feedback-correct':'leo-feedback-wrong');feedback.setAttribute('role','status');feedback.textContent=(leoPtAnswers[leoPtIndex]?'✓ Você acertou! ':'Vamos revisar. ')+q.why;leoPtBox.append(feedback);}
  if(answered&&!leoPtAnswers[leoPtIndex])leoPtBox.append(leoPtRecoveryPanel(leoPtIndex));
  const actions=document.createElement('div');actions.className='leo-practice-actions';
@@ -871,7 +895,7 @@ function leoHuRender(){
   leoHuBox.append(heading,summary);
   const q=leoHuQuestions[leoHuIndex];
   const question=document.createElement('p');question.textContent='Questão '+(leoHuIndex+1)+' de '+leoHuQuestions.length+': '+q.text;
-  question.style.fontWeight='600';leoHuBox.append(question);
+  question.style.fontWeight='600';leoHuBox.append(question);if(leoHuAnswers[leoHuIndex]===null)leoHuBox.append(leoStudyHint('humanas',0));
   const choices=document.createElement('div');choices.className='leo-choices leo-humanas-choices';
   q.choices.forEach((option,i)=>{
     const button=document.createElement('button');button.type='button';
@@ -914,7 +938,7 @@ function leoHuRender(){
       });
       const hint=document.createElement('p');hint.className='leo-humanas-hint';
       if(leoHuRecovery[leoHuIndex])hint.textContent='✓ Conteúdo recuperado! '+review.why;
-      help.append(title,explain,retry,opts,hint);leoHuBox.append(help);
+      help.append(title,explain,retry,leoStudyHint('humanas',1),opts,hint);leoHuBox.append(help);
     }
     const actions=document.createElement('div');actions.className='leo-choices leo-humanas-choices';
     const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
