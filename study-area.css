@@ -57,3 +57,19 @@ body.leo-study-open{overflow:hidden}
 @media(max-width:600px){.study-subject-card{min-height:165px}.study-subject-art{width:60px;height:60px;font-size:34px}}
 
 .study-topic-card{min-height:125px;padding:20px;gap:10px}.study-topic-example{background:#eaf1ff;border-left:4px solid #2350cf;border-radius:10px;padding:18px;color:#183665;font-weight:600;margin:12px 0 22px}.study-topic-answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.study-topic-answers button{padding:16px;border:1px solid #b8c9f1;border-radius:12px;background:white;color:#17366b;cursor:pointer;font-size:16px}.study-topic-answers button:hover,.study-topic-answers button:focus-visible{border-color:#1744c3;background:#edf3ff}.study-dashboard h3{color:#14254c;font-size:19px}@media(max-width:600px){.study-topic-answers{grid-template-columns:1fr}}
+
+/* Conversa acessível: apenas a área principal rola, inclusive durante os desafios. */
+.leo-widget .leo-panel:not([hidden]) .leo-body{overflow-y:auto;overflow-x:hidden;scrollbar-gutter:auto}
+.leo-widget .leo-chat{width:100%;max-width:1000px;min-width:0}
+.leo-widget .leo-chat .leo-thread{max-height:none!important;height:auto!important;overflow:visible!important;overscroll-behavior:auto;display:flex;flex-direction:column;gap:16px;padding:12px 0 20px;margin:0}
+.leo-widget .leo-chat .leo-bubble{max-width:min(84%,720px);padding:16px 19px;font-size:15px;line-height:1.7;border-radius:18px;box-shadow:0 2px 9px rgba(19,47,105,.06)}
+.leo-widget .leo-chat .leo-bubble strong{font-size:13px;margin-bottom:8px}
+.leo-widget .leo-chat .leo-bubble-teacher{background:#fff;border:1px solid #dce5f7;border-bottom-left-radius:5px}
+.leo-widget .leo-chat .leo-bubble-student{background:#e4edff;border:1px solid #c5d6ff;border-bottom-right-radius:5px}
+.leo-widget .leo-chat textarea{font-size:15px;line-height:1.6;min-height:105px;max-width:100%}
+.leo-widget .leo-chat label{font-size:14px}
+.leo-widget .leo-chat .leo-chat-actions button{min-height:46px}
+.leo-widget .leo-chat :is(.leo-challenge,.leo-chat-challenge,.leo-interactive-challenge,.leo-practice,.leo-quiz,.leo-question-card){max-height:none!important;overflow:visible!important;background:#fff;border:1px solid #d5e0f7;border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 3px 14px rgba(23,68,195,.05)}
+.leo-widget .leo-chat :is(input[type="text"],input[type="number"]){min-height:44px;border-radius:9px}
+.leo-widget .leo-chat :is(button,input,textarea):focus-visible{outline:3px solid #f0b429;outline-offset:2px}
+@media(max-width:600px){.leo-widget .leo-chat .leo-bubble{max-width:96%;font-size:14px;padding:12px 14px}.leo-widget .leo-chat :is(.leo-challenge,.leo-chat-challenge,.leo-interactive-challenge,.leo-practice,.leo-quiz,.leo-question-card){padding:13px}}
