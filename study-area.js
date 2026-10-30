@@ -150,6 +150,27 @@
   if(launch){launch.textContent='🎓 Abrir área de estudos';launch.setAttribute('aria-label','Abrir painel de estudos');launch.addEventListener('click',()=>{if(!panel()?.hidden)showDashboard();});}
   const p=panel();
   if(p){
+   // Voltar no cabeçalho azul: respeita o nível atual da navegação.
+   const top=p.querySelector('.leo-top');
+   const topBack=document.createElement('button');
+   topBack.type='button';topBack.className='study-top-back';topBack.textContent='← Voltar ao menu anterior';
+   topBack.setAttribute('aria-label','Voltar ao menu anterior');
+   top?.insertBefore(topBack,p.querySelector('.leo-close'));
+   const updateTopBack=()=>{
+    const d=p.querySelector('.study-dashboard');
+    const inner=d&&!d.hidden?d.querySelector('.study-dashboard-all'):null;
+    const active=!!inner;
+    topBack.hidden=!active;
+   };
+   topBack.addEventListener('click',()=>{
+    const d=p.querySelector('.study-dashboard');
+    const back=d&&!d.hidden?d.querySelector('.study-dashboard-all'):null;
+    if(back)back.click();
+    else p.querySelector('.leo-back')?.click();
+    updateTopBack();
+   });
+   new MutationObserver(updateTopBack).observe(p.querySelector('.leo-body'),{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+   updateTopBack();
 
    const legacyArea=p.querySelector('#leo-area');
    if(legacyArea)legacyArea.addEventListener('change',()=>{
