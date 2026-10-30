@@ -563,6 +563,60 @@ function leoPtRender(){
 }
 leoPtRender();
 
+// Painel consolidado: lê somente os resultados locais já existentes, sem alterar notas.
+const leoDashboard=document.createElement('section');
+leoDashboard.className='leo-dashboard';
+leoDashboard.setAttribute('aria-label','Meu painel de evolução');
+leoPtBox.after(leoDashboard);
+function leoRenderDashboard(){
+  leoDashboard.replaceChildren();
+  const heading=document.createElement('h3');heading.textContent='📊 Meu painel de evolução';
+  const intro=document.createElement('p');intro.textContent='Acompanhe Matemática e Português no mesmo lugar. Dados demonstrativos guardados somente neste navegador.';
+  leoDashboard.append(heading,intro);
+  const cards=document.createElement('div');cards.className='leo-dashboard-grid';
+  const areas=[
+    {name:'Matemática',history:leoPracticeHistory,answers:leoPracticeAnswers,questions:leoPracticeQuestions,recovered:leoReadRecoveryProgress()},
+    {name:'Português',history:leoPtHistory,answers:leoPtAnswers,questions:leoPtQuestions,recovered:null}
+  ];
+  let recommended=null;
+  areas.forEach(area=>{
+    const completed=area.answers.filter(x=>x!==null).length;
+    const correct=area.answers.filter(x=>x===true).length;
+    const total=area.questions.length;
+    const latest=area.history.length?area.history[area.history.length-1]:null;
+    const card=document.createElement('article');card.className='leo-dashboard-card';
+    const title=document.createElement('h4');title.textContent=area.name;
+    const score=document.createElement('strong');score.textContent=latest?Math.round(latest.correct/latest.total*100)+'%':'Sem rodada concluída';
+    const detail=document.createElement('p');detail.textContent=latest?'Última rodada: '+latest.correct+' de '+latest.total+' acertos · '+area.history.length+' rodada(s) registrada(s)':'Rodada atual: '+correct+' de '+completed+' respondidas';
+    const track=document.createElement('div');track.className='leo-dashboard-track';track.setAttribute('role','progressbar');track.setAttribute('aria-label','Acertos na última rodada de '+area.name);track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');
+    const pct=latest?Math.round(latest.correct/latest.total*100):completed?Math.round(correct/completed*100):0;
+    track.setAttribute('aria-valuenow',String(pct));
+    const fill=document.createElement('span');fill.style.width=pct+'%';track.append(fill);
+    const recovery=document.createElement('p');
+    if(area.name==='Matemática'){
+      const r=area.recovered;
+      recovery.textContent=r&&r.total?'Reforço: '+r.mastered+' de '+r.total+' tópico(s) recuperado(s).':'Reforço: ainda sem resultado registrado.';
+    }else{
+      const missed=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
+      const mastered=missed.filter(i=>leoPtRecoveryDone[i]).length;
+      recovery.textContent=missed.length?'Recuperação nesta sessão: '+mastered+' de '+missed.length+' questão(ões) com erro.':'Recuperação: sem erros na rodada atual.';
+    }
+    const button=document.createElement('button');button.type='button';button.textContent='Estudar '+area.name;button.addEventListener('click',()=>leoShowView(area.name==='Matemática'?'practice':'portuguese'));
+    card.append(title,score,detail,track,recovery,button);cards.append(card);
+    const missed=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
+    const pending=area.name==='Matemática'?missed:missed.filter(i=>!leoPtRecoveryDone[i]);
+    if(pending.length&&!recommended)recommended={area:area.name,topic:area.name==='Matemática'?'Porcentagem e resolução de problemas':'Interpretação de texto',view:area.name==='Matemática'?'practice':'portuguese'};
+  });
+  leoDashboard.append(cards);
+  const summary=document.createElement('section');summary.className='leo-dashboard-next';
+  const h=document.createElement('h4');h.textContent='🎯 Próximo estudo recomendado';
+  const p=document.createElement('p');
+  p.textContent=recommended?'Reforce '+recommended.topic+' em '+recommended.area+'. Revise os erros e tente novamente.':'Continue praticando Matemática e Português para identificar os próximos conteúdos de reforço.';
+  const go=document.createElement('button');go.type='button';go.textContent=recommended?'Ir para '+recommended.area:'Começar por Matemática';go.addEventListener('click',()=>leoShowView(recommended?recommended.view:'practice'));
+  summary.append(h,p,go);leoDashboard.append(summary);
+  const note=document.createElement('small');note.textContent='As notas das rodadas e os reforços são indicadores separados. O painel não altera resultados anteriores nem envia dados.';leoDashboard.append(note);
+}
+
 // Menu principal: cada modo ocupa uma tela própria, sem misturar aulas, treino e IA.
 const leoBody=root.querySelector('.leo-body');
 const leoMessage=root.querySelector('.leo-message');
@@ -617,7 +671,9 @@ function leoShowView(view){
   leoBack.hidden=menu;
   leoTalk.hidden=view==='chat';
   leoResume.hidden=view!=='chat';
-  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat',isPortuguese=view==='portuguese';
+  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat',isPortuguese=view==='portuguese',isDashboard=view==='dashboard';
+   if(isDashboard)leoRenderDashboard();
+   leoDashboard.hidden=!isDashboard;
   leoMessage.hidden=true;
   leoRecommendation.hidden=!isLesson;
   leoAreaLabel.hidden=!isLesson;
