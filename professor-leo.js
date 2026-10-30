@@ -824,6 +824,7 @@ function leoRenderDashboard(){
   const heading=document.createElement('h3');heading.textContent='📊 Meu painel de evolução';
   const intro=document.createElement('p');intro.textContent='Acompanhe Matemática, Português e Ciências Humanas no mesmo lugar. Dados demonstrativos guardados somente neste navegador.';
   leoDashboard.append(heading,intro);
+  leoRenderMasteryPanel(leoDashboard);
   const cards=document.createElement('div');cards.className='leo-dashboard-grid';
   const areas=[
     {name:'Matemática',history:leoPracticeHistory,answers:leoPracticeAnswers,questions:leoPracticeQuestions,recovered:leoReadRecoveryProgress()},
@@ -1298,6 +1299,39 @@ try{const saved=JSON.parse(localStorage.getItem(leoMockKey)||'null');if(saved&&A
 function leoMockSave(){try{localStorage.setItem(leoMockKey,JSON.stringify(leoMockState));}catch(_error){}}
 const leoMockBox=document.createElement('section');leoMockBox.className='leo-practice leo-simulado';leoMockBox.setAttribute('aria-label','Simulado inteligente do ENEM');leoDashboard.after(leoMockBox);
 let leoMockRecoveryOpen=null;
+function leoMasteryStage(index){
+ const basic=leoMockRecovery[index];
+ const record=leoMockProgressive[index]&&typeof leoMockProgressive[index]==='object'?leoMockProgressive[index]:{};
+ const stages=[leoMockRecoveryQuestions[index],...leoMockProgressiveQuestions[index]];
+ let done=0;
+ if(basic===stages[0].correct)done=1;
+ if(done===1&&record['1']===stages[1].correct)done=2;
+ if(done===2&&record['2']===stages[2].correct)done=3;
+ return done;
+}
+function leoRenderMasteryPanel(parent){
+ const section=document.createElement('section');section.className='leo-dashboard-next leo-mastery-panel';section.setAttribute('aria-label','Painel de domínio do aluno');
+ const title=document.createElement('h4');title.textContent='🏅 Meu domínio por conteúdo';section.append(title);
+ const intro=document.createElement('p');intro.textContent='Acompanhe a recuperação dos erros do simulado. Cada conteúdo avança por 3 desafios; os resultados originais não mudam.';section.append(intro);
+ if(!leoMockState.finished){const p=document.createElement('p');p.textContent='Conclua o Simulado Inteligente do ENEM para descobrir quais conteúdos precisam de reforço.';section.append(p);const b=document.createElement('button');b.type='button';b.textContent='Ir para o simulado';b.addEventListener('click',()=>leoShowView('simulado'));section.append(b);parent.append(section);return;}
+ const errors=leoMockQuestions.map((q,i)=>({q,i})).filter(({q,i})=>leoMockState.answers[i]!==q.correct);
+ const counts=[0,0,0];
+ const grid=document.createElement('div');grid.className='leo-dashboard-grid';
+ errors.forEach(({q,i})=>{
+  const done=leoMasteryStage(i),bucket=done===3?2:done>0?1:0;counts[bucket]++;
+  const card=document.createElement('article');card.className='leo-dashboard-card';
+  const heading=document.createElement('h4');heading.textContent=q.topic+' · '+q.area;card.append(heading);
+  const status=document.createElement('p');status.textContent=['📖 Em aprendizagem','📈 Em evolução','🏅 Dominado'][bucket]+' · '+done+'/3 desafios';card.append(status);
+  const bar=document.createElement('progress');bar.max=3;bar.value=done;bar.style.width='100%';bar.setAttribute('aria-label','Etapas concluídas em '+q.topic);card.append(bar);
+  if(done<3){const b=document.createElement('button');b.type='button';b.textContent=done?'Continuar desafios':'Começar recuperação';b.addEventListener('click',()=>{leoMockRecoveryOpen=i;leoShowView('simulado');leoMockRender();const target=leoMockBox.querySelector('.leo-dashboard-next');if(target)target.scrollIntoView({block:'start'});});card.append(b);}
+  else{const p=document.createElement('p');p.textContent='Três etapas concluídas. Continue revisando para manter o aprendizado.';card.append(p);}
+  grid.append(card);
+ });
+ const summary=document.createElement('p');summary.textContent='📖 Em aprendizagem: '+counts[0]+' · 📈 Em evolução: '+counts[1]+' · 🏅 Dominados: '+counts[2];section.append(summary);
+ if(errors.length){const priority=errors.find(({i})=>leoMasteryStage(i)<3);if(priority){const p=document.createElement('p');p.textContent='🎯 Próximo conteúdo sugerido: '+priority.q.topic+' ('+priority.q.area+').';section.append(p);}}
+ else{const p=document.createElement('p');p.textContent='🎉 Nenhum erro neste simulado! Continue praticando para ampliar seu domínio.';section.append(p);}
+ section.append(grid);parent.append(section);
+}
 function leoMockRender(){
  leoMockBox.replaceChildren();
  const heading=document.createElement('h3');heading.textContent='📝 Simulado Inteligente do ENEM';leoMockBox.append(heading);
@@ -1320,6 +1354,7 @@ function leoMockRender(){
   const summary=document.createElement('p');summary.textContent=errors.length?'Revise primeiro os conteúdos abaixo. As explicações são comentadas pelo Professor Leo e não alteram sua pontuação.':'Você acertou todas as questões! Continue praticando com outros exercícios.';recommendation.append(summary);
   errors.forEach(({q,i})=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+q.area+' — '+q.topic+': '+q.why;recommendation.append(p);const button=document.createElement('button');button.type='button';button.textContent='📖 Aprender com meu erro · Questão '+(i+1);button.style.margin='4px 8px 8px 0';button.addEventListener('click',()=>{leoMockRecoveryOpen=leoMockRecoveryOpen===i?null:i;leoMockRender();});recommendation.append(button);if(leoMockRecoveryOpen===i)leoMockRecoveryRender(recommendation,i);});
   leoMockBox.append(recommendation);
+  leoRenderMasteryPanel(leoMockBox);
   const review=document.createElement('h4');review.textContent='📖 Gabarito comentado';leoMockBox.append(review);
   leoMockQuestions.forEach((q,i)=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+(leoMockState.answers[i]===q.correct?'✓ Acertou':'✗ Revise')+' — '+q.q+' Resposta: '+q.choices[q.correct]+'. '+q.why;leoMockBox.append(p);});
   const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockRecovery={};leoMockProgressive={};leoMockRecoveryOpen=null;leoMockRecoverySave();leoMockProgressiveSave();leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
