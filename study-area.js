@@ -67,6 +67,7 @@
   dashboard.append(back,title,intro,example,question,answers,result,help);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
  function showMathTopics(dashboard){
+  hideLegacyViews(panel());
   dashboard.replaceChildren();
   const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar às matérias';back.addEventListener('click',()=>showSubjects(dashboard));
   const heading=document.createElement('h2');heading.textContent='∑ Matemática';
@@ -101,7 +102,7 @@
     const p=panel();const option=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Aprender uma matéria'));
     if(!option)return;
     dashboard.hidden=true;selectingLegacySubject=true;try{option.click();}finally{selectingLegacySubject=false;}
-    const select=p.querySelector('#leo-area');if(select){select.value=String(index);select.dispatchEvent(new Event('change',{bubbles:true}));}
+    const select=p.querySelector('#leo-area');if(select){const target=subject.name==='Ciências Humanas'?'Humanas':subject.name==='Ciências da Natureza'?'Natureza':subject.name;const match=[...select.options].find(o=>o.textContent.toLocaleLowerCase('pt-BR').includes(target.toLocaleLowerCase('pt-BR')));if(match){select.value=match.value;select.dispatchEvent(new Event('change',{bubbles:true}));}}
    });grid.append(button);
   });dashboard.append(back,heading,intro,grid);dashboard.hidden=false;
  }
