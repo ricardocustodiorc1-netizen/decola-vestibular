@@ -181,3 +181,9 @@
 @media (max-width:700px){
   .leo-practice .leo-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+.leo-recovery{margin:12px 0;padding:12px;border:1px solid #b9cafa;border-radius:10px;background:#f0f5ff}
+.leo-recovery button{min-height:40px;padding:8px 12px;border:1px solid #b9cafa;border-radius:8px;background:#fff;color:#1744c3;font-weight:700;cursor:pointer}
+.leo-recovery .leo-recovery-start{width:100%;background:#1744c3;color:#fff}
+.leo-recovery h4{margin:8px 0}
+.leo-recovery [hidden]{display:none!important}
