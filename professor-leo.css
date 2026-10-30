@@ -99,3 +99,10 @@
 .leo-top .leo-back:hover,.leo-top .leo-back:focus-visible{background:rgba(255,255,255,.28)}
 .leo-top>div{min-width:0}
 @media(max-width:440px){.leo-top .leo-back{font-size:11px;padding:6px 7px;margin-left:4px;margin-right:4px}}
+
+/* Acesso direto à conversa no cabeçalho do Professor Leo */
+.leo-top .leo-talk{border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.14);color:white;border-radius:8px;padding:7px 10px;min-height:34px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;margin-right:8px}
+.leo-top .leo-talk:hover,.leo-top .leo-talk:focus-visible{background:rgba(255,255,255,.28)}
+.leo-top .leo-talk[hidden]{display:none!important}
+@media(max-width:600px){.leo-top .leo-talk{font-size:11px;padding:6px;margin-right:4px}.leo-top .leo-back{font-size:11px;padding:6px}.leo-top>div small{font-size:9px}}
+@media(max-width:380px){.leo-top .leo-talk{font-size:0}.leo-top .leo-talk::after{content:'💬';font-size:15px}}
