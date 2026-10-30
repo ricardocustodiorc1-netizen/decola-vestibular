@@ -107,14 +107,14 @@ if(leoPracticeAnswers.every(x=>x!==null)){
 }
 let leoPracticeIndex=leoPracticeAnswers.findIndex(x=>x===null);
 if(leoPracticeIndex<0)leoPracticeIndex=0;
-const leoPractice=document.createElement('section');
-leoPractice.className='leo-practice';
-leoPractice.setAttribute('aria-label','Treino de Matemática');
-lessonBox.after(leoPractice);
+const leoAdaptivePractice=document.createElement('section');
+leoAdaptivePractice.className='leo-practice';
+leoAdaptivePractice.setAttribute('aria-label','Treino de Matemática');
+lessonBox.after(leoAdaptivePractice);
 function renderLeoPractice(){
-  leoPractice.replaceChildren();
-  if(selector.value!=='0'){leoPractice.hidden=true;return;}
-  leoPractice.hidden=false;
+  leoAdaptivePractice.replaceChildren();
+  if(selector.value!=='0'){leoAdaptivePractice.hidden=true;return;}
+  leoAdaptivePractice.hidden=false;
   const heading=document.createElement('h3');heading.textContent='🧮 Treino de Matemática';
   const count=leoPracticeAnswers.filter(x=>x!==null).length;
   const correct=leoPracticeAnswers.filter(x=>x===true).length;
@@ -154,7 +154,7 @@ function renderLeoPractice(){
   next.addEventListener('click',()=>{
     leoPracticeIndex=(leoPracticeIndex+1)%leoPracticeQuestions.length;
     renderLeoPractice();
-    leoPractice.querySelector('.leo-question')?.scrollIntoView({block:'nearest',behavior:'smooth'});
+    leoAdaptivePractice.querySelector('.leo-question')?.scrollIntoView({block:'nearest',behavior:'smooth'});
   });
   const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
   restart.addEventListener('click',()=>{
@@ -171,7 +171,7 @@ function renderLeoPractice(){
     practiceMore.type='button';
     practiceMore.textContent='📘 Quero praticar mais';
     practiceMore.addEventListener('click',()=>{
-      const box=leoPractice.querySelector('.leo-reinforcement');
+      const box=leoAdaptivePractice.querySelector('.leo-reinforcement');
       if(box){
         box.hidden=false;
         practiceMore.disabled=true;
@@ -281,9 +281,9 @@ function renderLeoPractice(){
   history.textContent='Histórico geral: '+leoPracticeHistory.length+' rodada(s) concluída(s), '+totalCorrect+' acerto(s) em '+totalAttempts+' respostas. Salvo somente neste navegador.';
   report.append(history);
   const note=document.createElement('small');note.textContent='Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.';
-  leoPractice.append(heading,progress,question,choices,feedback,controls);
-  if(reinforcementBox)leoPractice.append(reinforcementBox);
-  leoPractice.append(report,note);
+  leoAdaptivePractice.append(heading,progress,question,choices,feedback,controls);
+  if(reinforcementBox)leoAdaptivePractice.append(reinforcementBox);
+  leoAdaptivePractice.append(report,note);
 }
 renderLeoPractice();
 // Menu principal: cada modo ocupa uma tela própria, sem misturar aulas, treino e IA.
@@ -345,7 +345,7 @@ function leoShowView(view){
   leoAreaLabel.hidden=!isLesson;
   selector.hidden=!isLesson;
   lessonBox.hidden=!isLesson;
-  leoPractice.hidden=!isPractice;
+  leoAdaptivePractice.hidden=!isPractice;
   leoChat.hidden=!isChat;
   if(isPractice && previousView!=='chat'){
     selector.value='0';
@@ -426,12 +426,12 @@ function leoCleanMath(text){
     .replace(/\\\\/g,'');
 }
 // Acompanhamento demonstrativo local, sem identificação pessoal.
-const leoPracticeKey='decola-leo-practice-v1';
-let leoPractice={attempts:0,correct:0,streak:0,level:1};
+const leoAdaptivePracticeKey='decola-leo-practice-v1';
+let leoAdaptivePractice={attempts:0,correct:0,streak:0,level:1};
 try{
-  const saved=JSON.parse(localStorage.getItem(leoPracticeKey)||'null');
+  const saved=JSON.parse(localStorage.getItem(leoAdaptivePracticeKey)||'null');
   if(saved&&Number.isFinite(saved.attempts)&&Number.isFinite(saved.correct)&&Number.isFinite(saved.level)){
-    leoPractice={attempts:Math.max(0,saved.attempts),correct:Math.max(0,saved.correct),streak:Math.max(0,saved.streak||0),level:Math.max(1,Math.min(3,saved.level))};
+    leoAdaptivePractice={attempts:Math.max(0,saved.attempts),correct:Math.max(0,saved.correct),streak:Math.max(0,saved.streak||0),level:Math.max(1,Math.min(3,saved.level))};
   }
 }catch(_error){}
 let leoChallengeCount=0;
@@ -485,10 +485,10 @@ function leoLearningChallenge(question,answer){
     leoPractice.attempts++;
     if(isCorrect){leoPractice.correct++;leoPractice.streak++;if(leoPractice.streak>=2&&leoPractice.level<3){leoPractice.level++;leoPractice.streak=0;}}
     else{leoPractice.streak=0;if(leoPractice.level>1)leoPractice.level--;}
-    try{localStorage.setItem(leoPracticeKey,JSON.stringify(leoPractice));}catch(_error){}
+    try{localStorage.setItem(leoPracticeKey,JSON.stringify(leoAdaptivePractice));}catch(_error){}
     feedback.className=isCorrect?'leo-feedback-correct':'leo-feedback-wrong';
-    feedback.textContent=isCorrect?'✓ Você acertou! '+example.rate+'% de '+example.total+' = '+correct+'. '+(leoPractice.level>level?'Você avançou para o nível '+leoPractice.level+'!':'Vamos praticar mais uma?'):'✗ Vamos aprender com essa tentativa. '+example.rate+'% significa '+example.rate+' ÷ 100. Então '+example.total+' × '+example.rate+' ÷ 100 = '+correct+'. O próximo desafio será de reforço.';
-    progress.textContent='Seu acompanhamento: '+leoPractice.correct+' acerto(s) em '+leoPractice.attempts+' tentativa(s). Nível atual: '+leoPractice.level+'.';
+    feedback.textContent=isCorrect?'✓ Você acertou! '+example.rate+'% de '+example.total+' = '+correct+'. '+(leoAdaptivePractice.level>level?'Você avançou para o nível '+leoAdaptivePractice.level+'!':'Vamos praticar mais uma?'):'✗ Vamos aprender com essa tentativa. '+example.rate+'% significa '+example.rate+' ÷ 100. Então '+example.total+' × '+example.rate+' ÷ 100 = '+correct+'. O próximo desafio será de reforço.';
+    progress.textContent='Seu acompanhamento: '+leoAdaptivePractice.correct+' acerto(s) em '+leoAdaptivePractice.attempts+' tentativa(s). Nível atual: '+leoAdaptivePractice.level+'.';
     button.disabled=true;input.disabled=true;actions.hidden=false;help.hidden=isCorrect;
     actions.scrollIntoView({block:'nearest',behavior:'smooth'});
   });
