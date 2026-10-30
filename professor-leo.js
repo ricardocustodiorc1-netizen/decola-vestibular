@@ -798,6 +798,53 @@ function leoRenderDashboard(){
   go.textContent=pendingTopic?'Revisar '+pendingTopic.name:recommended?'Ir para '+recommended.area:mathAllRecovered?'Avançar em Matemática':'Começar por Matemática';
   go.addEventListener('click',()=>pendingTopic?leoOpenTopic(pendingTopic.view,pendingTopic.index):leoShowView(recommended?recommended.view:'practice'));
   summary.append(h,p,go);leoDashboard.append(summary);
+  // Missão diária opcional, independente das notas e da conclusão oficial do plano.
+  const mission=document.createElement('section');
+  mission.className='leo-dashboard-next';
+  mission.setAttribute('aria-label','Minha missão do dia');
+  const missionTitle=document.createElement('h4');
+  missionTitle.textContent='🚀 Minha missão do dia';
+  mission.append(missionTitle);
+  const missionDate=new Date();
+  const localDate=[missionDate.getFullYear(),String(missionDate.getMonth()+1).padStart(2,'0'),String(missionDate.getDate()).padStart(2,'0')].join('-');
+  const missionKey='decola-vestibular:leo:daily-mission:v1';
+  const missionTarget=adaptiveTarget;
+  const missionId=missionTarget?(missionTarget.view+':'+(missionTarget.name||missionTarget.topic||missionTarget.index)):'practice:explorar';
+  let missionCompleted=false;
+  try{
+    const record=JSON.parse(localStorage.getItem(missionKey)||'null');
+    missionCompleted=!!(record&&record.date===localDate&&record.id===missionId&&record.completed===true);
+  }catch(_error){}
+  const missionText=document.createElement('p');
+  missionText.textContent=missionTarget?'Missão: revisar '+(missionTarget.name||missionTarget.topic)+' em '+missionTarget.area+'. Reserve 15 minutos para estudar e resolver uma questão.':'Missão: pratique Matemática por 15 minutos e identifique um conteúdo para reforçar.';
+  mission.append(missionText);
+  const missionStatus=document.createElement('p');
+  missionStatus.setAttribute('aria-live','polite');
+  missionStatus.textContent=missionCompleted?'✅ Missão marcada como concluída hoje. Parabéns!':'⏳ Missão de hoje ainda não concluída.';
+  mission.append(missionStatus);
+  const missionActions=document.createElement('div');
+  missionActions.className='leo-dashboard-actions';
+  const missionStart=document.createElement('button');
+  missionStart.type='button';
+  missionStart.textContent='Começar missão';
+  missionStart.addEventListener('click',()=>missionTarget?(missionTarget.index!==undefined?leoOpenTopic(missionTarget.view,missionTarget.index):leoShowView(missionTarget.view)):leoShowView('practice'));
+  missionActions.append(missionStart);
+  const missionFinish=document.createElement('button');
+  missionFinish.type='button';
+  missionFinish.textContent=missionCompleted?'Desmarcar conclusão':'Marcar como concluída';
+  missionFinish.addEventListener('click',()=>{
+    missionCompleted=!missionCompleted;
+    try{localStorage.setItem(missionKey,JSON.stringify({date:localDate,id:missionId,completed:missionCompleted}));}catch(_error){}
+    missionStatus.textContent=missionCompleted?'✅ Missão marcada como concluída hoje. Parabéns!':'⏳ Missão de hoje ainda não concluída.';
+    missionFinish.textContent=missionCompleted?'Desmarcar conclusão':'Marcar como concluída';
+  });
+  missionActions.append(missionFinish);
+  mission.append(missionActions);
+  const missionNote=document.createElement('p');
+  missionNote.textContent='A conclusão é informada pelo aluno e salva apenas neste navegador. Não altera notas nem marca dias do plano semanal como concluídos.';
+  missionNote.style.fontSize='12px';
+  mission.append(missionNote);
+  leoDashboard.append(mission);
   // Integração somente de leitura com o plano semanal gerado pelo Decola.
   const weekly=document.createElement('section');weekly.className='leo-dashboard-next';
   const weeklyTitle=document.createElement('h4');weeklyTitle.textContent='📅 Meu plano semanal de estudos';
