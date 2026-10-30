@@ -101,7 +101,7 @@
     if(index===0){showMathTopics(dashboard);return;}
     const p=panel();const option=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Aprender uma matéria'));
     if(!option)return;
-    dashboard.hidden=true;selectingLegacySubject=true;try{option.click();}finally{selectingLegacySubject=false;}
+    dashboard.hidden=true;selectingLegacySubject=true;const widget=p.closest('.leo-widget');if(widget)widget.dataset.decolaLegacyLesson='true';try{option.click();}finally{selectingLegacySubject=false;if(widget)delete widget.dataset.decolaLegacyLesson;}
     const select=p.querySelector('#leo-area');if(select){const target=subject.name==='Ciências Humanas'?'Humanas':subject.name==='Ciências da Natureza'?'Natureza':subject.name;const match=[...select.options].find(o=>o.textContent.toLocaleLowerCase('pt-BR').includes(target.toLocaleLowerCase('pt-BR')));if(match){select.value=match.value;select.dispatchEvent(new Event('change',{bubbles:true}));}}
    });grid.append(button);
   });dashboard.append(back,heading,intro,grid);dashboard.hidden=false;
@@ -141,17 +141,11 @@
   if(launch){launch.textContent='🎓 Abrir área de estudos';launch.setAttribute('aria-label','Abrir painel de estudos');launch.addEventListener('click',()=>{if(!panel()?.hidden)showDashboard();});}
   const p=panel();
   if(p){
-   // A entrada "Aprender uma matéria" abre a escolha visual de áreas,
-   // preservando o módulo antigo apenas para aulas de outras disciplinas.
-   p.addEventListener('click',event=>{
-    const option=event.target.closest?.('.leo-menu-option');
-    if(!option||selectingLegacySubject||!option.textContent.includes('Aprender uma matéria'))return;
-    event.preventDefault();event.stopImmediatePropagation();
-    let dashboard=p.querySelector('.study-dashboard');
-    if(!dashboard){showDashboard();dashboard=p.querySelector('.study-dashboard');}
-    if(dashboard)showSubjects(dashboard);
-    p.querySelector('.leo-body')?.scrollTo(0,0);
-   },true);
+   p.closest('.leo-widget')?.addEventListener('decola:choose-subject',()=>{
+    let d=p.querySelector('.study-dashboard');
+    if(!d){showDashboard();d=p.querySelector('.study-dashboard');}
+    if(d)showSubjects(d);
+   });
    const legacyArea=p.querySelector('#leo-area');
    if(legacyArea)legacyArea.addEventListener('change',()=>{
     if(selectingLegacySubject)return;
