@@ -875,9 +875,9 @@ function leoRenderDashboard(){
   const performanceGrid=document.createElement('div');
   performanceGrid.className='leo-performance-grid';
   [
-    {name:'Matemática',history:leoPracticeHistory},
-    {name:'Português',history:leoPtHistory},
-    {name:'Ciências Humanas',history:leoHuHistory}
+    {name:'Matemática',history:leoPracticeHistory,view:'practice',answers:leoPracticeAnswers},
+    {name:'Português',history:leoPtHistory,view:'portuguese',answers:leoPtAnswers},
+    {name:'Ciências Humanas',history:leoHuHistory,view:'humanas',answers:leoHuAnswers}
   ].forEach(area=>{
     const card=document.createElement('div');
     card.className='leo-performance-card';
@@ -920,8 +920,34 @@ function leoRenderDashboard(){
       });
       card.append(graph);
       const trend=document.createElement('p');
-      trend.textContent=entries.length<2?'Primeira rodada registrada. Continue praticando para acompanhar a evolução.':last>first?'📈 Evolução positiva desde a primeira rodada exibida.':last<first?'📚 A última rodada ficou abaixo da primeira. Revise os conteúdos com calma.':'📊 Resultado estável entre a primeira e a última rodada exibidas.';
+      const previous=entries.length>1?Math.round(entries[entries.length-2].correct/entries[entries.length-2].total*100):null;
+      const recent=entries.slice(-3);
+      const recentAverage=Math.round(recent.reduce((sum,item)=>sum+item.correct/item.total*100,0)/recent.length);
+      let status='Em acompanhamento';
+      if(previous===null){
+        trend.textContent='📊 Primeira rodada registrada. Faça outra para medir sua evolução.';
+      }else{
+        const change=last-previous;
+        status=change>0?'Melhorando':change<0?'Precisa de reforço':'Estável';
+        trend.textContent=(change>0?'📈 ':change<0?'📚 ':'📊 ')+status+': '+(change>0?'+':'')+change+' pontos percentuais em relação à rodada anterior ('+previous+'% → '+last+'%).';
+      }
       card.append(trend);
+      const guidance=document.createElement('p');
+      if(last<70){
+        guidance.textContent='🎯 Próximo passo: revisar os erros e fazer uma nova rodada. Média das últimas '+recent.length+' rodada(s): '+recentAverage+'%.';
+      }else if(previous!==null&&last<previous){
+        guidance.textContent='🎯 Você está acima de 70%, mas caiu na última rodada. Revise os erros antes de avançar.';
+      }else{
+        guidance.textContent='🎯 Próximo passo: praticar para consolidar o desempenho'+(last>=70?' acima da referência de 70%':'')+'.';
+      }
+      card.append(guidance);
+      const action=document.createElement('button');
+      action.type='button';
+      action.className='leo-performance-action';
+      const wrongIndex=area.answers.findIndex(answer=>answer===false);
+      action.textContent=wrongIndex>=0?'Revisar questão com erro':'Praticar '+area.name;
+      action.addEventListener('click',()=>wrongIndex>=0?leoOpenTopic(area.view,wrongIndex):leoShowView(area.view));
+      card.append(action);
     }
     performanceGrid.append(card);
   });
