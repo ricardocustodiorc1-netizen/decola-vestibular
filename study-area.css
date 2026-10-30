@@ -86,3 +86,8 @@ body.leo-study-open{overflow:hidden}
 /* Elementos ocultos não podem ser reexibidos por regras display:grid/flex. */
 .leo-widget .leo-panel [hidden]{display:none!important}
 .leo-widget .leo-panel .study-dashboard:not([hidden]){display:block;position:relative;z-index:1}
+
+.leo-widget .study-top-back{margin-left:auto;margin-right:12px;background:rgba(255,255,255,.13);color:white;border:1px solid rgba(255,255,255,.55);border-radius:9px;padding:11px 15px;font-weight:700;cursor:pointer}
+.leo-widget .study-top-back:hover{background:rgba(255,255,255,.25)}
+.leo-widget .study-top-back[hidden]{display:none!important}
+@media(max-width:650px){.leo-widget .study-top-back{font-size:12px;padding:8px;margin-right:6px}}
