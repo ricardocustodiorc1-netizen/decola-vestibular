@@ -131,6 +131,13 @@
   dashboard.hidden=false;
   p.querySelector('.leo-body')?.scrollTo({top:0,behavior:'instant'});
  }
+ // Delegação no documento: funciona mesmo se o Professor Leo for criado depois deste script.
+ document.addEventListener('decola:choose-subject',()=>{
+  const p=openPanel();if(!p)return;
+  let d=p.querySelector('.study-dashboard');
+  if(!d){showDashboard();d=p.querySelector('.study-dashboard');}
+  if(d)showSubjects(d);
+ });
  function attach(){
   const nav=document.querySelector('.header nav');
   if(nav&&!nav.querySelector('[data-open-studies]')){
@@ -141,11 +148,7 @@
   if(launch){launch.textContent='🎓 Abrir área de estudos';launch.setAttribute('aria-label','Abrir painel de estudos');launch.addEventListener('click',()=>{if(!panel()?.hidden)showDashboard();});}
   const p=panel();
   if(p){
-   p.closest('.leo-widget')?.addEventListener('decola:choose-subject',()=>{
-    let d=p.querySelector('.study-dashboard');
-    if(!d){showDashboard();d=p.querySelector('.study-dashboard');}
-    if(d)showSubjects(d);
-   });
+
    const legacyArea=p.querySelector('#leo-area');
    if(legacyArea)legacyArea.addEventListener('change',()=>{
     if(selectingLegacySubject)return;
