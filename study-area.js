@@ -34,6 +34,7 @@
  ];
  function showMathLesson(dashboard,topic){
   if(topic.title==='Frações')return showFractionsSmartLesson(dashboard,topic);
+  if(topic.title==='Equações')return showEquationsSmartLesson(dashboard,topic);
   if(topic.title!=='Porcentagem')return showBasicMathLesson(dashboard,topic);
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
@@ -227,6 +228,104 @@
    if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
    const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Frações. Aprendi que 3/4 de 20 é 15. Pode me ajudar a compreender frações passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
    const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showFractionsSmartLesson(dashboard,topic);}
+  });help.append(helpBtn);
+  const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
+  const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
+  steps.append(lesson,practice,report,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+ }
+ function showEquationsSmartLesson(dashboard,topic){
+  hideLegacyViews(panel());dashboard.replaceChildren();
+  const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const title=make('h2','','📘 Equações — Aula Inteligente 1.3');
+  const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
+  const steps=make('div','study-smart-steps');
+  const lesson=make('section','study-smart-card');
+  lesson.append(make('h3','','1. Aprender: como resolver equações?'),make('p','','Uma equação é uma igualdade com um valor desconhecido, chamado incógnita (x). Para descobrir x, faça a mesma operação nos dois lados da igualdade. Exemplo: x + 7 = 12. Subtraindo 7 dos dois lados, x = 5.'));
+  const example=make('div','study-topic-example','Exemplo do cotidiano: você comprou 3 cadernos iguais e pagou R$ 24. Se cada caderno custa x, então 3x = 24 e x = R$ 8.');
+  lesson.append(example,make('p','','Dica: primeiro desfaça somas e subtrações; depois, multiplicações e divisões. Confira substituindo o valor de x na equação original.'));
+  const practice=make('section','study-smart-card');practice.append(make('h3','','2. Praticar: resolva as questões'));
+  const questions=[
+   {q:'Se x + 7 = 12, quanto vale x?',opts:['4','5','19'],answer:1,why:'Subtraia 7 dos dois lados: x = 12 − 7 = 5. Conferindo: 5 + 7 = 12.'},
+   {q:'Se 3x = 24, quanto vale x?',opts:['6','8','21'],answer:1,why:'Divida os dois lados por 3: x = 24 ÷ 3 = 8. Conferindo: 3 × 8 = 24.'},
+   {q:'Se 2x + 6 = 20, quanto vale x?',opts:['5','7','13'],answer:1,why:'Subtraia 6: 2x = 14. Divida por 2: x = 7. Conferindo: 2 × 7 + 6 = 20.'}
+  ];
+  const key='decola-smart-equations-v1';let progress={};
+  try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){progress={};}
+  const save=()=>{try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}};
+  const score=make('p','study-smart-score');score.setAttribute('aria-live','polite');
+  const updateScore=()=>{const done=questions.filter((q,i)=>progress[i]?.done).length;const correct=questions.filter((q,i)=>progress[i]?.done&&progress[i]?.choice===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões concluídas • '+correct+' acerto(s). Salvo neste navegador.';};
+  practice.append(score);
+  const hints=[
+   ['Para deixar x sozinho, subtraia 7 dos dois lados.','Calcule 12 − 7 e confira a igualdade.'],
+   ['3x significa 3 vezes x. Divida os dois lados por 3.','Calcule 24 ÷ 3 e substitua em 3x = 24.'],
+   ['Primeiro subtraia 6 dos dois lados: 2x = 14.','Depois divida 14 por 2 e confira em 2x + 6 = 20.']
+  ];
+  questions.forEach((q,i)=>{
+   const card=make('div','study-smart-question');card.append(make('strong','',('Questão '+(i+1)+' de '+questions.length+': ')+q.q));
+   const options=make('div','study-topic-answers');
+   const feedback=make('div','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+   const retry=make('button','study-smart-retry','Tentar novamente');retry.type='button';
+   const buttons=q.opts.map((opt,j)=>{const btn=make('button','',opt);btn.type='button';btn.addEventListener('click',()=>{
+    const previous=progress[i];if(previous?.done||(previous?.attempts===1&&previous?.choice!==null&&previous?.choice!==undefined))return;
+    const attempts=(previous?.attempts||0)+1;
+    progress[i]={choice:j,attempts,done:j===q.answer||attempts>=2};
+    save();render();updateScore();updateReport();
+   });options.append(btn);return btn;});
+   retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();buttons[0]?.focus();});
+   const render=()=>{
+    const p=progress[i];const selected=Number.isInteger(p?.choice);const right=selected&&p.choice===q.answer;
+    buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',selected&&p.choice===j);btn.setAttribute('aria-pressed',String(selected&&p.choice===j));btn.disabled=!!p?.done||(p?.attempts===1&&selected&&!p?.done);});
+    feedback.replaceChildren();retry.hidden=true;
+    if(!selected)return;
+    if(right){feedback.classList.add('study-smart-correct');feedback.classList.remove('study-smart-wrong');feedback.append(make('strong','','✅ Muito bem! Resposta correta.'),make('p','',q.why));}
+    else if(!p.done){feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','🔎 Ainda não. Você tem mais uma tentativa!'),make('p','',hints[i][0]));retry.hidden=false;}
+    else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Dica: '+hints[i][1]),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
+   };
+   card.append(options,feedback,retry);practice.append(card);render();
+  });save();updateScore();
+  // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.
+  const report=make('section','study-smart-card study-smart-report');
+  report.setAttribute('aria-live','polite');
+  function updateReport(){
+   const completed=questions.every((q,i)=>progress[i]?.done);
+   report.replaceChildren();report.hidden=!completed;
+   if(!completed)return;
+   const firstTry=questions.filter((q,i)=>progress[i]?.choice===q.answer&&progress[i]?.attempts===1).length;
+   const eventual=questions.filter((q,i)=>progress[i]?.choice===q.answer).length;
+   const reinforced=questions.map((q,i)=>({q,i,p:progress[i]})).filter(x=>x.p?.attempts>1||x.p?.choice!==x.q.answer);
+   report.append(make('h3','','🎓 Aula concluída! Seu relatório com o Professor Leo'));
+   report.append(make('p','study-smart-report-stats',
+    'Questões concluídas: 3 de 3 • Acertos finais: '+eventual+' de 3 • Acertos na primeira tentativa: '+firstTry+' de 3 • Questões que exigiram reforço: '+reinforced.length+'.'));
+   report.append(make('p','','Parabéns por concluir a prática! Acertar depois de uma dica também é aprender. Vamos revisar os pontos que exigiram mais atenção.'));
+   const guidance=make('div','study-smart-guidance');
+   guidance.append(make('h4','','Seu reforço personalizado'));
+   if(!reinforced.length)guidance.append(make('p','','Você acertou tudo na primeira tentativa. Continue praticando para consolidar equações.'));
+   reinforced.forEach(({i})=>{
+    const messages=[
+     'Isolando x: subtraia 7 dos dois lados de x + 7 = 12.',
+     'Quando há 3x, divida os dois lados por 3 para encontrar x.',
+     'Em 2x + 6 = 20, primeiro subtraia 6 e depois divida por 2.'
+    ];
+    guidance.append(make('p','','Questão '+(i+1)+': '+messages[i]));
+   });
+   report.append(guidance);
+   const actions=make('div','study-smart-report-actions');
+   const review=make('button','study-dashboard-all','🔁 Revisar esta aula');review.type='button';
+   review.addEventListener('click',()=>{lesson.scrollIntoView({behavior:'smooth',block:'start'});});
+   const next=make('button','study-dashboard-all','➡️ Próxima aula: Geometria');next.type='button';
+   next.addEventListener('click',()=>showMathLesson(dashboard,mathTopics[3]));
+   actions.append(review,next);report.append(actions);
+  }
+  updateReport();
+  const help=make('section','study-smart-card');help.append(make('h3','','3. Precisa de ajuda?'));
+  const helpText=make('p','','O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.');help.append(helpText);
+  const helpBtn=make('button','study-dashboard-all','🎓 Pedir ajuda ao Professor Leo');helpBtn.type='button';helpBtn.addEventListener('click',()=>{
+   const p=panel();if(!p)return;dashboard.hidden=true;
+   const chatOption=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Conversar com o Professor Leo'));
+   if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
+   const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Equações. Aprendi que x + 7 = 12 tem solução x = 5. Pode me ajudar a resolver equações passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
+   const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showEquationsSmartLesson(dashboard,topic);}
   });help.append(helpBtn);
   const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
   const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
