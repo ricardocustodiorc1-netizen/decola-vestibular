@@ -107,14 +107,14 @@ if(leoPracticeAnswers.every(x=>x!==null)){
 }
 let leoPracticeIndex=leoPracticeAnswers.findIndex(x=>x===null);
 if(leoPracticeIndex<0)leoPracticeIndex=0;
-const leoAdaptivePractice=document.createElement('section');
-leoAdaptivePractice.className='leo-practice';
-leoAdaptivePractice.setAttribute('aria-label','Treino de Matemática');
-lessonBox.after(leoAdaptivePractice);
+const leoPractice=document.createElement('section');
+leoPractice.className='leo-practice';
+leoPractice.setAttribute('aria-label','Treino de Matemática');
+lessonBox.after(leoPractice);
 function renderLeoPractice(){
-  leoAdaptivePractice.replaceChildren();
-  if(selector.value!=='0'){leoAdaptivePractice.hidden=true;return;}
-  leoAdaptivePractice.hidden=false;
+  leoPractice.replaceChildren();
+  if(selector.value!=='0'){leoPractice.hidden=true;return;}
+  leoPractice.hidden=false;
   const heading=document.createElement('h3');heading.textContent='🧮 Treino de Matemática';
   const count=leoPracticeAnswers.filter(x=>x!==null).length;
   const correct=leoPracticeAnswers.filter(x=>x===true).length;
@@ -154,7 +154,7 @@ function renderLeoPractice(){
   next.addEventListener('click',()=>{
     leoPracticeIndex=(leoPracticeIndex+1)%leoPracticeQuestions.length;
     renderLeoPractice();
-    leoAdaptivePractice.querySelector('.leo-question')?.scrollIntoView({block:'nearest',behavior:'smooth'});
+    leoPractice.querySelector('.leo-question')?.scrollIntoView({block:'nearest',behavior:'smooth'});
   });
   const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
   restart.addEventListener('click',()=>{
@@ -171,7 +171,7 @@ function renderLeoPractice(){
     practiceMore.type='button';
     practiceMore.textContent='📘 Quero praticar mais';
     practiceMore.addEventListener('click',()=>{
-      const box=leoAdaptivePractice.querySelector('.leo-reinforcement');
+      const box=leoPractice.querySelector('.leo-reinforcement');
       if(box){
         box.hidden=false;
         practiceMore.disabled=true;
@@ -281,9 +281,9 @@ function renderLeoPractice(){
   history.textContent='Histórico geral: '+leoPracticeHistory.length+' rodada(s) concluída(s), '+totalCorrect+' acerto(s) em '+totalAttempts+' respostas. Salvo somente neste navegador.';
   report.append(history);
   const note=document.createElement('small');note.textContent='Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.';
-  leoAdaptivePractice.append(heading,progress,question,choices,feedback,controls);
-  if(reinforcementBox)leoAdaptivePractice.append(reinforcementBox);
-  leoAdaptivePractice.append(report,note);
+  leoPractice.append(heading,progress,question,choices,feedback,controls);
+  if(reinforcementBox)leoPractice.append(reinforcementBox);
+  leoPractice.append(report,note);
 }
 renderLeoPractice();
 // Menu principal: cada modo ocupa uma tela própria, sem misturar aulas, treino e IA.
@@ -345,7 +345,7 @@ function leoShowView(view){
   leoAreaLabel.hidden=!isLesson;
   selector.hidden=!isLesson;
   lessonBox.hidden=!isLesson;
-  leoAdaptivePractice.hidden=!isPractice;
+  leoPractice.hidden=!isPractice;
   leoChat.hidden=!isChat;
   if(isPractice && previousView!=='chat'){
     selector.value='0';
@@ -442,7 +442,7 @@ function leoLearningChallenge(question,answer){
     [{rate:15,total:200},{rate:30,total:240},{rate:12,total:250},{rate:35,total:180}],
     [{rate:18,total:350},{rate:12,total:475},{rate:7,total:860},{rate:22,total:650}]
   ];
-  const level=leoPractice.level;
+  const level=leoAdaptivePractice.level;
   const options=sets[level-1];
   const example=options[leoChallengeCount++%options.length];
   const correct=example.rate*example.total/100;
@@ -450,7 +450,7 @@ function leoLearningChallenge(question,answer){
   box.className='leo-bubble leo-bubble-teacher leo-learning-check';
   const heading=document.createElement('strong');heading.textContent='🎯 Agora é sua vez! · Nível '+level;
   const progress=document.createElement('p');
-  progress.textContent='Seu acompanhamento: '+leoPractice.correct+' acerto(s) em '+leoPractice.attempts+' tentativa(s).';
+  progress.textContent='Seu acompanhamento: '+leoAdaptivePractice.correct+' acerto(s) em '+leoAdaptivePractice.attempts+' tentativa(s).';
   const task=document.createElement('p');task.textContent='Quanto é '+example.rate+'% de '+example.total+'? Tente antes de ver a resposta.';
   const form=document.createElement('div');form.className='leo-check-form';
   const input=document.createElement('input');input.type='number';input.step='any';input.inputMode='decimal';input.placeholder='Digite sua resposta';input.setAttribute('aria-label','Resposta do exercício de fixação');
@@ -482,10 +482,10 @@ function leoLearningChallenge(question,answer){
   button.addEventListener('click',()=>{
     if(!input.value.trim()||!Number.isFinite(Number(input.value.replace(',','.')))){feedback.textContent='Digite um número válido para conferir.';return;}
     const isCorrect=Math.abs(Number(input.value.replace(',','.'))-correct)<0.001;
-    leoPractice.attempts++;
-    if(isCorrect){leoPractice.correct++;leoPractice.streak++;if(leoPractice.streak>=2&&leoPractice.level<3){leoPractice.level++;leoPractice.streak=0;}}
-    else{leoPractice.streak=0;if(leoPractice.level>1)leoPractice.level--;}
-    try{localStorage.setItem(leoPracticeKey,JSON.stringify(leoAdaptivePractice));}catch(_error){}
+    leoAdaptivePractice.attempts++;
+    if(isCorrect){leoAdaptivePractice.correct++;leoAdaptivePractice.streak++;if(leoAdaptivePractice.streak>=2&&leoAdaptivePractice.level<3){leoAdaptivePractice.level++;leoAdaptivePractice.streak=0;}}
+    else{leoAdaptivePractice.streak=0;if(leoAdaptivePractice.level>1)leoAdaptivePractice.level--;}
+    try{localStorage.setItem(leoAdaptivePracticeKey,JSON.stringify(leoAdaptivePractice));}catch(_error){}
     feedback.className=isCorrect?'leo-feedback-correct':'leo-feedback-wrong';
     feedback.textContent=isCorrect?'✓ Você acertou! '+example.rate+'% de '+example.total+' = '+correct+'. '+(leoAdaptivePractice.level>level?'Você avançou para o nível '+leoAdaptivePractice.level+'!':'Vamos praticar mais uma?'):'✗ Vamos aprender com essa tentativa. '+example.rate+'% significa '+example.rate+' ÷ 100. Então '+example.total+' × '+example.rate+' ÷ 100 = '+correct+'. O próximo desafio será de reforço.';
     progress.textContent='Seu acompanhamento: '+leoAdaptivePractice.correct+' acerto(s) em '+leoAdaptivePractice.attempts+' tentativa(s). Nível atual: '+leoAdaptivePractice.level+'.';
