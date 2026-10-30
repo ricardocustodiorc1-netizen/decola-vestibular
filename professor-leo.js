@@ -187,6 +187,7 @@ function renderLeoPractice(){
       const input=root.querySelector('#leo-question-input');
       input.value='Errei esta questão: '+item.question+' Pode explicar passo a passo, com uma dica para eu aprender?';
       root.querySelector('.leo-ai-status').textContent='Sua dúvida está pronta. Clique em Enviar pergunta para conversar com a IA.';
+      leoShowView('chat');
       input.scrollIntoView({block:'center',behavior:'smooth'});
       input.focus({preventScroll:true});
     });
@@ -285,8 +286,57 @@ function renderLeoPractice(){
   leoPractice.append(report,note);
 }
 renderLeoPractice();
+// Menu principal: cada modo ocupa uma tela própria, sem misturar aulas, treino e IA.
+const leoBody=root.querySelector('.leo-body');
+const leoMessage=root.querySelector('.leo-message');
+const leoRecommendation=root.querySelector('.leo-recommend');
+const leoAreaLabel=root.querySelector('label[for="leo-area"]');
+const leoChat=root.querySelector('.leo-chat');
+const leoMenu=document.createElement('section');
+leoMenu.className='leo-menu';
+leoMenu.innerHTML='<h3>O que vamos estudar hoje?</h3><p>Escolha como deseja aprender com o Professor Leo.</p>';
+const leoViews=[
+  ['lesson','📖 Aprender uma matéria','Aulas explicadas com exemplos e dicas.'],
+  ['practice','🧮 Fazer exercícios','Treino de Matemática com correção e reforço.'],
+  ['chat','💬 Conversar com o Professor Leo','Tire suas dúvidas com a IA em teste.']
+];
+leoViews.forEach(([view,label,description])=>{
+  const button=document.createElement('button');
+  button.type='button';button.className='leo-menu-option';
+  const title=document.createElement('strong');title.textContent=label;
+  const detail=document.createElement('small');detail.textContent=description;
+  button.append(title,detail);
+  button.addEventListener('click',()=>leoShowView(view));
+  leoMenu.append(button);
+});
+leoBody.prepend(leoMenu);
+const leoBack=document.createElement('button');
+leoBack.type='button';leoBack.className='leo-back';
+leoBack.textContent='← Voltar ao menu';
+leoMenu.after(leoBack);
+leoBack.addEventListener('click',()=>leoShowView('menu'));
+function leoShowView(view){
+  const menu=view==='menu';
+  leoMenu.hidden=!menu;
+  leoBack.hidden=menu;
+  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat';
+  leoMessage.hidden=true;
+  leoRecommendation.hidden=!isLesson;
+  leoAreaLabel.hidden=!isLesson;
+  selector.hidden=!isLesson;
+  lessonBox.hidden=!isLesson;
+  leoPractice.hidden=!isPractice;
+  leoChat.hidden=!isChat;
+  if(isPractice){
+    selector.value='0';
+    renderLeoPractice();
+  }
+  leoBody.scrollTop=0;
+  if(!menu)leoBack.focus({preventScroll:true});
+}
+leoShowView('menu');
 selector.addEventListener('change',renderLeoPractice);
-launch.addEventListener('click',()=>{panel.hidden=false;launch.hidden=true;launch.setAttribute('aria-expanded','true');recommend();renderLesson();root.querySelector('.leo-close').focus();});
+launch.addEventListener('click',()=>{panel.hidden=false;launch.hidden=true;launch.setAttribute('aria-expanded','true');recommend();renderLesson();leoShowView('menu');root.querySelector('.leo-close').focus();});
 root.querySelector('.leo-close').addEventListener('click',()=>{panel.hidden=true;launch.hidden=false;launch.setAttribute('aria-expanded','false');launch.focus();});
 selector.addEventListener('change',renderLesson);
 
