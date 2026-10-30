@@ -93,6 +93,48 @@ const leoChallenges=[
  {level:'Médio',question:'Um tênis de R$ 240 recebeu desconto de 15%. Quanto custa agora?',choices:['R$ 204','R$ 225','R$ 216'],correct:0,explanation:'15% de 240 = 36. Preço final: 240 − 36 = R$ 204.'},
  {level:'Difícil',question:'Um produto aumentou 20% e depois teve desconto de 20%. Em relação ao preço inicial, o valor final:',choices:['Ficou igual','Caiu 4%','Subiu 4%'],correct:1,explanation:'Se custava 100, sobe para 120 e cai 20% de 120 (=24): termina em 96, 4% abaixo do inicial.'}
 ];
+// Painel de evolução: registra apenas desempenho demonstrativo neste navegador.
+const leoRecoveryProgressKey='decola-vestibular:leo-recovery-progress:v1';
+function leoRoundSignature(){return leoPracticeAnswers.map(x=>x===true?'1':x===false?'0':'-').join('');}
+function leoReadRecoveryProgress(){
+  try{
+    const value=JSON.parse(localStorage.getItem(leoRecoveryProgressKey)||'null');
+    if(value&&value.signature===leoRoundSignature()&&Number.isInteger(value.mastered)&&Number.isInteger(value.total)&&value.total>=0&&value.mastered>=0&&value.mastered<=value.total)return value;
+  }catch{}
+  return null;
+}
+function leoSaveRecoveryProgress(mastered,total){
+  const value={signature:leoRoundSignature(),mastered,total,completedAt:new Date().toISOString()};
+  try{localStorage.setItem(leoRecoveryProgressKey,JSON.stringify(value));}catch{}
+  return value;
+}
+function leoEvolutionPanel(correct,total,record){
+  const box=document.createElement('section');box.className='leo-evolution';
+  const title=document.createElement('h4');title.textContent='📈 Minha evolução';
+  const metrics=document.createElement('div');metrics.className='leo-evolution-metrics';
+  const initial=document.createElement('div');initial.className='leo-evolution-metric';
+  const label=document.createElement('small');label.textContent='Treino inicial';
+  const value=document.createElement('strong');value.textContent=Math.round(correct/total*100)+'%';
+  const detail=document.createElement('small');detail.textContent=correct+' de '+total+' questões';
+  initial.append(label,value,detail);
+  const recovery=document.createElement('div');recovery.className='leo-evolution-metric';
+  const recoveryLabel=document.createElement('small');recoveryLabel.textContent='Recuperação';
+  const recoveryValue=document.createElement('strong');
+  recoveryValue.textContent=record?record.mastered+' / '+record.total:'Pendente';
+  const recoveryDetail=document.createElement('small');
+  recoveryDetail.textContent=record?'Tópicos com domínio demonstrado':'Conclua o reforço para acompanhar';
+  recovery.append(recoveryLabel,recoveryValue,recoveryDetail);
+  metrics.append(initial,recovery);
+  const track=document.createElement('div');track.className='leo-score-track';
+  track.setAttribute('role','progressbar');track.setAttribute('aria-label','Progresso da recuperação');
+  track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');
+  const percent=record&&record.total?Math.round(record.mastered/record.total*100):0;
+  track.setAttribute('aria-valuenow',String(percent));
+  const fill=document.createElement('div');fill.className='leo-score-fill';fill.style.width=percent+'%';track.append(fill);
+  const summary=document.createElement('p');summary.textContent=record?(record.mastered===record.total?'Todos os tópicos do reforço foram recuperados nesta atividade.':'Ainda há tópicos que precisam de revisão. Você pode praticar novamente.'):'O treino inicial e a recuperação são avaliações diferentes. Sua nota original não muda.';
+  box.append(title,metrics,track,summary);
+  return box;
+}
 let leoChallengeResult=null;
 const leoPracticeKey='decola-vestibular:leo-math-practice:v1';
 function readLeoPractice(){
@@ -269,7 +311,7 @@ function renderLeoPractice(){
       const list=document.createElement('ol');
       missed.forEach(q=>{const li=document.createElement('li');li.textContent=q.question+' Revise: '+q.explanation;list.append(li);});
       const tip=document.createElement('p');tip.textContent='Leia as explicações com calma e clique em Recomeçar treino para praticar novamente.';
-      report.append(title,score,bar,guidance,heading,list,tip);
+      report.append(leoEvolutionPanel(correct,leoPracticeQuestions.length,leoReadRecoveryProgress()),title,score,bar,guidance,heading,list,tip);
       // Recuperação guiada: apenas os assuntos que o estudante errou.
       const recovery=document.createElement('section');
       recovery.className='leo-recovery';
@@ -292,6 +334,9 @@ function renderLeoPractice(){
         content.replaceChildren();
         if(!pending.length){
           recoveryFinished=true;
+          const savedProgress=leoSaveRecoveryProgress(mastered.length,missedIndices.length);
+          const evolution=report.querySelector('.leo-evolution');
+          if(evolution)evolution.replaceWith(leoEvolutionPanel(correct,leoPracticeQuestions.length,savedProgress));
           leoPractice.classList.remove('leo-recovery-mode');
           const heading=document.createElement('h4');
           heading.textContent=unresolved.length?'📘 Reforço concluído: continue praticando':'🎉 Conteúdos recuperados!';
@@ -362,7 +407,7 @@ function renderLeoPractice(){
       });
       recovery.append(start,content);
       report.append(recovery);
-    }else{report.append(title,score,bar,guidance);}
+    }else{report.append(leoEvolutionPanel(correct,leoPracticeQuestions.length,null),title,score,bar,guidance);}
   }
   if(finished){
     const level=correct<=1?0:correct<=3?1:2;
