@@ -25,3 +25,8 @@ body.leo-study-open{overflow:hidden}
 .leo-widget .leo-back,.leo-widget .leo-talk{min-height:42px}
 @media(max-width:850px){.leo-widget .leo-menu{grid-template-columns:repeat(2,minmax(0,1fr))}.leo-widget .leo-body{padding:22px 20px}.leo-widget .leo-top{padding:12px 18px}}
 @media(max-width:560px){.leo-widget .leo-menu{grid-template-columns:1fr;gap:12px}.leo-widget .leo-menu-option{min-height:90px!important;padding:17px!important}.leo-widget .leo-top strong{font-size:17px}.leo-widget .leo-top{gap:7px}.leo-widget .leo-body{padding:18px 14px}.leo-widget .leo-choices{grid-template-columns:1fr}.leo-widget .leo-close{min-width:70px!important}}
+
+.leo-widget .leo-menu[hidden],.leo-widget .leo-panel[hidden]{display:none!important}
+.study-nav-link{border:0;background:#e9f0ff;color:#1744c3;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+.study-nav-link:hover{background:#dbe7ff}
+@media(max-width:850px){.header nav{flex-wrap:wrap;justify-content:flex-end}.study-nav-link{padding:9px}}
