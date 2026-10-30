@@ -383,6 +383,21 @@ function leoBubble(who,message){
   name.textContent=who==='student'?'Você':'🎓 Professor Leo';
   const body=document.createElement('div');
   body.textContent=message;
+  if(who==='teacher'){
+    body.style.whiteSpace='pre-line';
+    const paragraphs=message.split(/\n\s*\n/);
+    if(message.length>950&&paragraphs.length>2){
+      body.textContent=paragraphs.slice(0,2).join('\n\n');
+      const details=document.createElement('details');
+      const summary=document.createElement('summary');
+      summary.textContent='Ler o restante da explicação';
+      const more=document.createElement('div');
+      more.style.whiteSpace='pre-line';
+      more.textContent=paragraphs.slice(2).join('\n\n');
+      details.append(summary,more);
+      body.append(details);
+    }
+  }
   bubble.append(name,body);
   leoThread.append(bubble);
   bubble.scrollIntoView({block:'nearest'});
@@ -480,7 +495,7 @@ leoAsk.addEventListener('click',async()=>{
     const timer=setTimeout(()=>controller.abort(),25000);
     let response;
     try{response=await fetch('https://professor-leo-api.ricardocustodio-rc1.workers.dev/chat',{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:question,mensagem:question,history:leoHistory.slice(-8),historico:leoHistory.slice(-8)}),signal:controller.signal
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:question+'\n\nExplique em português simples, em até 3 etapas curtas. Escreva contas em texto comum (ex.: 20 ÷ 100 = 0,2; 0,2 × 50 = 10). Não use LaTeX nem comandos com barras invertidas. Ao final, pergunte se o aluno entendeu.',mensagem:question+'\n\nResponda brevemente, sem LaTeX, com contas em texto simples.',history:leoHistory.slice(-8),historico:leoHistory.slice(-8)}),signal:controller.signal
     });}finally{clearTimeout(timer);}
     const data=await response.json();
     if(!response.ok)throw new Error(data.error||'Não foi possível obter uma resposta.');
