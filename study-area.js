@@ -37,11 +37,11 @@
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
   const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
-  const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.1');
+  const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.2');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
   const lesson=make('section','study-smart-card');
-  lesson.append(make('h3','','1. Aprender: o que é porcentagem?'),make('p','','Porcentagem significa uma parte de cada 100. Assim, 20% = 20 ÷ 100 = 0,20. Para encontrar 20% de 150, multiplicamos 150 × 0,20 = 30.'));
+  lesson.append(make('h3','','1. Aprender: o que é porcentagem?'),make('p','','Porcentagem significa uma parte de cada 100. Por exemplo, 15% = 15 ÷ 100 = 0,15. Para encontrar 15% de 80, multiplicamos 80 × 0,15 = 12.'));
   const example=make('div','study-topic-example','Exemplo do cotidiano: uma mochila de R$ 200 com 25% de desconto tem abatimento de R$ 50 (200 × 0,25). O preço final é R$ 150.');
   lesson.append(example,make('p','','Dica: 10% é dividir por 10; 20% é o dobro de 10%.'));
   const practice=make('section','study-smart-card');practice.append(make('h3','','2. Praticar: resolva as questões'));
@@ -69,20 +69,20 @@
    const feedback=make('div','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
    const retry=make('button','study-smart-retry','Tentar novamente');retry.type='button';
    const buttons=q.opts.map((opt,j)=>{const btn=make('button','',opt);btn.type='button';btn.addEventListener('click',()=>{
-    const previous=progress[i];if(previous?.done)return;
+    const previous=progress[i];if(previous?.done||(previous?.attempts===1&&previous?.choice!==null&&previous?.choice!==undefined))return;
     const attempts=(previous?.attempts||0)+1;
     progress[i]={choice:j,attempts,done:j===q.answer||attempts>=2};
     save();render();updateScore();
    });options.append(btn);return btn;});
-   retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();});
+   retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();buttons[0]?.focus();});
    const render=()=>{
     const p=progress[i];const selected=Number.isInteger(p?.choice);const right=selected&&p.choice===q.answer;
-    buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',selected&&p.choice===j);btn.setAttribute('aria-pressed',String(selected&&p.choice===j));btn.disabled=!!p?.done;});
+    buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',selected&&p.choice===j);btn.setAttribute('aria-pressed',String(selected&&p.choice===j));btn.disabled=!!p?.done||(p?.attempts===1&&selected&&!p?.done);});
     feedback.replaceChildren();retry.hidden=true;
     if(!selected)return;
     if(right){feedback.classList.add('study-smart-correct');feedback.classList.remove('study-smart-wrong');feedback.append(make('strong','','✅ Muito bem! Resposta correta.'),make('p','',q.why));}
-    else if(!p.done){feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','🔎 Ainda não. Você tem mais uma tentativa!'),make('p','',hints[i][0]),make('p','','Dica extra: '+hints[i][1]));retry.hidden=false;}
-    else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
+    else if(!p.done){feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','🔎 Ainda não. Você tem mais uma tentativa!'),make('p','',hints[i][0]));retry.hidden=false;}
+    else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Dica: '+hints[i][1]),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
    };
    card.append(options,feedback,retry);practice.append(card);render();
   });save();updateScore();
