@@ -245,13 +245,25 @@ function leoFocusedMathPanel(){
   const exercise=leoReinforcement[index];
   const topic=document.createElement('p');
   topic.textContent='Conteúdo: '+original.topic+' · Revisão da questão '+(index+1);
-  const hint=document.createElement('p');
-  hint.textContent='💡 Dica: '+exercise.steps;
+  const hint=document.createElement('aside');
+  hint.className='leo-focused-hint';
+  hint.id='leo-focused-hint';
+  hint.setAttribute('role','note');
+  const hintTitle=document.createElement('strong');
+  hintTitle.className='leo-focused-hint-title';
+  hintTitle.textContent='💡 Dica do Professor Leo';
+  const hintText=document.createElement('p');
+  hintText.textContent=exercise.steps;
+  const hintPrompt=document.createElement('p');
+  hintPrompt.className='leo-focused-hint-prompt';
+  hintPrompt.textContent='Agora tente escolher a alternativa correta. Você consegue!';
+  hint.append(hintTitle,hintText,hintPrompt);
   hint.hidden=true;
   const hintButton=document.createElement('button');
   hintButton.type='button';
   hintButton.textContent='💡 Preciso de uma dica';
   hintButton.setAttribute('aria-expanded','false');
+  hintButton.setAttribute('aria-controls','leo-focused-hint');
   hintButton.addEventListener('click',()=>{
     hint.hidden=false;
     hintButton.hidden=true;
