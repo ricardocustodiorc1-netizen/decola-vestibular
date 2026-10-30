@@ -36,6 +36,7 @@
   if(topic.title==='Frações')return showFractionsSmartLesson(dashboard,topic);
   if(topic.title==='Equações')return showEquationsSmartLesson(dashboard,topic);
   if(topic.title==='Geometria')return showGeometrySmartLesson(dashboard,topic);
+  if(topic.title==='Estatística')return showStatisticsSmartLesson(dashboard,topic);
   if(topic.title!=='Porcentagem')return showBasicMathLesson(dashboard,topic);
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
@@ -425,6 +426,99 @@
    if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
    const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Geometria. Aprendi a calcular perímetro e área de retângulos e quadrados. Pode me ajudar passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
    const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showGeometrySmartLesson(dashboard,topic);}
+  });help.append(helpBtn);
+  const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
+  const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
+  steps.append(lesson,practice,report,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+ }
+ function showStatisticsSmartLesson(dashboard,topic){
+  hideLegacyViews(panel());dashboard.replaceChildren();
+  const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const title=make('h2','','📘 Estatística — Aula Inteligente 1.5');
+  const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
+  const steps=make('div','study-smart-steps');
+  const lesson=make('section','study-smart-card');
+  lesson.append(make('h3','','1. Aprender: média, moda e mediana'),make('p','','Média é a soma dos valores dividida pela quantidade. Moda é o valor mais frequente. Mediana é o valor central dos dados ordenados; se houver dois valores centrais, calcule a média deles.'));
+  lesson.append(make('div','study-topic-example','Exemplo: notas 6, 7, 7, 8 e 12. Média = 40 ÷ 5 = 8; moda = 7; mediana = 7.'),make('p','','Dica: ordene os dados para achar a mediana e conte as repetições para encontrar a moda.'));
+  const practice=make('section','study-smart-card');practice.append(make('h3','','2. Praticar: resolva as questões'));
+  const questions=[
+   {q:'Qual é a média dos números 6, 8 e 10?',opts:['7','8','9'],answer:1,why:'6 + 8 + 10 = 24; 24 ÷ 3 = 8.'},
+   {q:'Qual é a moda de 2, 3, 3, 5 e 7?',opts:['3','4','5'],answer:0,why:'3 aparece duas vezes e os demais apenas uma. A moda é 3.'},
+   {q:'Qual é a mediana de 9, 3, 7, 5 e 11?',opts:['5','7','9'],answer:1,why:'Ordenando: 3, 5, 7, 9, 11. O valor central é 7.'}
+  ];
+  const key='decola-smart-statistics-v1';let progress={};
+  try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){progress={};}
+  const save=()=>{try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}};
+  const score=make('p','study-smart-score');score.setAttribute('aria-live','polite');
+  const updateScore=()=>{const done=questions.filter((q,i)=>progress[i]?.done).length;const correct=questions.filter((q,i)=>progress[i]?.done&&progress[i]?.choice===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões concluídas • '+correct+' acerto(s). Salvo neste navegador.';};
+  practice.append(score);
+  const hints=[
+   ['Some os três valores e divida pela quantidade de números.','A soma é 24; divida por 3.'],
+   ['Moda é o valor que mais se repete.','Conte a frequência de cada valor.'],
+   ['Ordene os cinco números antes de procurar o centro.','Com cinco números, escolha o terceiro da lista ordenada.']
+  ];
+  questions.forEach((q,i)=>{
+   const card=make('div','study-smart-question');card.append(make('strong','',('Questão '+(i+1)+' de '+questions.length+': ')+q.q));
+   const options=make('div','study-topic-answers');
+   const feedback=make('div','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+   const retry=make('button','study-smart-retry','Tentar novamente');retry.type='button';
+   const buttons=q.opts.map((opt,j)=>{const btn=make('button','',opt);btn.type='button';btn.addEventListener('click',()=>{
+    const previous=progress[i];if(previous?.done||(previous?.attempts===1&&previous?.choice!==null&&previous?.choice!==undefined))return;
+    const attempts=(previous?.attempts||0)+1;
+    progress[i]={choice:j,attempts,done:j===q.answer||attempts>=2};
+    save();render();updateScore();updateReport();
+   });options.append(btn);return btn;});
+   retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();buttons[0]?.focus();});
+   const render=()=>{
+    const p=progress[i];const selected=Number.isInteger(p?.choice);const right=selected&&p.choice===q.answer;
+    buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',selected&&p.choice===j);btn.setAttribute('aria-pressed',String(selected&&p.choice===j));btn.disabled=!!p?.done||(p?.attempts===1&&selected&&!p?.done);});
+    feedback.replaceChildren();retry.hidden=true;
+    if(!selected)return;
+    if(right){feedback.classList.add('study-smart-correct');feedback.classList.remove('study-smart-wrong');feedback.append(make('strong','','✅ Muito bem! Resposta correta.'),make('p','',q.why));}
+    else if(!p.done){feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','🔎 Ainda não. Você tem mais uma tentativa!'),make('p','',hints[i][0]));retry.hidden=false;}
+    else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Dica: '+hints[i][1]),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
+   };
+   card.append(options,feedback,retry);practice.append(card);render();
+  });save();updateScore();
+  // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.
+  const report=make('section','study-smart-card study-smart-report');
+  report.setAttribute('aria-live','polite');
+  function updateReport(){
+   const completed=questions.every((q,i)=>progress[i]?.done);
+   report.replaceChildren();report.hidden=!completed;
+   if(!completed)return;
+   const firstTry=questions.filter((q,i)=>progress[i]?.choice===q.answer&&progress[i]?.attempts===1).length;
+   const eventual=questions.filter((q,i)=>progress[i]?.choice===q.answer).length;
+   const reinforced=questions.map((q,i)=>({q,i,p:progress[i]})).filter(x=>x.p?.attempts>1||x.p?.choice!==x.q.answer);
+   report.append(make('h3','','🎓 Aula concluída! Seu relatório com o Professor Leo'));
+   report.append(make('p','study-smart-report-stats',
+    'Questões concluídas: 3 de 3 • Acertos finais: '+eventual+' de 3 • Acertos na primeira tentativa: '+firstTry+' de 3 • Questões que exigiram reforço: '+reinforced.length+'.'));
+   report.append(make('p','','Parabéns por concluir a prática! Acertar depois de uma dica também é aprender. Vamos revisar os pontos que exigiram mais atenção.'));
+   const guidance=make('div','study-smart-guidance');
+   guidance.append(make('h4','','Seu reforço personalizado'));
+   if(!reinforced.length)guidance.append(make('p','','Você acertou tudo na primeira tentativa. Continue praticando para consolidar estatística.'));
+   reinforced.forEach(({i})=>{
+    const messages=['Média: some os valores e divida pela quantidade.','Moda: encontre o valor mais frequente.','Mediana: ordene os valores e encontre o centro.'];
+    guidance.append(make('p','','Questão '+(i+1)+': '+messages[i]));
+   });
+   report.append(guidance);
+   const actions=make('div','study-smart-report-actions');
+   const review=make('button','study-dashboard-all','🔁 Revisar esta aula');review.type='button';
+   review.addEventListener('click',()=>{lesson.scrollIntoView({behavior:'smooth',block:'start'});});
+   const next=make('button','study-dashboard-all','➡️ Voltar aos assuntos');next.type='button';
+   next.addEventListener('click',()=>showMathTopics(dashboard));
+   actions.append(review,next);report.append(actions);
+  }
+  updateReport();
+  const help=make('section','study-smart-card');help.append(make('h3','','3. Precisa de ajuda?'));
+  const helpText=make('p','','O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.');help.append(helpText);
+  const helpBtn=make('button','study-dashboard-all','🎓 Pedir ajuda ao Professor Leo');helpBtn.type='button';helpBtn.addEventListener('click',()=>{
+   const p=panel();if(!p)return;dashboard.hidden=true;
+   const chatOption=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Conversar com o Professor Leo'));
+   if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
+   const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Estatística. Ajude-me a entender média, moda e mediana com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
+   const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showStatisticsSmartLesson(dashboard,topic);}
   });help.append(helpBtn);
   const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
   const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
