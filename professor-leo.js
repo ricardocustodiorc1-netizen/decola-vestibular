@@ -506,7 +506,10 @@ const leoPtRecovery=[
  ['Fato é verificável; opinião expressa avaliação pessoal.','O museu abre às nove. É o lugar mais bonito da cidade.','Qual trecho é opinião?',['Abre às nove','É o lugar mais bonito','O museu tem horário'],1,'Mais bonito é uma avaliação subjetiva.'],
  ['Um pronome pode retomar um termo já mencionado.','Lia comprou uma caneta e a guardou na mochila.','O pronome "a" retoma:',['A caneta','A mochila','Lia'],0,'O pronome substitui caneta.']
 ];
-let leoPtRecoveryDone={};
+const leoPtRecoveryKey='decola-vestibular:leo-portugues-recovery:v1';
+let leoPtRecoveryDone=leoPtRead(leoPtRecoveryKey,{});
+if(!leoPtRecoveryDone||typeof leoPtRecoveryDone!=='object'||Array.isArray(leoPtRecoveryDone))leoPtRecoveryDone={};
+function leoPtSaveRecovery(){try{localStorage.setItem(leoPtRecoveryKey,JSON.stringify(leoPtRecoveryDone));}catch{}}
 function leoPtRecoveryPanel(index){
  const [lesson,passage,question,answers,correct,why]=leoPtRecovery[index];
  const box=document.createElement('section');box.className='leo-portuguese-recovery';
@@ -523,7 +526,7 @@ function leoPtRecoveryPanel(index){
    button.disabled=leoPtRecoveryDone[index]===true;
    button.addEventListener('click',()=>{
     if(leoPtRecoveryDone[index])return;
-    if(i===correct){leoPtRecoveryDone[index]=true;feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='✓ Conteúdo recuperado! '+why;}
+    if(i===correct){leoPtRecoveryDone[index]=true;leoPtSaveRecovery();feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='✓ Conteúdo recuperado! '+why;}
     else{feedback.className='leo-practice-feedback leo-feedback-wrong';feedback.textContent='Vamos tentar de novo. '+lesson;}
     renderChoices();
    });choices.append(button);
@@ -554,7 +557,7 @@ function leoPtRender(){
  const actions=document.createElement('div');actions.className='leo-practice-actions';
  if(answered){const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';next.addEventListener('click',()=>{leoPtIndex=(leoPtIndex+1)%leoPtQuestions.length;leoPtRender();leoBody.scrollTop=0;});actions.append(next);
  const help=document.createElement('button');help.type='button';help.textContent='💬 Peça ajuda ao Leo';help.addEventListener('click',()=>{leoReturnView='portuguese';leoShowView('chat');leoInput.value='Professor Leo, explique esta questão de interpretação: '+q.text+' Pergunta: '+q.question+' Resposta correta: '+q.choices[q.correct]+'.';leoInput.focus({preventScroll:true});});actions.append(help);}
- const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';restart.addEventListener('click',()=>{leoPtAnswers=Array(leoPtQuestions.length).fill(null);leoPtIndex=0;leoPtRecorded=false;leoPtRecoveryDone={};try{localStorage.removeItem(leoPtKey);}catch{}leoPtRender();});actions.append(restart);leoPtBox.append(actions);
+ const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';restart.addEventListener('click',()=>{leoPtAnswers=Array(leoPtQuestions.length).fill(null);leoPtIndex=0;leoPtRecorded=false;leoPtRecoveryDone={};try{localStorage.removeItem(leoPtRecoveryKey);localStorage.removeItem(leoPtKey);}catch{}leoPtRender();});actions.append(restart);leoPtBox.append(actions);
  if(count===leoPtQuestions.length){const result=document.createElement('h4');result.textContent='📊 Resultado: '+score+' de '+leoPtQuestions.length+' acertos ('+Math.round(score/leoPtQuestions.length*100)+'%)';leoPtBox.append(result);}
  const history=document.createElement('div');history.className='leo-portuguese-history';const hh=document.createElement('h4');hh.textContent='📈 Histórico de Português';history.append(hh);
  if(!leoPtHistory.length){const p=document.createElement('p');p.textContent='Conclua a rodada para começar seu histórico.';history.append(p);}
@@ -588,7 +591,10 @@ if(!Array.isArray(leoHuHistory))leoHuHistory=[];
 leoHuHistory=leoHuHistory.filter(x=>x&&Number.isInteger(x.correct)&&x.correct>=0&&x.correct<=leoHuQuestions.length&&x.total===leoHuQuestions.length).slice(-20);
 let leoHuIndex=Math.max(0,leoHuAnswers.findIndex(x=>x===null));
 let leoHuRecorded=leoHuAnswers.every(x=>x!==null);
-let leoHuRecovery={};
+const leoHuRecoveryKey='decola-vestibular:leo-humanas-recovery:v1';
+let leoHuRecovery=leoPtRead(leoHuRecoveryKey,{});
+if(!leoHuRecovery||typeof leoHuRecovery!=='object'||Array.isArray(leoHuRecovery))leoHuRecovery={};
+function leoHuSaveRecovery(){try{localStorage.setItem(leoHuRecoveryKey,JSON.stringify(leoHuRecovery));}catch{}}
 const leoHuBox=document.createElement('section');
 leoHuBox.className='leo-practice leo-humanas';
 leoHuBox.setAttribute('aria-label','Treino de Ciências Humanas');
@@ -639,7 +645,7 @@ function leoHuRender(){
         btn.disabled=leoHuRecovery[leoHuIndex]===true;
         btn.addEventListener('click',()=>{
           if(leoHuRecovery[leoHuIndex])return;
-          if(i===review.correct){leoHuRecovery[leoHuIndex]=true;leoHuRender();}
+          if(i===review.correct){leoHuRecovery[leoHuIndex]=true;leoHuSaveRecovery();leoHuRender();}
           else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Vamos pensar novamente. '+review.why;}
         });opts.append(btn);
       });
@@ -651,7 +657,7 @@ function leoHuRender(){
     const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
     next.addEventListener('click',()=>{leoHuIndex=(leoHuIndex+1)%leoHuQuestions.length;leoHuRender();});
     const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
-    restart.addEventListener('click',()=>{leoHuAnswers=Array(leoHuQuestions.length).fill(null);leoHuIndex=0;leoHuRecorded=false;leoHuRecovery={};try{localStorage.setItem(leoHuKey,JSON.stringify(leoHuAnswers));}catch(_error){}leoHuRender();});
+    restart.addEventListener('click',()=>{leoHuAnswers=Array(leoHuQuestions.length).fill(null);leoHuIndex=0;leoHuRecorded=false;leoHuRecovery={};try{localStorage.removeItem(leoHuRecoveryKey);localStorage.setItem(leoHuKey,JSON.stringify(leoHuAnswers));}catch(_error){}leoHuRender();});
     const ask=document.createElement('button');ask.type='button';ask.textContent='💬 Peça ajuda ao Leo';
     ask.addEventListener('click',()=>{leoReturnView='humanas';leoShowView('chat');const input=root.querySelector('#leo-question-input');if(input){input.value='Professor Leo, explique de forma simples esta questão de Ciências Humanas: '+q.text+' '+q.why;input.focus();}});
     actions.append(next,ask,restart);leoHuBox.append(actions);
@@ -715,11 +721,56 @@ function leoRenderDashboard(){
     if(pending.length&&!recommended)recommended={area:area.name,topic:area.name==='Matemática'?'Porcentagem e resolução de problemas':area.name==='Humanas'?'Cidadania e sociedade':'Interpretação de texto',view:area.name==='Matemática'?'practice':area.name==='Humanas'?'humanas':'portuguese'};
   });
   leoDashboard.append(cards);
+  // Mapa de domínio por conteúdo, independente da nota da rodada.
+  const mastery=document.createElement('section');
+  mastery.className='leo-dashboard-next';
+  const masteryTitle=document.createElement('h4');masteryTitle.textContent='🧭 Meu mapa de domínio por conteúdo';
+  const masteryIntro=document.createElement('p');
+  masteryIntro.textContent='Acompanhamento da rodada atual: dominado = acerto direto; recuperado = acerto após reforço; revisar = erro ainda não recuperado. Os resultados ficam neste navegador.';
+  mastery.append(masteryTitle,masteryIntro);
+  const topics=[
+    {area:'Matemática',view:'practice',items:leoPracticeQuestions.map((q,i)=>({name:q.topic||q.title||'Questão '+(i+1),answer:leoPracticeAnswers[i],recovered:false}))},
+    {area:'Português',view:'portuguese',items:leoPtQuestions.map((q,i)=>({name:['Concessão e contraste','Ideia principal','Inferência textual','Fato e opinião','Referência pronominal'][i],answer:leoPtAnswers[i],recovered:leoPtRecoveryDone[i]===true}))},
+    {area:'Ciências Humanas',view:'humanas',items:leoHuQuestions.map((q,i)=>({name:['Constituição e cidadania','Participação política','Movimentos sociais','Urbanização e desigualdade','Abolição e inclusão social'][i],answer:leoHuAnswers[i],recovered:leoHuRecovery[i]===true}))}
+  ];
+  let pendingTopic=null;
+  let recoveredCount=0,masteredCount=0,pendingCount=0;
+  topics.forEach(group=>{
+    const section=document.createElement('div');
+    section.style.marginTop='12px';
+    const label=document.createElement('strong');label.textContent=group.area;
+    section.append(label);
+    group.items.forEach(item=>{
+      const state=item.answer===true?'✓ Dominado':item.answer===false?(item.recovered?'↗ Recuperado':'! Precisa revisar'):'○ Não avaliado';
+      if(item.answer===true)masteredCount++;
+      else if(item.answer===false&&item.recovered)recoveredCount++;
+      else if(item.answer===false){pendingCount++;if(!pendingTopic)pendingTopic={area:group.area,name:item.name,view:group.view};}
+      const line=document.createElement('p');
+      line.style.margin='6px 0';
+      line.style.fontSize='13px';
+      line.textContent=item.name+' — '+state;
+      if(item.answer===false&&!item.recovered)line.style.color='#b42318';
+      else if(item.answer===true||item.recovered)line.style.color='#176b43';
+      section.append(line);
+    });
+    mastery.append(section);
+  });
+  const totals=document.createElement('p');
+  totals.style.fontWeight='700';
+  totals.textContent='Domínio atual: '+masteredCount+' dominado(s) · '+recoveredCount+' recuperado(s) · '+pendingCount+' para revisar.';
+  mastery.insertBefore(totals,mastery.children[2]||null);
+  if(pendingTopic){
+    const action=document.createElement('button');action.type='button';
+    action.textContent='Revisar agora: '+pendingTopic.name;
+    action.addEventListener('click',()=>leoShowView(pendingTopic.view));
+    mastery.append(action);
+  }
+  leoDashboard.append(mastery);
   const summary=document.createElement('section');summary.className='leo-dashboard-next';
   const h=document.createElement('h4');h.textContent='🎯 Próximo estudo recomendado';
   const p=document.createElement('p');
-  p.textContent=recommended?'Reforce '+recommended.topic+' em '+recommended.area+'. Revise os erros e tente novamente.':'Continue praticando Matemática e Português para identificar os próximos conteúdos de reforço.';
-  const go=document.createElement('button');go.type='button';go.textContent=recommended?'Ir para '+recommended.area:'Começar por Matemática';go.addEventListener('click',()=>leoShowView(recommended?recommended.view:'practice'));
+  p.textContent=pendingTopic?'Prioridade: '+pendingTopic.name+' em '+pendingTopic.area+'. Revise este conteúdo e faça a recuperação.':recommended?'Reforce '+recommended.topic+' em '+recommended.area+'. Revise os erros e tente novamente.':'Continue praticando para identificar os próximos conteúdos de reforço.';
+  const go=document.createElement('button');go.type='button';go.textContent=pendingTopic?'Ir para '+pendingTopic.area:recommended?'Ir para '+recommended.area:'Começar por Matemática';go.addEventListener('click',()=>leoShowView(pendingTopic?pendingTopic.view:recommended?recommended.view:'practice'));
   summary.append(h,p,go);leoDashboard.append(summary);
   // Integração somente de leitura com o plano semanal gerado pelo Decola.
   const weekly=document.createElement('section');weekly.className='leo-dashboard-next';
