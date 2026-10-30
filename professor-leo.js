@@ -811,13 +811,38 @@ function leoStudyHint(subject,stage,questionIndex){
  button.addEventListener('click',()=>{panel.hidden=false;button.hidden=true;button.setAttribute('aria-expanded','true');});
  box.append(button,panel);return box;
 }
+function leoRecoveryLesson(subject,index){
+ const lessons={
+  portuguese:[
+   'Exemplo: “Embora estivesse chovendo, fomos à escola”. A chuva é um obstáculo, mas a ação aconteceu.',
+   'Exemplo: em um texto sobre leitura, procure a mensagem que reúne todas as ideias, não um detalhe isolado.',
+   'Exemplo: “João pegou o guarda-chuva porque viu nuvens escuras”. Podemos inferir que ele esperava chuva.',
+   'Exemplo: “A escola abriu às 7h” é verificável; “A escola é maravilhosa” expressa opinião.',
+   'Exemplo: em “Maria chegou e ela sorriu”, o pronome “ela” retoma Maria.'
+  ],
+  humanas:[
+   'Exemplo: uma constituição cidadã protege a liberdade de expressão, o voto e o acesso a direitos sociais.',
+   'Exemplo: no plebiscito, a população vota diretamente sobre uma proposta antes da decisão política.',
+   'Exemplo: moradores que se organizam para pedir transporte melhor exercem participação coletiva.',
+   'Exemplo: dois bairros com acesso muito diferente a saneamento mostram desigualdade urbana.',
+   'Exemplo: abolir uma lei injusta não elimina automaticamente a desigualdade acumulada ao longo da história.'
+  ]
+ };
+ return (lessons[subject]||[])[index]||'Pense em uma situação do cotidiano em que esse conceito aparece.';
+}
+function leoRecoverySteps(parent,subject,index,reason){
+ const step=document.createElement('p');step.textContent='1. Entenda o conceito: '+reason;
+ const example=document.createElement('p');example.textContent='2. Veja um exemplo: '+leoRecoveryLesson(subject,index);
+ const tryAgain=document.createElement('p');tryAgain.textContent='3. Agora tente uma nova questão. Você pode consultar a dica antes de responder.';
+ parent.append(step,example,tryAgain);
+}
 function leoPtRecoveryPanel(index){
  const [lesson,passage,question,answers,correct,why]=leoPtRecovery[index];
  const box=document.createElement('section');box.className='leo-portuguese-recovery';
  const heading=document.createElement('h4');heading.textContent='📚 Recuperação personalizada';box.append(heading);
- const explanation=document.createElement('p');explanation.textContent='1. Entenda: '+lesson;box.append(explanation);
+ leoRecoverySteps(box,'portuguese',index,lesson);
  const excerpt=document.createElement('blockquote');excerpt.className='leo-portuguese-passage';excerpt.textContent=passage;box.append(excerpt);
- const prompt=document.createElement('p');prompt.textContent='2. Tente outra questão: '+question;box.append(prompt);box.append(leoStudyHint('portuguese',1,index));
+ const prompt=document.createElement('p');prompt.textContent='Nova questão: '+question;box.append(prompt);box.append(leoStudyHint('portuguese',1,index));
  const choices=document.createElement('div');choices.className='leo-choices leo-portuguese-choices';box.append(choices);
  const feedback=document.createElement('p');feedback.setAttribute('role','status');box.append(feedback);
  function renderChoices(){
@@ -827,8 +852,8 @@ function leoPtRecoveryPanel(index){
    button.disabled=leoPtRecoveryDone[index]===true;
    button.addEventListener('click',()=>{
     if(leoPtRecoveryDone[index])return;
-    if(i===correct){leoPtRecoveryDone[index]=true;leoPtSaveRecovery();leoMissionRecoverySucceeded('portuguese',index);feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='✓ Conteúdo recuperado! '+why;}
-    else{feedback.className='leo-practice-feedback leo-feedback-wrong';feedback.textContent='Vamos tentar de novo. '+lesson;}
+    if(i===correct){leoPtRecoveryDone[index]=true;leoPtSaveRecovery();leoMissionRecoverySucceeded('portuguese',index);feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='🏅 Parabéns! Você recuperou este conteúdo! '+why+' Sua nota original foi preservada.';}
+    else{feedback.className='leo-practice-feedback leo-feedback-wrong';feedback.textContent='Ainda não foi dessa vez. Releia o exemplo e tente novamente: '+lesson;}
     renderChoices();
    });choices.append(button);
   });
@@ -937,7 +962,7 @@ function leoHuRender(){
     if(!leoHuAnswers[leoHuIndex]){
       const help=document.createElement('section');help.className='leo-reinforcement';
       const title=document.createElement('h4');title.textContent='📚 Recuperação personalizada';
-      const explain=document.createElement('p');explain.textContent='Entenda: '+q.why;
+      const explain=document.createElement('div');leoRecoverySteps(explain,'humanas',leoHuIndex,q.why);
       const review=leoHuReview[leoHuIndex];
       const retry=document.createElement('p');retry.textContent='Agora aplique o que aprendeu em outra situação: '+review.text;
       const opts=document.createElement('div');opts.className='leo-choices leo-humanas-choices';
@@ -947,11 +972,11 @@ function leoHuRender(){
         btn.addEventListener('click',()=>{
           if(leoHuRecovery[leoHuIndex])return;
           if(i===review.correct){leoHuRecovery[leoHuIndex]=true;leoHuSaveRecovery();leoHuRender();leoMissionRecoverySucceeded('humanas',leoHuIndex);}
-          else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Vamos pensar novamente. '+review.why;}
+          else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Ainda não foi dessa vez. Volte ao exemplo e tente outra vez. '+review.why;}
         });opts.append(btn);
       });
       const hint=document.createElement('p');hint.className='leo-humanas-hint';
-      if(leoHuRecovery[leoHuIndex])hint.textContent='✓ Conteúdo recuperado! '+review.why;
+      if(leoHuRecovery[leoHuIndex])hint.textContent='🏅 Parabéns! Você recuperou este conteúdo! '+review.why+' Sua nota original foi preservada.';
       help.append(title,explain,retry,leoStudyHint('humanas',1),opts,hint);leoHuBox.append(help);
     }
     const actions=document.createElement('div');actions.className='leo-choices leo-humanas-choices';
