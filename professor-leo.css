@@ -342,3 +342,8 @@
 .leo-study-hint .leo-focused-hint p{font-size:14px;margin:6px 0 0;line-height:1.7}
 .leo-study-hint .leo-focused-hint-prompt{font-weight:700;color:#654600;margin-top:10px}
 .leo-study-hint .leo-focused-hint[hidden],.leo-study-hint-button[hidden]{display:none!important}
+
+/* Localização de navegação na tarja azul */
+.leo-top .leo-current-location{display:block;margin-top:4px;font-size:11px;font-weight:700;color:#fff;line-height:1.35;max-width:265px}
+.leo-top>div{min-width:0}
+@media(max-width:550px){.leo-top .leo-current-location{font-size:10px;max-width:170px}}
