@@ -531,7 +531,7 @@ function leoMissionSave(record){try{localStorage.setItem(leoMissionStorageKey,JS
 // Conquistas locais: uma missão por dia, sem penalidades por pausas.
 const leoAchievementKey='decola-vestibular:leo:achievements:v1';
 function leoAchievementDates(){
-  try{const a=JSON.parse(localStorage.getItem(leoAchievementKey)||'[]');return Array.isArray(a)?Array.from(new Set(a.filter(d=>typeof d==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(d)))).sort():[];}catch(_error){return [];}
+  try{const a=JSON.parse(localStorage.getItem(leoAchievementKey)||'[]');return Array.isArray(a)?Array.from(new Set(a.filter(d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)))).sort():[];}catch(_error){return [];}
 }
 function leoAchievementMark(date,completed){
   const dates=new Set(leoAchievementDates());
@@ -1151,7 +1151,7 @@ try{
 }catch(_error){}
 let leoChallengeCount=0;
 function leoLearningChallenge(question,answer){
-  if(!/porcent|\\d+\\s*%/i.test(question+' '+answer))return;
+  if(!/porcent|\d+\\s*%/i.test(question+' '+answer))return;
   const sets=[
     [{rate:10,total:80},{rate:25,total:120},{rate:50,total:90},{rate:20,total:150}],
     [{rate:15,total:200},{rate:30,total:240},{rate:12,total:250},{rate:35,total:180}],
