@@ -55,3 +55,5 @@ body.leo-study-open{overflow:hidden}
 .study-subject-nature{--subject-bg:#ddf7ed;--subject-ink:#167c61}
 .study-subject-writing{--subject-bg:#fff4cd;--subject-ink:#9b6d0c}
 @media(max-width:600px){.study-subject-card{min-height:165px}.study-subject-art{width:60px;height:60px;font-size:34px}}
+
+.study-topic-card{min-height:125px;padding:20px;gap:10px}.study-topic-example{background:#eaf1ff;border-left:4px solid #2350cf;border-radius:10px;padding:18px;color:#183665;font-weight:600;margin:12px 0 22px}.study-topic-answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.study-topic-answers button{padding:16px;border:1px solid #b8c9f1;border-radius:12px;background:white;color:#17366b;cursor:pointer;font-size:16px}.study-topic-answers button:hover,.study-topic-answers button:focus-visible{border-color:#1744c3;background:#edf3ff}.study-dashboard h3{color:#14254c;font-size:19px}@media(max-width:600px){.study-topic-answers{grid-template-columns:1fr}}
