@@ -37,7 +37,7 @@
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
   const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
-  const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.2');
+  const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.1');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
   const lesson=make('section','study-smart-card');
@@ -72,7 +72,7 @@
     const previous=progress[i];if(previous?.done||(previous?.attempts===1&&previous?.choice!==null&&previous?.choice!==undefined))return;
     const attempts=(previous?.attempts||0)+1;
     progress[i]={choice:j,attempts,done:j===q.answer||attempts>=2};
-    save();render();updateScore();
+    save();render();updateScore();updateReport();
    });options.append(btn);return btn;});
    retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();buttons[0]?.focus();});
    const render=()=>{
@@ -86,6 +86,40 @@
    };
    card.append(options,feedback,retry);practice.append(card);render();
   });save();updateScore();
+  // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.
+  const report=make('section','study-smart-card study-smart-report');
+  report.setAttribute('aria-live','polite');
+  function updateReport(){
+   const completed=questions.every((q,i)=>progress[i]?.done);
+   report.replaceChildren();report.hidden=!completed;
+   if(!completed)return;
+   const firstTry=questions.filter((q,i)=>progress[i]?.choice===q.answer&&progress[i]?.attempts===1).length;
+   const eventual=questions.filter((q,i)=>progress[i]?.choice===q.answer).length;
+   const reinforced=questions.map((q,i)=>({q,i,p:progress[i]})).filter(x=>x.p?.attempts>1||x.p?.choice!==x.q.answer);
+   report.append(make('h3','','🎓 Aula concluída! Seu relatório com o Professor Leo'));
+   report.append(make('p','study-smart-report-stats',
+    'Questões concluídas: 3 de 3 • Acertos finais: '+eventual+' de 3 • Acertos na primeira tentativa: '+firstTry+' de 3 • Questões que exigiram reforço: '+reinforced.length+'.'));
+   report.append(make('p','','Parabéns por concluir a prática! Acertar depois de uma dica também é aprender. Vamos revisar os pontos que exigiram mais atenção.'));
+   const guidance=make('div','study-smart-guidance');
+   guidance.append(make('h4','','Seu reforço personalizado'));
+   if(!reinforced.length)guidance.append(make('p','','Você acertou tudo na primeira tentativa. Continue praticando para consolidar porcentagens.'));
+   reinforced.forEach(({i})=>{
+    const messages=[
+     'Porcentagem de um valor: transforme a taxa em decimal (20% = 0,20) e multiplique pelo total.',
+     'Desconto: calcule a porcentagem e subtraia do preço original.',
+     'Aumento: calcule a porcentagem e some ao preço original.'
+    ];
+    guidance.append(make('p','','Questão '+(i+1)+': '+messages[i]));
+   });
+   report.append(guidance);
+   const actions=make('div','study-smart-report-actions');
+   const review=make('button','study-dashboard-all','🔁 Revisar esta aula');review.type='button';
+   review.addEventListener('click',()=>{lesson.scrollIntoView({behavior:'smooth',block:'start'});});
+   const next=make('button','study-dashboard-all','➡️ Próxima aula: Frações');next.type='button';
+   next.addEventListener('click',()=>showMathLesson(dashboard,mathTopics[1]));
+   actions.append(review,next);report.append(actions);
+  }
+  updateReport();
   const help=make('section','study-smart-card');help.append(make('h3','','3. Precisa de ajuda?'));
   const helpText=make('p','','O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.');help.append(helpText);
   const helpBtn=make('button','study-dashboard-all','🎓 Pedir ajuda ao Professor Leo');helpBtn.type='button';helpBtn.addEventListener('click',()=>{
@@ -97,7 +131,7 @@
   });help.append(helpBtn);
   const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
   const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
-  steps.append(lesson,practice,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+  steps.append(lesson,practice,report,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
  function showBasicMathLesson(dashboard,topic){
   dashboard.replaceChildren();
