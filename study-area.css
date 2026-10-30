@@ -82,3 +82,7 @@ body.leo-study-open{overflow:hidden}
 .leo-widget .leo-learning-check p{line-height:1.65}
 .leo-widget .leo-chat .leo-thread .leo-learning-check{box-shadow:0 4px 18px rgba(23,68,195,.07)}
 .leo-widget .leo-chat .leo-thread .leo-learning-check strong{font-size:16px}
+
+/* Elementos ocultos não podem ser reexibidos por regras display:grid/flex. */
+.leo-widget .leo-panel [hidden]{display:none!important}
+.leo-widget .leo-panel .study-dashboard:not([hidden]){display:block;position:relative;z-index:1}
