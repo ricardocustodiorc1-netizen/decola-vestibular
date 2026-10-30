@@ -130,3 +130,11 @@ body.leo-study-open{overflow:hidden}
 .leo-widget .study-smart-report-stats{font-size:17px!important;line-height:1.75!important}
 .leo-widget .study-smart-report-actions button{font-size:16px!important;padding:12px 16px}
 .leo-widget .study-smart-card>p{font-size:17px!important;line-height:1.7!important}
+
+/* Painel do estudante — navegação simplificada */
+.study-dashboard-hero{background:linear-gradient(115deg,#e8f0ff,#f7faff);border:1px solid #bfd2ff;border-radius:18px;padding:24px;margin:0 0 22px;color:#14254c}
+.study-dashboard-hero h3{font-size:22px;margin:0 0 8px}
+.study-dashboard-hero p{font-size:16px;margin:0 0 16px}
+.study-dashboard-primary{background:#1744c3!important;color:#fff!important;border-color:#1744c3!important;font-weight:800!important}
+.study-dashboard-card:focus-visible,.study-dashboard-all:focus-visible{outline:3px solid #ffb84d;outline-offset:3px}
+@media(max-width:600px){.study-dashboard-grid{grid-template-columns:1fr}.study-dashboard-hero{padding:18px}.study-dashboard-card{min-height:125px;padding:18px}}
