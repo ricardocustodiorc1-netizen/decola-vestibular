@@ -6,6 +6,7 @@
   {icon:'📈',title:'Minha evolução',detail:'Veja seu desempenho e plano de estudos.',terms:['minha evolução']},
   {icon:'🎓',title:'Professor Leo',detail:'Converse com o tutor em uma tela ampla.',terms:['conversar com o professor leo']}
  ];
+ let selectingLegacySubject=false;
  const panel=()=>document.querySelector('.leo-panel');
  const launcher=()=>document.querySelector('.leo-launch');
  function openPanel(){const p=panel();if(p&&p.hidden)launcher()?.click();return p;}
@@ -95,7 +96,7 @@
     if(index===0){showMathTopics(dashboard);return;}
     const p=panel();const option=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Aprender uma matéria'));
     if(!option)return;
-    dashboard.hidden=true;option.click();
+    dashboard.hidden=true;selectingLegacySubject=true;try{option.click();}finally{selectingLegacySubject=false;}
     const select=p.querySelector('#leo-area');if(select){select.value=String(index);select.dispatchEvent(new Event('change',{bubbles:true}));}
    });grid.append(button);
   });dashboard.append(back,heading,intro,grid);dashboard.hidden=false;
@@ -135,6 +136,17 @@
   if(launch){launch.textContent='🎓 Abrir área de estudos';launch.setAttribute('aria-label','Abrir painel de estudos');launch.addEventListener('click',()=>{if(!panel()?.hidden)showDashboard();});}
   const p=panel();
   if(p){
+   // A entrada "Aprender uma matéria" abre a escolha visual de áreas,
+   // preservando o módulo antigo apenas para aulas de outras disciplinas.
+   p.addEventListener('click',event=>{
+    const option=event.target.closest?.('.leo-menu-option');
+    if(!option||selectingLegacySubject||!option.textContent.includes('Aprender uma matéria'))return;
+    event.preventDefault();event.stopImmediatePropagation();
+    let dashboard=p.querySelector('.study-dashboard');
+    if(!dashboard){showDashboard();dashboard=p.querySelector('.study-dashboard');}
+    if(dashboard)showSubjects(dashboard);
+    p.querySelector('.leo-body')?.scrollTo(0,0);
+   },true);
    const sync=()=>{document.body.classList.toggle('leo-study-open',!p.hidden);if(p.hidden){const dashboard=p.querySelector('.study-dashboard');if(dashboard)dashboard.hidden=true;}};
    new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['hidden']});sync();
    const header=p.querySelector('.leo-top strong');
