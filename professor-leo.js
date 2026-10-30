@@ -481,6 +481,52 @@ function renderLeoPractice(){
   leoPractice.append(report,note);
 }
 renderLeoPractice();
+
+const leoPtQuestions=[
+ {text:'Apesar da chuva, a turma foi à biblioteca.',question:'A expressão "apesar da" indica:',choices:['Contraste','Causa','Conclusão'],correct:0,why:'Apesar de introduz uma concessão: a turma foi mesmo com chuva.'},
+ {text:'Ler amplia o vocabulário, estimula a imaginação e permite conhecer outras perspectivas.',question:'Qual é a ideia principal?',choices:['Ler tem diversos benefícios','Ler é apenas memorizar palavras','Imaginação atrapalha a leitura'],correct:0,why:'O trecho apresenta três benefícios da leitura.'},
+ {text:'Marina chegou à estação e viu o trem se afastando. Em seguida, consultou o próximo horário.',question:'O que se pode inferir?',choices:['Marina perdeu o trem','Marina estava dentro do trem','Marina não queria viajar'],correct:0,why:'O trem já estava partindo e ela procurou o próximo horário.'},
+ {text:'A biblioteca abre às oito horas. Para mim, é o melhor lugar da cidade para estudar.',question:'Qual alternativa expressa opinião?',choices:['A biblioteca abre às oito','É o melhor lugar para estudar','A biblioteca tem horário de abertura'],correct:1,why:'Melhor lugar é uma avaliação pessoal; o horário é um fato verificável.'},
+ {text:'Júlia pegou um livro emprestado e prometeu devolvê-lo na sexta-feira.',question:'O pronome em "devolvê-lo" retoma:',choices:['O livro','A sexta-feira','A promessa'],correct:0,why:'O pronome lo substitui livro, evitando repetição.'}
+];
+const leoPtKey='decola-vestibular:leo-portugues:v1',leoPtHistoryKey='decola-vestibular:leo-portugues-history:v1';
+function leoPtRead(key,fallback){try{return JSON.parse(localStorage.getItem(key))||fallback;}catch{return fallback;}}
+let leoPtAnswers=leoPtRead(leoPtKey,Array(leoPtQuestions.length).fill(null));
+if(!Array.isArray(leoPtAnswers)||leoPtAnswers.length!==leoPtQuestions.length||!leoPtAnswers.every(x=>x===null||typeof x==='boolean'))leoPtAnswers=Array(leoPtQuestions.length).fill(null);
+let leoPtHistory=leoPtRead(leoPtHistoryKey,[]);
+if(!Array.isArray(leoPtHistory))leoPtHistory=[];
+leoPtHistory=leoPtHistory.filter(x=>x&&Number.isInteger(x.correct)&&x.correct>=0&&x.correct<=leoPtQuestions.length).slice(-20);
+let leoPtIndex=Math.max(0,leoPtAnswers.findIndex(x=>x===null)),leoPtRecorded=leoPtAnswers.every(x=>x!==null);
+const leoPtBox=document.createElement('section');leoPtBox.className='leo-practice leo-portuguese';leoPtBox.setAttribute('aria-label','Treino de Português');leoPractice.after(leoPtBox);
+function leoPtRender(){
+ leoPtBox.replaceChildren();
+ const h=document.createElement('h3');h.textContent='📖 Português e Interpretação de Texto';leoPtBox.append(h);
+ const count=leoPtAnswers.filter(x=>x!==null).length,score=leoPtAnswers.filter(Boolean).length,q=leoPtQuestions[leoPtIndex],answered=leoPtAnswers[leoPtIndex]!==null;
+ const progress=document.createElement('p');progress.className='leo-practice-progress';progress.textContent='Rodada: '+count+' de '+leoPtQuestions.length+' questões respondidas.';leoPtBox.append(progress);
+ const passage=document.createElement('blockquote');passage.className='leo-portuguese-passage';passage.textContent=q.text;
+ const title=document.createElement('p');title.className='leo-question';title.textContent='Questão '+(leoPtIndex+1)+': '+q.question;
+ const options=document.createElement('div');options.className='leo-choices leo-portuguese-choices';
+ q.choices.forEach((choice,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String.fromCharCode(65+i)+') '+choice;b.disabled=answered;b.addEventListener('click',()=>{
+  if(leoPtAnswers[leoPtIndex]!==null)return;
+  leoPtAnswers[leoPtIndex]=i===q.correct;
+  try{localStorage.setItem(leoPtKey,JSON.stringify(leoPtAnswers));}catch{}
+  if(leoPtAnswers.every(x=>x!==null)&&!leoPtRecorded){leoPtRecorded=true;leoPtHistory.push({correct:leoPtAnswers.filter(Boolean).length,total:leoPtQuestions.length,date:new Date().toISOString()});leoPtHistory=leoPtHistory.slice(-20);try{localStorage.setItem(leoPtHistoryKey,JSON.stringify(leoPtHistory));}catch{}}
+  leoPtRender();
+ });options.append(b);});
+ leoPtBox.append(passage,title,options);
+ if(answered){const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(leoPtAnswers[leoPtIndex]?'leo-feedback-correct':'leo-feedback-wrong');feedback.setAttribute('role','status');feedback.textContent=(leoPtAnswers[leoPtIndex]?'✓ Você acertou! ':'Vamos revisar. ')+q.why;leoPtBox.append(feedback);}
+ const actions=document.createElement('div');actions.className='leo-practice-actions';
+ if(answered){const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';next.addEventListener('click',()=>{leoPtIndex=(leoPtIndex+1)%leoPtQuestions.length;leoPtRender();leoBody.scrollTop=0;});actions.append(next);
+ const help=document.createElement('button');help.type='button';help.textContent='💬 Peça ajuda ao Leo';help.addEventListener('click',()=>{leoReturnView='portuguese';leoShowView('chat');leoInput.value='Professor Leo, explique esta questão de interpretação: '+q.text+' Pergunta: '+q.question+' Resposta correta: '+q.choices[q.correct]+'.';leoInput.focus({preventScroll:true});});actions.append(help);}
+ const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';restart.addEventListener('click',()=>{leoPtAnswers=Array(leoPtQuestions.length).fill(null);leoPtIndex=0;leoPtRecorded=false;try{localStorage.removeItem(leoPtKey);}catch{}leoPtRender();});actions.append(restart);leoPtBox.append(actions);
+ if(count===leoPtQuestions.length){const result=document.createElement('h4');result.textContent='📊 Resultado: '+score+' de '+leoPtQuestions.length+' acertos ('+Math.round(score/leoPtQuestions.length*100)+'%)';leoPtBox.append(result);}
+ const history=document.createElement('div');history.className='leo-portuguese-history';const hh=document.createElement('h4');hh.textContent='📈 Histórico de Português';history.append(hh);
+ if(!leoPtHistory.length){const p=document.createElement('p');p.textContent='Conclua a rodada para começar seu histórico.';history.append(p);}
+ else{const bars=document.createElement('div');bars.className='leo-portuguese-bars';leoPtHistory.forEach((x,i)=>{const item=document.createElement('div');item.className='leo-portuguese-bar-item';const pct=Math.round(x.correct/x.total*100);const top=document.createElement('span');top.textContent=pct+'%';const track=document.createElement('div');track.className='leo-portuguese-bar-track';const fill=document.createElement('div');fill.className='leo-portuguese-bar-fill';fill.style.height=pct+'%';track.append(fill);const bottom=document.createElement('small');bottom.textContent=String(i+1);item.append(top,track,bottom);bars.append(item);});history.append(bars);}
+ const note=document.createElement('small');note.textContent='Resultados demonstrativos salvos neste navegador, separados dos resultados de Matemática.';history.append(note);leoPtBox.append(history);
+}
+leoPtRender();
+
 // Menu principal: cada modo ocupa uma tela própria, sem misturar aulas, treino e IA.
 const leoBody=root.querySelector('.leo-body');
 const leoMessage=root.querySelector('.leo-message');
@@ -492,7 +538,8 @@ leoMenu.className='leo-menu';
 leoMenu.innerHTML='<h3>O que vamos estudar hoje?</h3><p>Escolha como deseja aprender com o Professor Leo.</p>';
 const leoViews=[
   ['lesson','📖 Aprender uma matéria','Aulas explicadas com exemplos e dicas.'],
-  ['practice','🧮 Fazer exercícios','Treino de Matemática com correção e reforço.'],
+  ['practice','🧮 Fazer exercícios de Matemática','Treino de Matemática com correção e reforço.'],
+   ['portuguese','📖 Exercícios de Português','Interpretação de texto, correção e histórico de acertos.'],
   ['chat','💬 Conversar com o Professor Leo','Tire suas dúvidas com a IA em teste.']
 ];
 leoViews.forEach(([view,label,description])=>{
@@ -524,7 +571,7 @@ leoResume.textContent='🧮 Voltar aos exercícios';
 leoResume.setAttribute('aria-label','Retomar os exercícios sem perder o progresso');
 root.querySelector('.leo-top').insertBefore(leoResume,root.querySelector('.leo-close'));
 leoResume.addEventListener('click',()=>leoShowView(leoReturnView));
-leoTalk.addEventListener('click',()=>{if(leoCurrentView==='practice'||leoCurrentView==='lesson')leoReturnView=leoCurrentView;leoShowView('chat')});
+leoTalk.addEventListener('click',()=>{if(leoCurrentView==='practice'||leoCurrentView==='lesson'||leoCurrentView==='portuguese')leoReturnView=leoCurrentView;leoShowView('chat')});
 leoBack.addEventListener('click',()=>leoShowView('menu'));
 function leoShowView(view){
   const previousView=leoCurrentView;
@@ -534,13 +581,14 @@ function leoShowView(view){
   leoBack.hidden=menu;
   leoTalk.hidden=view==='chat';
   leoResume.hidden=view!=='chat';
-  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat';
+  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat',isPortuguese=view==='portuguese';
   leoMessage.hidden=true;
   leoRecommendation.hidden=!isLesson;
   leoAreaLabel.hidden=!isLesson;
   selector.hidden=!isLesson;
   lessonBox.hidden=!isLesson;
   leoPractice.hidden=!isPractice;
+   leoPtBox.hidden=!isPortuguese;
   leoChat.hidden=!isChat;
   if(isPractice && previousView!=='chat'){
     selector.value='0';
