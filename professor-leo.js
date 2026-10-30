@@ -978,6 +978,65 @@ function leoRenderDashboard(){
   missionNote.style.fontSize='12px';
   mission.append(missionNote);
   leoDashboard.append(mission);
+  // Metas semanais: usa somente datas de missões registradas, sem mexer nas notas.
+  const weeklyGoals=document.createElement('section');
+  weeklyGoals.className='leo-dashboard-next';
+  weeklyGoals.setAttribute('aria-label','Painel de metas semanais');
+  const goalHeading=document.createElement('h4');
+  goalHeading.textContent='🎯 Minhas metas semanais';
+  weeklyGoals.append(goalHeading);
+  const today=new Date();
+  const monday=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+  monday.setDate(monday.getDate()-(monday.getDay()+6)%7);
+  const dateKey=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+  const achievementDays=new Set(leoAchievementDates());
+  const weekDays=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return d;});
+  const doneDays=weekDays.filter(d=>achievementDays.has(dateKey(d))).length;
+  const weeklyTarget=5;
+  const remaining=Math.max(0,weeklyTarget-doneDays);
+  const goalProgress=document.createElement('p');
+  goalProgress.textContent=doneDays+' de '+weeklyTarget+' missões concluídas nesta semana ('+Math.min(100,Math.round(doneDays/weeklyTarget*100))+'% da meta).';
+  const goalBar=document.createElement('progress');
+  goalBar.max=weeklyTarget;goalBar.value=Math.min(doneDays,weeklyTarget);
+  goalBar.style.width='100%';
+  goalBar.setAttribute('aria-label','Progresso da meta semanal de cinco missões');
+  weeklyGoals.append(goalProgress,goalBar);
+  const dayLabels=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  const daysLine=document.createElement('div');
+  daysLine.className='leo-dashboard-actions';
+  daysLine.setAttribute('aria-label','Missões desta semana');
+  weekDays.forEach((d,i)=>{
+    const item=document.createElement('span');
+    const done=achievementDays.has(dateKey(d));
+    const current=dateKey(d)===dateKey(today);
+    item.textContent=dayLabels[i]+' '+(done?'✓':current?'•':'–');
+    item.title=done?'Missão concluída':current?'Hoje, missão pendente':'Sem missão registrada';
+    item.style.cssText='display:inline-block;padding:6px 9px;border:1px solid #c5d4ff;border-radius:8px;font-size:12px;'+(done?'background:#dcfce7;color:#166534;':current?'background:#e8efff;color:#1745c5;':'');
+    daysLine.append(item);
+  });
+  weeklyGoals.append(daysLine);
+  const goalMessage=document.createElement('p');
+  goalMessage.textContent=remaining===0?'🎉 Meta semanal alcançada! Você pode descansar ou continuar estudando no seu ritmo.':remaining===1?'Falta apenas 1 missão para sua meta. Um passo de cada vez!':'Faltam '+remaining+' missões para a meta desta semana. Pausas fazem parte do aprendizado, sem punições.';
+  weeklyGoals.append(goalMessage);
+  if(adaptiveTarget){
+    const focus=document.createElement('p');
+    focus.textContent='📚 Matéria que merece atenção: '+(adaptiveTarget.name||adaptiveTarget.topic)+' — '+adaptiveTarget.area+'.';
+    weeklyGoals.append(focus);
+    const focusButton=document.createElement('button');
+    focusButton.type='button';
+    focusButton.textContent='Revisar conteúdo prioritário';
+    focusButton.addEventListener('click',()=>adaptiveTarget.index!==undefined?leoOpenTopic(adaptiveTarget.view,adaptiveTarget.index):leoShowView(adaptiveTarget.view));
+    weeklyGoals.append(focusButton);
+  }
+  const missionButton=document.createElement('button');
+  missionButton.type='button';
+  missionButton.textContent='Ver minha missão do dia';
+  missionButton.addEventListener('click',()=>{mission.scrollIntoView({block:'start',behavior:'smooth'});});
+  weeklyGoals.append(missionButton);
+  const goalNote=document.createElement('small');
+  goalNote.textContent='Semana de segunda a domingo. Cada dia com missão concluída conta uma vez. Dados salvos somente neste navegador; não altera notas nem o plano de estudos.';
+  weeklyGoals.append(goalNote);
+  leoDashboard.append(weeklyGoals);
   leoDashboard.append(leoAchievementPanel());
   // Integração somente de leitura com o plano semanal gerado pelo Decola.
   const weekly=document.createElement('section');weekly.className='leo-dashboard-next';
