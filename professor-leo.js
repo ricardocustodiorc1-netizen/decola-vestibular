@@ -249,27 +249,74 @@ function leoFocusedMathPanel(){
   const question=document.createElement('p');question.className='leo-question';question.textContent=exercise.question;
   const options=document.createElement('div');options.className='leo-choices';
   const result=document.createElement('p');result.setAttribute('role','status');
+  const guidance=document.createElement('div');guidance.className='leo-practice-actions';
+  let attempts=0;
+  function setFeedback(message,correct){
+    result.textContent=message;
+    result.className='leo-practice-feedback '+(correct?'leo-feedback-correct':'leo-feedback-wrong');
+  }
+  function lockOptions(){
+    options.querySelectorAll('button').forEach(button=>button.disabled=true);
+  }
+  function makeAction(label,handler){
+    const button=document.createElement('button');button.type='button';button.textContent=label;
+    button.addEventListener('click',handler);return button;
+  }
+  function openLeoConversation(){
+    leoInput.value='Professor Leo, estou estudando '+original.topic+'. A questão é: '+exercise.question+
+      '. Minhas alternativas são: '+exercise.choices.join(', ')+
+      '. Não consegui resolver. Me ajude com uma explicação simples e uma pergunta por vez, sem entregar a resposta de imediato.';
+    leoShowView('chat');
+    leoInput.focus({preventScroll:true});
+  }
+  function showHelp(){
+    guidance.replaceChildren();
+    guidance.append(
+      makeAction('💡 Explicar mais simples',()=>{
+        setFeedback('Vamos por partes! '+exercise.steps+' Agora escolha novamente a alternativa que parece correta.',false);
+        if(attempts<2)options.querySelectorAll('button').forEach(button=>button.disabled=false);
+      }),
+      makeAction('💬 Falar com Leo',openLeoConversation),
+      makeAction('📖 Ver solução completa',()=>{
+        setFeedback('Solução comentada: '+exercise.explanation,false);
+        lockOptions();
+        guidance.replaceChildren(makeAction('💬 Tirar dúvida com Leo',openLeoConversation));
+      })
+    );
+  }
   exercise.choices.forEach((choice,i)=>{
     const button=document.createElement('button');button.type='button';button.textContent=choice;
     button.addEventListener('click',()=>{
-      options.querySelectorAll('button').forEach(b=>b.disabled=true);
-      result.textContent=(i===exercise.correct?'✓ Muito bem! ':'Vamos aprender com essa tentativa. ')+exercise.explanation;
-      result.className='leo-practice-feedback '+(i===exercise.correct?'leo-feedback-correct':'leo-feedback-wrong');
+      if(button.disabled)return;
+      if(i===exercise.correct){
+        lockOptions();
+        setFeedback('✓ Muito bem! '+exercise.explanation,true);
+        guidance.replaceChildren(makeAction('💬 Conversar com Leo',openLeoConversation));
+        return;
+      }
+      attempts+=1;
+      if(attempts===1){
+        button.disabled=true;
+        setFeedback('Boa tentativa! Vamos descobrir juntos. '+exercise.steps+' Você pode tentar mais uma vez.',false);
+        showHelp();
+      }else{
+        lockOptions();
+        setFeedback('Você tentou novamente, e isso faz parte do aprendizado! Vamos entender o caminho.',false);
+        showHelp();
+      }
     });
     options.append(button);
   });
   const actions=document.createElement('div');actions.className='leo-practice-actions';
-  const next=document.createElement('button');next.type='button';next.textContent='Outro exercício direcionado';
-  next.addEventListener('click',()=>{
+  const next=makeAction('Outro exercício direcionado',()=>{
     const missed=leoPracticeAnswers.map((answer,i)=>answer===false?i:-1).filter(i=>i>=0);
     const pool=missed.length?missed:leoPracticeQuestions.map((_,i)=>i);
     leoFocusedMathIndex=pool[(pool.indexOf(index)+1)%pool.length];
     renderLeoPractice();
   });
-  const regular=document.createElement('button');regular.type='button';regular.textContent='Voltar ao treino completo';
-  regular.addEventListener('click',()=>{leoFocusedMathIndex=null;renderLeoPractice();});
+  const regular=makeAction('Voltar ao treino completo',()=>{leoFocusedMathIndex=null;renderLeoPractice();});
   actions.append(next,regular);
-  box.append(title,intro,topic,hint,question,options,result,actions);
+  box.append(title,intro,topic,hint,question,options,result,guidance,actions);
   return box;
 }
 function renderLeoPractice(){
