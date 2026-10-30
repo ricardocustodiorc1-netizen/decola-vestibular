@@ -331,3 +331,14 @@
 .leo-focused-math .leo-focused-hint .leo-focused-hint-prompt{font-weight:700;color:#654600;margin-top:10px}
 .leo-focused-math .leo-focused-hint[hidden]{display:none!important}
 @media(max-width:480px){.leo-focused-math .leo-focused-hint:not([hidden]){padding:12px}}
+
+/* Dicas didáticas em Português e Ciências Humanas */
+.leo-study-hint{margin:10px 0 14px}
+.leo-study-hint-button{cursor:pointer;background:#fff8e1;border:1px solid #dba82f;border-radius:9px;padding:10px 14px;font-size:14px;font-weight:700;color:#694700;min-height:42px}
+.leo-study-hint-button:hover{background:#ffedb5}
+.leo-study-hint-button:focus-visible{outline:3px solid #1744c3;outline-offset:2px}
+.leo-study-hint .leo-focused-hint:not([hidden]){display:block;background:#fff8db;border:2px solid #e7b54c;border-left:6px solid #d89b17;border-radius:12px;padding:15px 17px;margin:10px 0;color:#503b13;line-height:1.65}
+.leo-study-hint .leo-focused-hint-title{display:block;font-size:16px;font-weight:800;color:#704a00;margin-bottom:8px}
+.leo-study-hint .leo-focused-hint p{font-size:14px;margin:6px 0 0;line-height:1.7}
+.leo-study-hint .leo-focused-hint-prompt{font-weight:700;color:#654600;margin-top:10px}
+.leo-study-hint .leo-focused-hint[hidden],.leo-study-hint-button[hidden]{display:none!important}
