@@ -127,3 +127,9 @@
 .leo-learning-check .leo-check-actions[hidden]{display:none!important}
 .leo-learning-check .leo-feedback-correct,.leo-learning-check .leo-feedback-wrong{padding:10px;border-radius:8px;line-height:1.5}
 .leo-learning-check button:focus-visible,.leo-learning-check input:focus-visible{outline:3px solid #e7a72e;outline-offset:2px}
+
+/* Três caminhos de ajuda após um erro, mantendo a conversa e o treino. */
+.leo-help-options{display:grid;gap:8px;margin:12px 0;padding:12px;border:1px solid #b9cafa;border-radius:10px;background:#fff}
+.leo-help-options[hidden]{display:none!important}
+.leo-help-options strong{margin:0 0 3px;color:#14254c}
+.leo-help-options button{width:100%;text-align:left;white-space:normal}
