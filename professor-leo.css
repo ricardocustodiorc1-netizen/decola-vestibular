@@ -246,3 +246,17 @@
 .leo-dashboard-next{margin:14px 0;background:#eaf1ff}
 .leo-dashboard>small{display:block;font-size:11px;color:#566681;line-height:1.5}
 @media(max-width:560px){.leo-dashboard-grid{grid-template-columns:1fr}}
+
+/* Ciências Humanas: mesma linguagem visual dos exercícios de Matemática e Português. */
+.leo-humanas .leo-humanas-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:9px 0}
+.leo-humanas .leo-humanas-choices button{font:inherit;font-size:12px;text-align:left;white-space:normal;overflow-wrap:anywhere;min-width:0;min-height:43px;padding:9px 10px;border:1px solid #b9cafa;border-radius:8px;background:#f2f6ff;color:#1744c3;cursor:pointer}
+.leo-humanas .leo-humanas-choices button:hover:not(:disabled){background:#e2ebff;border-color:#789eff}
+.leo-humanas .leo-humanas-choices button:disabled{opacity:.68;cursor:default}
+.leo-humanas .leo-humanas-choices button:focus-visible{outline:3px solid #e7a72e;outline-offset:2px}
+.leo-humanas .leo-practice-feedback{border-radius:8px;padding:10px 12px;line-height:1.5;margin:10px 0}
+.leo-humanas .leo-feedback-correct{background:#e2f6e9;color:#146239;border:1px solid #93d8ac}
+.leo-humanas .leo-feedback-wrong{background:#fff0f0;color:#a21e1e;border:1px solid #ffb0b0}
+.leo-humanas .leo-reinforcement{background:#f0f5ff;border:1px solid #c2d2ff;border-radius:10px;padding:12px;margin:12px 0}
+.leo-humanas .leo-reinforcement h4{margin:0 0 8px;color:#173c9c}
+.leo-humanas .leo-humanas-hint{font-weight:600;color:#1744c3}
+@media(max-width:520px){.leo-humanas .leo-humanas-choices{grid-template-columns:1fr}}
