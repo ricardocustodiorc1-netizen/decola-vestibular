@@ -583,30 +583,84 @@
    });grid.append(button);
   });dashboard.append(back,heading,intro,grid);dashboard.hidden=false;
  }
+
+ const studyPaths=[
+  {name:'Porcentagem',key:'decola-smart-percent-v2',subject:'Matemática'},
+  {name:'Frações',key:'decola-smart-fractions-v1',subject:'Matemática'},
+  {name:'Equações',key:'decola-smart-equations-v1',subject:'Matemática'},
+  {name:'Geometria',key:'decola-smart-geometry-v1',subject:'Matemática'},
+  {name:'Estatística',key:'decola-smart-statistics-v1',subject:'Matemática'},
+  {name:'Interpretação de Textos',key:'decola-smart-language-interpretation-v1',subject:'Linguagens'}
+ ];
+ function lessonStats(path){
+  try{
+   const obj=JSON.parse(localStorage.getItem(path.key)||'{}');
+   const entries=[0,1,2].map(i=>obj?.[i]);
+   return {done:entries.filter(v=>v?.done).length,correct:entries.filter(v=>v?.done&&v?.choice===undefined?false:v?.done).length};
+  }catch{return {done:0,correct:0};}
+ }
+ function launchLesson(path){
+  const p=openPanel();if(!p)return;
+  let d=p.querySelector('.study-dashboard');if(!d){showDashboard();d=p.querySelector('.study-dashboard');}
+  if(path.subject==='Matemática'){
+   const topic=mathTopics.find(t=>t.title===path.name);
+   if(topic){showMathLesson(d,topic);return;}
+  }
+  if(path.subject==='Linguagens'&&typeof window.decolaOpenLanguageSmart==='function'){
+   window.decolaOpenLanguageSmart(d);return;
+  }
+  showSubjects(d);
+ }
+ function showStudyProgress(dashboard){
+  hideLegacyViews(panel());dashboard.replaceChildren();
+  const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.onclick=showDashboard;
+  const title=document.createElement('h2');title.textContent='📈 Meu progresso';
+  const intro=document.createElement('p');intro.textContent='Resultados registrados neste navegador. Sua conta e a sincronização entre dispositivos ainda serão implementadas.';
+  const grid=document.createElement('div');grid.className='study-dashboard-grid';
+  studyPaths.forEach(path=>{
+   const stats=lessonStats(path),b=document.createElement('button');b.type='button';b.className='study-dashboard-card';
+   const name=document.createElement('strong');name.textContent=path.name;
+   const desc=document.createElement('small');desc.textContent=path.subject+' • '+stats.done+' de 3 questões concluídas';
+   const action=document.createElement('span');action.className='study-subject-action';action.textContent='Abrir aula →';
+   b.append(name,desc,action);b.onclick=()=>launchLesson(path);grid.append(b);
+  });
+  dashboard.append(back,title,intro,grid);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+ }
+ function openDashboardTool(terms){
+  const p=openPanel();if(!p)return;
+  const d=p.querySelector('.study-dashboard');if(d)d.hidden=true;
+  openModule({terms});
+ }
  function showDashboard(){
   const p=openPanel();if(!p)return;
   let dashboard=p.querySelector('.study-dashboard');
-  if(!dashboard){
-   dashboard=document.createElement('section');dashboard.className='study-dashboard';
-   dashboard.setAttribute('aria-label','Meu Decola — início dos estudos');
-   const heading=document.createElement('h2');heading.textContent='🚀 Meu Decola';
-   const intro=document.createElement('p');intro.textContent='O que você quer fazer hoje? Escolha uma opção para começar.';
-   const grid=document.createElement('div');grid.className='study-dashboard-grid';
-   cards.forEach(card=>{
-    const button=document.createElement('button');button.type='button';button.className='study-dashboard-card';
-    const icon=document.createElement('span');icon.className='study-dashboard-icon';icon.textContent=card.icon;
-    const title=document.createElement('strong');title.textContent=card.title;
-    const description=document.createElement('small');description.textContent=card.detail;
-    button.append(icon,title,description);button.addEventListener('click',()=>{if(card.title==='Matérias'){showSubjects(dashboard);return;}dashboard.hidden=true;openModule(card);});
-    grid.append(button);
-   });
-   const all=document.createElement('button');all.type='button';all.className='study-dashboard-all';all.textContent='Ver todas as ferramentas de estudo →';
-   all.addEventListener('click',()=>{dashboard.hidden=true;const back=p.querySelector('.leo-back');if(back)back.click();});
-   dashboard.append(heading,intro,grid,all);
-   p.querySelector('.leo-body')?.prepend(dashboard);
-  }
-  dashboard.hidden=false;
-  p.querySelector('.leo-body')?.scrollTo({top:0,behavior:'instant'});
+  if(!dashboard){dashboard=document.createElement('section');dashboard.className='study-dashboard';dashboard.setAttribute('aria-label','Meu Decola — painel do estudante');p.querySelector('.leo-body')?.prepend(dashboard);}
+  hideLegacyViews(p);dashboard.replaceChildren();
+  const heading=document.createElement('h2');heading.textContent='🚀 Meu Decola';
+  const intro=document.createElement('p');intro.textContent='Seu espaço de estudos: escolha um caminho e continue de onde parou.';
+  const recent=(()=>{try{return studyPaths.map(path=>({...path,stats:lessonStats(path)})).filter(x=>x.stats.done>0).sort((a,b)=>a.stats.done-b.stats.done)[0]||studyPaths[0];}catch{return studyPaths[0];}})();
+  const hero=document.createElement('section');hero.className='study-dashboard-hero';
+  const heroTitle=document.createElement('h3');heroTitle.textContent='📘 Continue estudando';
+  const heroText=document.createElement('p');heroText.textContent=recent.subject+' • '+recent.name+' — '+recent.stats.done+' de 3 questões concluídas';
+  const continueBtn=document.createElement('button');continueBtn.type='button';continueBtn.className='study-dashboard-all study-dashboard-primary';continueBtn.textContent='Continuar estudando →';continueBtn.onclick=()=>launchLesson(recent);
+  hero.append(heroTitle,heroText,continueBtn);
+  const grid=document.createElement('div');grid.className='study-dashboard-grid';
+  const options=[
+   ['📚','Minhas aulas','Matérias e trilhas de aprendizagem',()=>showSubjects(dashboard)],
+   ['🎓','Professor Leo','Abra o tutor em uma tela ampla',()=>openDashboardTool(['conversar com o professor leo'])],
+   ['📈','Meu progresso','Acompanhe aulas e exercícios concluídos',()=>showStudyProgress(dashboard)],
+   ['📝','Simulados','Treine com questões para o ENEM',()=>openDashboardTool(['simulado'])]
+  ];
+  options.forEach(([icon,label,detail,action])=>{
+   const b=document.createElement('button');b.type='button';b.className='study-dashboard-card';
+   const i=document.createElement('span');i.className='study-dashboard-icon';i.textContent=icon;
+   const name=document.createElement('strong');name.textContent=label;
+   const desc=document.createElement('small');desc.textContent=detail;
+   b.append(i,name,desc);b.onclick=action;grid.append(b);
+  });
+  const all=document.createElement('button');all.type='button';all.className='study-dashboard-all';all.textContent='Mais ferramentas de estudo →';all.onclick=()=>{dashboard.hidden=true;p.querySelector('.leo-back')?.click();};
+  dashboard.append(heading,intro,hero,grid,all);dashboard.hidden=false;
+  p.querySelector('.leo-body')?.scrollTo(0,0);
  }
  // Delegação no documento: funciona mesmo se o Professor Leo for criado depois deste script.
  document.addEventListener('decola:choose-subject',()=>{
