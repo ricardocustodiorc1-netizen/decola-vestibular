@@ -308,3 +308,18 @@
 .leo-dashboard-pane[hidden]{display:none!important}
 .leo-dashboard-pane>*{margin-bottom:14px}
 @media(max-width:420px){.leo-dashboard-tabs button{font-size:11px;padding:9px 3px}}
+
+/* Refinamento do painel de evolução: evita sobreposição e facilita a leitura. */
+.leo-dashboard-tabs{position:relative;top:auto;z-index:1;margin:12px 0 14px;padding:5px 0 8px;border-bottom:1px solid #dce5fb}
+.leo-dashboard-panes,.leo-dashboard-pane{min-width:0}
+.leo-dashboard-pane>*{scroll-margin-top:16px}
+.leo-performance-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.leo-performance-card{padding:14px;overflow-wrap:anywhere}
+.leo-performance-card p{line-height:1.55;margin:9px 0}
+.leo-performance-bars{gap:7px;margin:14px 0 9px;min-height:142px}
+.leo-performance-column{max-width:44px;gap:6px;font-size:11px}
+.leo-performance-column span{font-weight:700}
+.leo-performance-caption{font-size:11px!important;color:#536586}
+.leo-performance-summary{background:#f1f6ff;border-color:#aac4ff}
+.leo-performance-summary h4{margin-bottom:8px}
+@media(max-width:700px){.leo-performance-grid{grid-template-columns:1fr}.leo-performance-bars{justify-content:flex-start;gap:10px}.leo-performance-column{flex:0 1 44px}}
