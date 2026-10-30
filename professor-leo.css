@@ -115,3 +115,15 @@
 .leo-bubble-teacher{align-self:flex-start;background:#eef2f9;color:#14254c;border-bottom-left-radius:3px}
 .leo-chat-status{font-size:12px;color:#52617c;margin:8px 0}
 .leo-chat .leo-new-question[hidden],.leo-chat .leo-ai-answer[hidden]{display:none!important}
+
+/* Exercício de fixação: controles grandes, feedback e próximos passos visíveis. */
+.leo-learning-check{width:100%;max-width:100%;box-sizing:border-box;white-space:normal}
+.leo-learning-check .leo-check-form{display:flex;gap:9px;flex-wrap:wrap;align-items:stretch;margin:12px 0}
+.leo-learning-check input{flex:1 1 135px;min-width:0;min-height:44px;padding:10px 12px;font:inherit;font-size:15px;border:1px solid #aebddd;border-radius:8px;background:#fff}
+.leo-learning-check button{min-height:44px;padding:10px 13px;border-radius:8px;border:1px solid #b9cafa;background:#eaf0ff;color:#1744c3;font-weight:700;cursor:pointer;font-size:13px}
+.leo-learning-check button:disabled{opacity:.65;cursor:default}
+.leo-learning-check .leo-check-form button{background:#1744c3;color:white}
+.leo-learning-check .leo-check-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.leo-learning-check .leo-check-actions[hidden]{display:none!important}
+.leo-learning-check .leo-feedback-correct,.leo-learning-check .leo-feedback-wrong{padding:10px;border-radius:8px;line-height:1.5}
+.leo-learning-check button:focus-visible,.leo-learning-check input:focus-visible{outline:3px solid #e7a72e;outline-offset:2px}
