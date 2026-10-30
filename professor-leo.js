@@ -425,61 +425,75 @@ function leoCleanMath(text){
     .replace(/\*\*([^*]+)\*\*/g,'$1')
     .replace(/\\\\/g,'');
 }
+// Acompanhamento demonstrativo local, sem identificação pessoal.
+const leoPracticeKey='decola-leo-practice-v1';
+let leoPractice={attempts:0,correct:0,streak:0,level:1};
+try{
+  const saved=JSON.parse(localStorage.getItem(leoPracticeKey)||'null');
+  if(saved&&Number.isFinite(saved.attempts)&&Number.isFinite(saved.correct)&&Number.isFinite(saved.level)){
+    leoPractice={attempts:Math.max(0,saved.attempts),correct:Math.max(0,saved.correct),streak:Math.max(0,saved.streak||0),level:Math.max(1,Math.min(3,saved.level))};
+  }
+}catch(_error){}
 let leoChallengeCount=0;
 function leoLearningChallenge(question,answer){
-  const source=question+' '+answer;
-  if(!/porcent|\\d+\\s*%/i.test(source))return;
-  const examples=[
-    {rate:15,total:200,correct:30},
-    {rate:20,total:150,correct:30},
-    {rate:10,total:240,correct:24},
-    {rate:25,total:120,correct:30}
+  if(!/porcent|\\d+\\s*%/i.test(question+' '+answer))return;
+  const sets=[
+    [{rate:10,total:80},{rate:25,total:120},{rate:50,total:90},{rate:20,total:150}],
+    [{rate:15,total:200},{rate:30,total:240},{rate:12,total:250},{rate:35,total:180}],
+    [{rate:18,total:350},{rate:12,total:475},{rate:7,total:860},{rate:22,total:650}]
   ];
-  const example=examples[leoChallengeCount++%examples.length];
+  const level=leoPractice.level;
+  const options=sets[level-1];
+  const example=options[leoChallengeCount++%options.length];
+  const correct=example.rate*example.total/100;
   const box=document.createElement('div');
   box.className='leo-bubble leo-bubble-teacher leo-learning-check';
-  const heading=document.createElement('strong');heading.textContent='🎯 Agora é sua vez!';
-  const task=document.createElement('p');task.textContent='Quanto é '+example.rate+'% de '+example.total+'? Tente calcular antes de ver a resposta.';
+  const heading=document.createElement('strong');heading.textContent='🎯 Agora é sua vez! · Nível '+level;
+  const progress=document.createElement('p');
+  progress.textContent='Seu acompanhamento: '+leoPractice.correct+' acerto(s) em '+leoPractice.attempts+' tentativa(s).';
+  const task=document.createElement('p');task.textContent='Quanto é '+example.rate+'% de '+example.total+'? Tente antes de ver a resposta.';
   const form=document.createElement('div');form.className='leo-check-form';
-  const input=document.createElement('input');input.type='number';input.inputMode='decimal';input.placeholder='Digite sua resposta';input.setAttribute('aria-label','Resposta do exercício de fixação');
+  const input=document.createElement('input');input.type='number';input.step='any';input.inputMode='decimal';input.placeholder='Digite sua resposta';input.setAttribute('aria-label','Resposta do exercício de fixação');
   const button=document.createElement('button');button.type='button';button.textContent='Conferir resposta';
   const feedback=document.createElement('p');feedback.setAttribute('role','status');
   const actions=document.createElement('div');actions.className='leo-check-actions';actions.hidden=true;
   const help=document.createElement('div');help.className='leo-help-options';help.hidden=true;
-  const helpTitle=document.createElement('strong');helpTitle.textContent='Como o Professor Leo pode ajudar?';
-  help.append(helpTitle);
+  const helpTitle=document.createElement('strong');helpTitle.textContent='Como o Professor Leo pode ajudar?';help.append(helpTitle);
   const helpChoices=[
-    ['📖 Explique mais simples','Explique de forma mais simples, usando palavras fáceis e uma analogia do cotidiano.'],
-    ['🧮 Passo a passo','Mostre o cálculo passo a passo, explicando cada operação sem pular etapas.'],
-    ['🎯 Outro exemplo','Dê outro exemplo parecido para eu tentar sozinho, sem revelar a resposta antes da minha tentativa.']
+    ['📖 Explique mais simples','Explique com uma analogia do cotidiano e palavras fáceis.'],
+    ['🧮 Passo a passo','Mostre o cálculo passo a passo, sem pular etapas.'],
+    ['🎯 Outro exemplo','Mostre outro exemplo parecido para eu tentar, sem dar a resposta primeiro.']
   ];
   helpChoices.forEach(([label,instruction])=>{
     const choice=document.createElement('button');choice.type='button';choice.textContent=label;
     choice.addEventListener('click',()=>{
-      leoInput.value='Estou aprendendo porcentagem. Errei a questão: Quanto é '+example.rate+'% de '+example.total+'? Minha resposta foi '+input.value+'. A resposta correta é '+example.correct+'. '+instruction;
+      leoInput.value='Estou aprendendo porcentagem. Na questão quanto é '+example.rate+'% de '+example.total+', respondi '+input.value+' e o resultado correto é '+correct+'. '+instruction;
       leoInput.focus({preventScroll:true});
-      leoAiStatus.textContent='Escolha de ajuda pronta. Clique em Enviar mensagem para receber a explicação do Professor Leo.';
+      leoAiStatus.textContent='Sua dúvida está pronta. Clique em Enviar mensagem para conversar com o Professor Leo.';
       leoInput.scrollIntoView({block:'nearest',behavior:'smooth'});
     });
     help.append(choice);
   });
-  const again=document.createElement('button');again.type='button';again.textContent='🔄 Praticar outra questão';
-  const converse=document.createElement('button');converse.type='button';converse.textContent='💬 Continuar conversando';
+  const again=document.createElement('button');again.type='button';again.textContent='🔄 Próximo desafio';
+  const converse=document.createElement('button');converse.type='button';converse.textContent='💬 Perguntar ao Professor Leo';
   converse.addEventListener('click',()=>{leoInput.focus({preventScroll:true});leoInput.scrollIntoView({block:'nearest'});});
-  again.addEventListener('click',()=>{leoLearningChallenge('porcentagem','porcentagem');leoThread.scrollTop=leoThread.scrollHeight;});
+  again.addEventListener('click',()=>{leoLearningChallenge('porcentagem','porcentagem');});
   actions.append(again,converse);
   button.addEventListener('click',()=>{
-    if(!input.value.trim()){feedback.textContent='Digite sua resposta para conferir.';return;}
-    const correct=Number(input.value.replace(',','.'))===example.correct;
-    feedback.className=correct?'leo-feedback-correct':'leo-feedback-wrong';
-    feedback.textContent=correct?'✓ VOCÊ ACERTOU! Parabéns! '+example.rate+'% de '+example.total+' = '+example.correct+'.':'✗ AINDA NÃO. '+example.rate+'% = '+example.rate+' ÷ 100. Multiplique pelo total: '+example.total+' × '+example.rate+' ÷ 100 = '+example.correct+'. Você consegue!';
-    button.disabled=true;input.disabled=true;actions.hidden=false;help.hidden=correct;
+    if(!input.value.trim()||!Number.isFinite(Number(input.value.replace(',','.')))){feedback.textContent='Digite um número válido para conferir.';return;}
+    const isCorrect=Math.abs(Number(input.value.replace(',','.'))-correct)<0.001;
+    leoPractice.attempts++;
+    if(isCorrect){leoPractice.correct++;leoPractice.streak++;if(leoPractice.streak>=2&&leoPractice.level<3){leoPractice.level++;leoPractice.streak=0;}}
+    else{leoPractice.streak=0;if(leoPractice.level>1)leoPractice.level--;}
+    try{localStorage.setItem(leoPracticeKey,JSON.stringify(leoPractice));}catch(_error){}
+    feedback.className=isCorrect?'leo-feedback-correct':'leo-feedback-wrong';
+    feedback.textContent=isCorrect?'✓ Você acertou! '+example.rate+'% de '+example.total+' = '+correct+'. '+(leoPractice.level>level?'Você avançou para o nível '+leoPractice.level+'!':'Vamos praticar mais uma?'):'✗ Vamos aprender com essa tentativa. '+example.rate+'% significa '+example.rate+' ÷ 100. Então '+example.total+' × '+example.rate+' ÷ 100 = '+correct+'. O próximo desafio será de reforço.';
+    progress.textContent='Seu acompanhamento: '+leoPractice.correct+' acerto(s) em '+leoPractice.attempts+' tentativa(s). Nível atual: '+leoPractice.level+'.';
+    button.disabled=true;input.disabled=true;actions.hidden=false;help.hidden=isCorrect;
     actions.scrollIntoView({block:'nearest',behavior:'smooth'});
   });
-  form.append(input,button);
-  box.append(heading,task,form,feedback,help,actions);
-  leoThread.append(box);
-  box.scrollIntoView({block:'nearest'});
+  form.append(input,button);box.append(heading,progress,task,form,feedback,help,actions);
+  leoThread.append(box);box.scrollIntoView({block:'nearest'});
 }
 let leoBusy=false;
 let leoLastRequest=0;
