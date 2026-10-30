@@ -93,3 +93,9 @@
 .leo-lesson h3{margin-top:8px}
 .leo-chat{margin-top:0;padding-top:0;border-top:0}
 .leo-practice{margin-top:0}
+
+/* Botão Voltar sempre acessível no cabeçalho fixo do tutor. */
+.leo-top .leo-back{margin:0 8px 0 auto;padding:7px 10px;min-height:34px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.14);color:#fff;border-radius:8px;font-size:12px;white-space:nowrap}
+.leo-top .leo-back:hover,.leo-top .leo-back:focus-visible{background:rgba(255,255,255,.28)}
+.leo-top>div{min-width:0}
+@media(max-width:440px){.leo-top .leo-back{font-size:11px;padding:6px 7px;margin-left:4px;margin-right:4px}}
