@@ -79,6 +79,7 @@
   const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.onclick=()=>{try{localStorage.removeItem(key);}catch{}show(d);};evolve.append(reset);
   d.append(back,title,intro,lesson,practice,report,help,evolve);save();update();panel?.querySelector('.leo-body')?.scrollTo(0,0);
  }
+ window.decolaOpenLanguageSmart=show;
  // Intercepta somente o cartão Linguagens, sem alterar os outros módulos.
  document.addEventListener('click',event=>{
   const card=event.target.closest('.study-subject-language');
