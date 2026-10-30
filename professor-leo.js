@@ -853,6 +853,29 @@ function leoRenderSmartPlan(parent){
  });
  if(!leoMockState.finished)tasks.push({priority:2,subject:'ENEM',heading:'Fazer simulado diagnóstico',detail:'Descubra quais conteúdos precisam de atenção.',action:'Começar simulado',run:()=>leoShowView('simulado')});
  tasks.sort((a,b)=>a.priority-b.priority);
+ // Celebra a recuperação integral do simulado sem alterar a pontuação original.
+ if(leoMockState.finished){
+  const missed=leoMockQuestions.map((q,i)=>({q,i})).filter(item=>leoMockState.answers[item.i]!==item.q.correct);
+  const mastered=missed.filter(item=>leoMasteryStage(item.i)>=3);
+  if(missed.length>0&&mastered.length===missed.length){
+   const celebration=document.createElement('section');
+   celebration.className='leo-dashboard-card leo-mastery-celebration';
+   celebration.setAttribute('aria-label','Parabéns pelas recuperações concluídas');
+   const headline=document.createElement('h4');headline.textContent='🏆 Parabéns! Todas as recuperações concluídas!';
+   const summary=document.createElement('p');
+   summary.textContent='Você transformou '+mastered.length+' erro(s) do simulado em '+mastered.length+' conteúdo(s) dominado(s), concluindo os três desafios de cada um. Seu esforço está fazendo diferença!';
+   const topics=document.createElement('p');topics.textContent='Suas conquistas: '+mastered.map(item=>item.q.topic).join(' · ')+'.';
+   const reassurance=document.createElement('p');reassurance.textContent='A pontuação original do simulado não mudou. As revisões espaçadas continuam disponíveis para fortalecer o aprendizado.';
+   celebration.append(headline,summary,topics,reassurance);
+   const nextTask=tasks.find(task=>task.priority<=3)||tasks[0];
+   if(nextTask){
+    const next=document.createElement('p');next.textContent='🎯 Sua próxima meta: '+nextTask.heading+'. Reserve de 15 a 25 minutos no seu ritmo.';
+    const action=document.createElement('button');action.type='button';action.textContent='🚀 '+nextTask.action;action.addEventListener('click',nextTask.run);
+    celebration.append(next,action);
+   }
+   section.append(celebration);
+  }
+ }
  const top=tasks.slice(0,4);
  const list=document.createElement('div');list.className='leo-dashboard-grid';
  top.forEach((task,i)=>{
