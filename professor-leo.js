@@ -729,48 +729,51 @@ function leoRenderDashboard(){
   masteryIntro.textContent='Acompanhamento da rodada atual: dominado = acerto direto; recuperado = acerto após reforço; revisar = erro ainda não recuperado. Os resultados ficam neste navegador.';
   mastery.append(masteryTitle,masteryIntro);
   const topics=[
-    {area:'Matemática',view:'practice',items:leoPracticeQuestions.map((q,i)=>({name:q.topic||q.title||'Questão '+(i+1),answer:leoPracticeAnswers[i],recovered:false}))},
-    {area:'Português',view:'portuguese',items:leoPtQuestions.map((q,i)=>({name:['Concessão e contraste','Ideia principal','Inferência textual','Fato e opinião','Referência pronominal'][i],answer:leoPtAnswers[i],recovered:leoPtRecoveryDone[i]===true}))},
-    {area:'Ciências Humanas',view:'humanas',items:leoHuQuestions.map((q,i)=>({name:['Constituição e cidadania','Participação política','Movimentos sociais','Urbanização e desigualdade','Abolição e inclusão social'][i],answer:leoHuAnswers[i],recovered:leoHuRecovery[i]===true}))}
+    {area:'Matemática',view:'practice',items:leoPracticeQuestions.map((q,i)=>({name:q.topic||'Questão '+(i+1),index:i,answer:leoPracticeAnswers[i],recovered:false}))},
+    {area:'Português',view:'portuguese',items:leoPtQuestions.map((q,i)=>({name:['Concessão e contraste','Ideia principal','Inferência textual','Fato e opinião','Referência pronominal'][i],index:i,answer:leoPtAnswers[i],recovered:leoPtRecoveryDone[i]===true}))},
+    {area:'Ciências Humanas',view:'humanas',items:leoHuQuestions.map((q,i)=>({name:['Constituição e cidadania','Participação política','Movimentos sociais','Urbanização e desigualdade','Abolição e inclusão social'][i],index:i,answer:leoHuAnswers[i],recovered:leoHuRecovery[i]===true}))}
   ];
-  let pendingTopic=null;
-  let recoveredCount=0,masteredCount=0,pendingCount=0;
+  let pendingTopic=null,masteredCount=0,recoveredCount=0,pendingCount=0;
   topics.forEach(group=>{
-    const section=document.createElement('div');
-    section.style.marginTop='12px';
-    const label=document.createElement('strong');label.textContent=group.area;
-    section.append(label);
-    group.items.forEach(item=>{
-      const state=item.answer===true?'✓ Dominado':item.answer===false?(item.recovered?'↗ Recuperado':'! Precisa revisar'):'○ Não avaliado';
-      if(item.answer===true)masteredCount++;
-      else if(item.answer===false&&item.recovered)recoveredCount++;
-      else if(item.answer===false){pendingCount++;if(!pendingTopic)pendingTopic={area:group.area,name:item.name,view:group.view};}
-      const line=document.createElement('p');
-      line.style.margin='6px 0';
-      line.style.fontSize='13px';
-      line.textContent=item.name+' — '+state;
-      if(item.answer===false&&!item.recovered)line.style.color='#b42318';
-      else if(item.answer===true||item.recovered)line.style.color='#176b43';
+    const section=document.createElement('div');section.style.marginTop='12px';
+    const label=document.createElement('strong');label.textContent=group.area;section.append(label);
+    const grouped=new Map();
+    group.items.forEach(item=>{if(!grouped.has(item.name))grouped.set(item.name,[]);grouped.get(item.name).push(item);});
+    grouped.forEach((items,name)=>{
+      const evaluated=items.filter(item=>item.answer!==null);
+      const correct=items.filter(item=>item.answer===true).length;
+      const recovered=items.filter(item=>item.answer===false&&item.recovered).length;
+      const pending=items.filter(item=>item.answer===false&&!item.recovered);
+      const rate=evaluated.length?Math.round(100*(correct+recovered)/evaluated.length):null;
+      if(pending.length){pendingCount++;if(!pendingTopic)pendingTopic={area:group.area,name,view:group.view,index:pending[0].index};}
+      else if(recovered){recoveredCount++;}
+      else if(evaluated.length&&correct===evaluated.length){masteredCount++;}
+      const line=document.createElement('div');line.style.margin='8px 0';
+      const status=document.createElement('span');
+      status.textContent=name+' — '+(rate===null?'○ Não avaliado':rate+'% de domínio ('+(correct+recovered)+' de '+evaluated.length+')')+(pending.length?' · Precisa revisar':recovered?' · Recuperado':rate===100?' · Dominado':'');
+      if(pending.length)status.style.color='#b42318';
+      else if(rate===100)status.style.color='#176b43';
+      line.append(status);
+      if(pending.length){
+        const button=document.createElement('button');button.type='button';
+        button.textContent='Revisar '+name;
+        button.style.display='block';button.style.marginTop='5px';
+        button.addEventListener('click',()=>leoOpenTopic(group.view,pending[0].index));
+        line.append(button);
+      }
       section.append(line);
     });
     mastery.append(section);
   });
-  const totals=document.createElement('p');
-  totals.style.fontWeight='700';
-  totals.textContent='Domínio atual: '+masteredCount+' dominado(s) · '+recoveredCount+' recuperado(s) · '+pendingCount+' para revisar.';
+  const totals=document.createElement('p');totals.style.fontWeight='700';
+  totals.textContent='Competências: '+masteredCount+' dominada(s) · '+recoveredCount+' recuperada(s) · '+pendingCount+' para revisar.';
   mastery.insertBefore(totals,mastery.children[2]||null);
-  if(pendingTopic){
-    const action=document.createElement('button');action.type='button';
-    action.textContent='Revisar agora: '+pendingTopic.name;
-    action.addEventListener('click',()=>leoShowView(pendingTopic.view));
-    mastery.append(action);
-  }
   leoDashboard.append(mastery);
   const summary=document.createElement('section');summary.className='leo-dashboard-next';
   const h=document.createElement('h4');h.textContent='🎯 Próximo estudo recomendado';
   const p=document.createElement('p');
   p.textContent=pendingTopic?'Prioridade: '+pendingTopic.name+' em '+pendingTopic.area+'. Revise este conteúdo e faça a recuperação.':recommended?'Reforce '+recommended.topic+' em '+recommended.area+'. Revise os erros e tente novamente.':'Continue praticando para identificar os próximos conteúdos de reforço.';
-  const go=document.createElement('button');go.type='button';go.textContent=pendingTopic?'Ir para '+pendingTopic.area:recommended?'Ir para '+recommended.area:'Começar por Matemática';go.addEventListener('click',()=>leoShowView(pendingTopic?pendingTopic.view:recommended?recommended.view:'practice'));
+  const go=document.createElement('button');go.type='button';go.textContent=pendingTopic?'Ir para '+pendingTopic.area:recommended?'Ir para '+recommended.area:'Começar por Matemática';go.addEventListener('click',()=>pendingTopic?leoOpenTopic(pendingTopic.view,pendingTopic.index):leoShowView(recommended?recommended.view:'practice'));
   summary.append(h,p,go);leoDashboard.append(summary);
   // Integração somente de leitura com o plano semanal gerado pelo Decola.
   const weekly=document.createElement('section');weekly.className='leo-dashboard-next';
@@ -879,6 +882,12 @@ root.querySelector('.leo-top').insertBefore(leoResume,root.querySelector('.leo-c
 leoResume.addEventListener('click',()=>leoShowView(leoReturnView));
 leoTalk.addEventListener('click',()=>{if(leoCurrentView==='practice'||leoCurrentView==='lesson'||leoCurrentView==='portuguese'||leoCurrentView==='humanas')leoReturnView=leoCurrentView;leoShowView('chat')});
 leoBack.addEventListener('click',()=>leoShowView('menu'));
+function leoOpenTopic(view,index){
+  if(view==='practice'){leoPracticeIndex=index;renderLeoPractice();}
+  else if(view==='portuguese'){leoPtIndex=index;leoPtRender();}
+  else if(view==='humanas'){leoHuIndex=index;leoHuRender();}
+  leoShowView(view);
+}
 function leoShowView(view){
   const previousView=leoCurrentView;
   leoCurrentView=view;
