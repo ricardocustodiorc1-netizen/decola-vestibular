@@ -103,6 +103,19 @@ function leoReadRecoveryProgress(){
   }catch{}
   return null;
 }
+const leoMathRecoveryTopicsKey='decola-vestibular:leo-math-recovered-topics:v1';
+function leoReadMathRecoveryTopics(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(leoMathRecoveryTopicsKey)||'null');
+    if(saved&&saved.signature===leoRoundSignature()&&Array.isArray(saved.indices))return saved.indices.filter(i=>Number.isInteger(i)&&i>=0&&i<leoPracticeQuestions.length&&leoPracticeAnswers[i]===false);
+  }catch(_error){}
+  return [];
+}
+function leoMarkMathTopicRecovered(index){
+  if(leoPracticeAnswers[index]!==false)return;
+  const indices=Array.from(new Set([...leoReadMathRecoveryTopics(),index]));
+  try{localStorage.setItem(leoMathRecoveryTopicsKey,JSON.stringify({signature:leoRoundSignature(),indices}));}catch(_error){}
+}
 function leoSaveRecoveryProgress(mastered,total){
   const value={signature:leoRoundSignature(),mastered,total,completedAt:new Date().toISOString()};
   try{localStorage.setItem(leoRecoveryProgressKey,JSON.stringify(value));}catch{}
@@ -418,7 +431,7 @@ function renderLeoPractice(){
             if(choices.dataset.answered)return;
             choices.dataset.answered='true';
             const hit=i===exercise.correct;
-            if(hit){recoveryCorrect++;mastered.push(index);}
+            if(hit){recoveryCorrect++;mastered.push(index);leoMarkMathTopicRecovered(index);}
             status.className=hit?'leo-feedback-correct':'leo-feedback-wrong';
             status.textContent=(hit?'✓ Muito bem! ':'Ainda não; vamos aprender de outro jeito. ')+exercise.explanation;
             choices.querySelectorAll('button').forEach(b=>b.disabled=true);
@@ -707,8 +720,9 @@ function leoRenderDashboard(){
       const wrong=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
       recovery.textContent=wrong.length?'Recuperação nesta sessão: '+wrong.filter(i=>leoHuRecovery[i]).length+' de '+wrong.length+' erro(s) revisado(s).':'Recuperação: sem erros na rodada atual.';
     }else if(area.name==='Matemática'){
-      const r=area.recovered;
-      recovery.textContent=r&&r.total?'Reforço: '+r.mastered+' de '+r.total+' tópico(s) recuperado(s).':'Reforço: ainda sem resultado registrado.';
+      const missed=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
+      const mastered=missed.filter(i=>leoReadMathRecoveryTopics().includes(i)).length;
+      recovery.textContent=missed.length?'Recuperação nesta rodada: '+mastered+' de '+missed.length+' questão(ões) recuperada(s).':'Recuperação: sem erros na rodada atual.';
     }else{
       const missed=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
       const mastered=missed.filter(i=>leoPtRecoveryDone[i]).length;
@@ -717,7 +731,7 @@ function leoRenderDashboard(){
     const button=document.createElement('button');button.type='button';button.textContent='Estudar '+area.name;button.addEventListener('click',()=>leoShowView(area.name==='Matemática'?'practice':area.name==='Humanas'?'humanas':'portuguese'));
     card.append(title,score,detail,track,recovery,button);cards.append(card);
     const missed=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
-    const pending=area.name==='Matemática'?missed:area.name==='Humanas'?missed.filter(i=>!leoHuRecovery[i]):missed.filter(i=>!leoPtRecoveryDone[i]);
+    const pending=area.name==='Matemática'?missed.filter(i=>!leoReadMathRecoveryTopics().includes(i)):area.name==='Humanas'?missed.filter(i=>!leoHuRecovery[i]):missed.filter(i=>!leoPtRecoveryDone[i]);
     if(pending.length&&!recommended)recommended={area:area.name,topic:area.name==='Matemática'?'Porcentagem e resolução de problemas':area.name==='Humanas'?'Cidadania e sociedade':'Interpretação de texto',view:area.name==='Matemática'?'practice':area.name==='Humanas'?'humanas':'portuguese'};
   });
   leoDashboard.append(cards);
@@ -729,7 +743,7 @@ function leoRenderDashboard(){
   masteryIntro.textContent='Acompanhamento da rodada atual: dominado = acerto direto; recuperado = acerto após reforço; revisar = erro ainda não recuperado. Os resultados ficam neste navegador.';
   mastery.append(masteryTitle,masteryIntro);
   const topics=[
-    {area:'Matemática',view:'practice',items:leoPracticeQuestions.map((q,i)=>({name:q.topic||'Questão '+(i+1),index:i,answer:leoPracticeAnswers[i],recovered:false}))},
+    {area:'Matemática',view:'practice',items:leoPracticeQuestions.map((q,i)=>({name:q.topic||'Questão '+(i+1),index:i,answer:leoPracticeAnswers[i],recovered:leoReadMathRecoveryTopics().includes(i)}))},
     {area:'Português',view:'portuguese',items:leoPtQuestions.map((q,i)=>({name:['Concessão e contraste','Ideia principal','Inferência textual','Fato e opinião','Referência pronominal'][i],index:i,answer:leoPtAnswers[i],recovered:leoPtRecoveryDone[i]===true}))},
     {area:'Ciências Humanas',view:'humanas',items:leoHuQuestions.map((q,i)=>({name:['Constituição e cidadania','Participação política','Movimentos sociais','Urbanização e desigualdade','Abolição e inclusão social'][i],index:i,answer:leoHuAnswers[i],recovered:leoHuRecovery[i]===true}))}
   ];
