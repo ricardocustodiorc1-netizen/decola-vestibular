@@ -8,6 +8,9 @@
  ];
  let selectingLegacySubject=false;
  const panel=()=>document.querySelector('.leo-panel');
+ function hideLegacyViews(p){
+  p?.querySelectorAll('.leo-menu,.leo-practice,.leo-portuguese,.leo-humanas,.leo-chat,.leo-dashboard,.leo-simulado').forEach(el=>{if(!el.classList.contains('study-dashboard'))el.hidden=true;});
+ }
  const launcher=()=>document.querySelector('.leo-launch');
  function openPanel(){const p=panel();if(p&&p.hidden)launcher()?.click();return p;}
  function findOption(terms){
@@ -73,6 +76,7 @@
   dashboard.append(back,heading,intro,grid);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
  function showSubjects(dashboard){
+  hideLegacyViews(panel());
   dashboard.replaceChildren();
   const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.addEventListener('click',()=>{dashboard.remove();showDashboard();});
   const heading=document.createElement('h2');heading.textContent='📚 Escolha sua matéria';
@@ -147,6 +151,13 @@
     if(dashboard)showSubjects(dashboard);
     p.querySelector('.leo-body')?.scrollTo(0,0);
    },true);
+   const legacyArea=p.querySelector('#leo-area');
+   if(legacyArea)legacyArea.addEventListener('change',()=>{
+    if(selectingLegacySubject)return;
+    const dashboard=p.querySelector('.study-dashboard');
+    if(!dashboard||dashboard.hidden)return;
+    if(legacyArea.selectedIndex===0)showMathTopics(dashboard);
+   });
    const sync=()=>{document.body.classList.toggle('leo-study-open',!p.hidden);if(p.hidden){const dashboard=p.querySelector('.study-dashboard');if(dashboard)dashboard.hidden=true;}};
    new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['hidden']});sync();
    const header=p.querySelector('.leo-top strong');
