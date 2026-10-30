@@ -890,6 +890,7 @@ function leoRenderSmartPlan(parent){
  const note=document.createElement('p');note.textContent='As sugestões são recalculadas ao abrir este painel, usando somente os dados guardados neste navegador. Não são uma previsão de nota no ENEM.';
  section.append(note);parent.append(section);
 }
+let leoDashboardActiveTab='plano';
 function leoRenderDashboard(){
   leoDashboard.replaceChildren();
   const heading=document.createElement('h3');heading.textContent='📊 Meu painel de evolução';
@@ -1282,6 +1283,47 @@ function leoRenderDashboard(){
   }
   leoDashboard.append(weekly);
   const note=document.createElement('small');note.textContent='As notas das rodadas e os reforços são indicadores separados. O painel não altera resultados anteriores nem envia dados.';leoDashboard.append(note);
+  // Organiza o painel existente em abas sem recriar ou alterar seus dados.
+  const sections=Array.from(leoDashboard.children);
+  const tabs=[
+    {id:'plano',label:'🗓️ Meu plano',indices:[2,8,9,11]},
+    {id:'desempenho',label:'📊 Desempenho',indices:[3,4,5,6]},
+    {id:'conquistas',label:'🏅 Conquistas',indices:[7,10]}
+  ];
+  const nav=document.createElement('div');nav.className='leo-dashboard-tabs';
+  nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Seções do painel do aluno');
+  const panes=document.createElement('div');panes.className='leo-dashboard-panes';
+  const tabButtons=[];
+  const tabPanes=[];
+  const selected=leoDashboardActiveTab;
+  tabs.forEach((tab,i)=>{
+    const button=document.createElement('button');button.type='button';
+    button.id='leo-dashboard-tab-'+tab.id;button.textContent=tab.label;
+    button.setAttribute('role','tab');button.setAttribute('aria-controls','leo-dashboard-pane-'+tab.id);
+    const pane=document.createElement('section');pane.id='leo-dashboard-pane-'+tab.id;
+    pane.className='leo-dashboard-pane';pane.setAttribute('role','tabpanel');
+    pane.setAttribute('aria-labelledby',button.id);
+    tab.indices.forEach(index=>{if(sections[index])pane.append(sections[index]);});
+    button.addEventListener('click',()=>{leoDashboardActiveTab=tab.id;activate(tab.id);});
+    button.addEventListener('keydown',event=>{
+      if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+      event.preventDefault();
+      const next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(i+(event.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+      tabButtons[next].click();tabButtons[next].focus();
+    });
+    tabButtons.push(button);tabPanes.push(pane);nav.append(button);panes.append(pane);
+  });
+  function activate(id){
+    tabButtons.forEach((button,i)=>{
+      const active=tabs[i].id===id;
+      button.setAttribute('aria-selected',String(active));
+      button.tabIndex=active?0:-1;
+      tabPanes[i].hidden=!active;
+    });
+  }
+  leoDashboard.replaceChildren(sections[0],sections[1],nav,panes,sections[12]);
+  activate(tabs.some(t=>t.id===selected)?selected:'plano');
+
 }
 
 // Menu principal: cada modo ocupa uma tela própria, sem misturar aulas, treino e IA.
