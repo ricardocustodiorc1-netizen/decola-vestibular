@@ -73,3 +73,12 @@ body.leo-study-open{overflow:hidden}
 .leo-widget .leo-chat :is(input[type="text"],input[type="number"]){min-height:44px;border-radius:9px}
 .leo-widget .leo-chat :is(button,input,textarea):focus-visible{outline:3px solid #f0b429;outline-offset:2px}
 @media(max-width:600px){.leo-widget .leo-chat .leo-bubble{max-width:96%;font-size:14px;padding:12px 14px}.leo-widget .leo-chat :is(.leo-challenge,.leo-chat-challenge,.leo-interactive-challenge,.leo-practice,.leo-quiz,.leo-question-card){padding:13px}}
+
+/* Exercício adaptativo inserido na conversa, separado das mensagens. */
+.leo-widget .leo-chat .leo-learning-check{align-self:stretch;max-width:100%;width:100%;box-sizing:border-box;background:#fff;border:1px solid #c9d9fa;border-left:5px solid #1744c3;border-radius:16px;padding:20px;margin:10px 0 20px}
+.leo-widget .leo-learning-check .leo-check-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.leo-widget .leo-learning-check .leo-check-form input{flex:1 1 220px;min-width:0;padding:12px;font-size:16px}
+.leo-widget .leo-learning-check .leo-check-form button{min-height:46px;padding:10px 15px}
+.leo-widget .leo-learning-check p{line-height:1.65}
+.leo-widget .leo-chat .leo-thread .leo-learning-check{box-shadow:0 4px 18px rgba(23,68,195,.07)}
+.leo-widget .leo-chat .leo-thread .leo-learning-check strong{font-size:16px}
