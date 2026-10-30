@@ -223,10 +223,60 @@ function leoLearningHistoryPanel(){
   section.append(other);
   return section;
 }
+// Treino direcionado independente: não altera a nota da rodada nem o histórico.
+let leoFocusedMathIndex=null;
+function leoOpenFocusedMath(){
+  const missed=leoPracticeAnswers.map((answer,index)=>answer===false?index:-1).filter(index=>index>=0);
+  const pending=missed.filter(index=>!leoReadMathRecoveryTopics().includes(index));
+  const candidates=pending.length?pending:missed.length?missed:leoPracticeQuestions.map((_,index)=>index);
+  leoFocusedMathIndex=candidates[0];
+  selector.value='0';
+  leoShowView('practice');
+  renderLeoPractice();
+}
+function leoFocusedMathPanel(){
+  const box=document.createElement('section');
+  box.className='leo-dashboard-next leo-focused-math';
+  const title=document.createElement('h4');title.textContent='🎯 Treino personalizado com o Professor Leo';
+  const intro=document.createElement('p');
+  intro.textContent='Exercício escolhido a partir dos seus erros de Matemática. Este treino extra não altera a pontuação original.';
+  const index=leoFocusedMathIndex;
+  const original=leoPracticeQuestions[index];
+  const exercise=leoReinforcement[index];
+  const topic=document.createElement('p');
+  topic.textContent='Conteúdo: '+original.topic+' · Revisão da questão '+(index+1);
+  const hint=document.createElement('p');hint.textContent='💡 Dica: '+exercise.steps;
+  const question=document.createElement('p');question.className='leo-question';question.textContent=exercise.question;
+  const options=document.createElement('div');options.className='leo-choices';
+  const result=document.createElement('p');result.setAttribute('role','status');
+  exercise.choices.forEach((choice,i)=>{
+    const button=document.createElement('button');button.type='button';button.textContent=choice;
+    button.addEventListener('click',()=>{
+      options.querySelectorAll('button').forEach(b=>b.disabled=true);
+      result.textContent=(i===exercise.correct?'✓ Muito bem! ':'Vamos aprender com essa tentativa. ')+exercise.explanation;
+      result.className='leo-practice-feedback '+(i===exercise.correct?'leo-feedback-correct':'leo-feedback-wrong');
+    });
+    options.append(button);
+  });
+  const actions=document.createElement('div');actions.className='leo-practice-actions';
+  const next=document.createElement('button');next.type='button';next.textContent='Outro exercício direcionado';
+  next.addEventListener('click',()=>{
+    const missed=leoPracticeAnswers.map((answer,i)=>answer===false?i:-1).filter(i=>i>=0);
+    const pool=missed.length?missed:leoPracticeQuestions.map((_,i)=>i);
+    leoFocusedMathIndex=pool[(pool.indexOf(index)+1)%pool.length];
+    renderLeoPractice();
+  });
+  const regular=document.createElement('button');regular.type='button';regular.textContent='Voltar ao treino completo';
+  regular.addEventListener('click',()=>{leoFocusedMathIndex=null;renderLeoPractice();});
+  actions.append(next,regular);
+  box.append(title,intro,topic,hint,question,options,result,actions);
+  return box;
+}
 function renderLeoPractice(){
   leoPractice.replaceChildren();
   if(selector.value!=='0'){leoPractice.hidden=true;return;}
   leoPractice.hidden=false;
+  if(leoFocusedMathIndex!==null){leoPractice.append(leoFocusedMathPanel());return;}
   const heading=document.createElement('h3');heading.textContent='🧮 Treino de Matemática';
   const count=leoPracticeAnswers.filter(x=>x!==null).length;
   const correct=leoPracticeAnswers.filter(x=>x===true).length;
@@ -270,6 +320,7 @@ function renderLeoPractice(){
   });
   const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
   restart.addEventListener('click',()=>{
+    leoFocusedMathIndex=null;
     leoPractice.classList.remove('leo-recovery-mode');
     leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
     leoReinforcementAnswers={};
@@ -1328,7 +1379,7 @@ function leoRenderDashboard(){
       overview.append(title,message,explanation);
       if(attention.length){
         const action=document.createElement('button');action.type='button';action.textContent='🎯 Praticar '+attention[0].name;
-        action.addEventListener('click',()=>leoShowView(attention[0].view));overview.append(action);
+        action.addEventListener('click',()=>{if(attention[0].view==='practice')leoOpenFocusedMath();else leoShowView(attention[0].view);});overview.append(action);
       }
       pane.prepend(overview);
     }
