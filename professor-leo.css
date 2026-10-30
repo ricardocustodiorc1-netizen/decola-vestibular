@@ -323,3 +323,11 @@
 .leo-performance-summary{background:#f1f6ff;border-color:#aac4ff}
 .leo-performance-summary h4{margin-bottom:8px}
 @media(max-width:700px){.leo-performance-grid{grid-template-columns:1fr}.leo-performance-bars{justify-content:flex-start;gap:10px}.leo-performance-column{flex:0 1 44px}}
+
+/* Dica acessível e destacada no treino personalizado */
+.leo-focused-math .leo-focused-hint:not([hidden]){display:block;background:#fff8db;border:2px solid #e7b54c;border-left:6px solid #d89b17;border-radius:12px;padding:15px 17px;margin:12px 0 16px;color:#503b13;line-height:1.65;box-shadow:0 3px 10px rgba(107,75,16,.08)}
+.leo-focused-math .leo-focused-hint-title{display:block;font-size:16px;font-weight:800;color:#704a00;margin-bottom:9px}
+.leo-focused-math .leo-focused-hint p{font-size:14px;margin:6px 0 0;line-height:1.7}
+.leo-focused-math .leo-focused-hint .leo-focused-hint-prompt{font-weight:700;color:#654600;margin-top:10px}
+.leo-focused-math .leo-focused-hint[hidden]{display:none!important}
+@media(max-width:480px){.leo-focused-math .leo-focused-hint:not([hidden]){padding:12px}}
