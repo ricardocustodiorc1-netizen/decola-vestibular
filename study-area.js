@@ -38,7 +38,28 @@
   const answers=document.createElement('div');answers.className='study-topic-answers';
   const result=document.createElement('p');result.setAttribute('role','status');result.setAttribute('aria-live','polite');
   topic.choices.forEach((choice,index)=>{const b=document.createElement('button');b.type='button';b.textContent=choice;b.addEventListener('click',()=>{result.textContent=(index===topic.correct?'✅ Correto! ':'🔎 Vamos revisar. ')+topic.feedback;});answers.append(b);});
-  const help=document.createElement('button');help.type='button';help.className='study-dashboard-all';help.textContent='🎓 Pedir ajuda ao Professor Leo';help.addEventListener('click',()=>{dashboard.hidden=true;openModule(cards[3]);});
+  const help=document.createElement('button');help.type='button';help.className='study-dashboard-all';help.textContent='🎓 Pedir ajuda ao Professor Leo';help.addEventListener('click',()=>{
+   const p=panel();if(!p)return;
+   dashboard.hidden=true;
+   const chatOption=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Conversar com o Professor Leo'));
+   if(chatOption)chatOption.click();
+   else p.querySelector('.leo-talk')?.click();
+   const input=p.querySelector('#leo-question-input');
+   if(input){
+    input.value='Professor Leo, estou estudando Matemática, assunto '+topic.title+'. '+topic.explanation+' Exemplo da aula: '+topic.example+' Minha questão é: '+topic.question+' Alternativas: '+topic.choices.join(', ')+'. Pode me ajudar a entender o raciocínio passo a passo, sem entregar a resposta imediatamente?';
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+    input.focus();
+   }
+   const chat=p.querySelector('.leo-chat');
+   if(chat&&!chat.querySelector('.study-return-lesson')){
+    const returnButton=document.createElement('button');returnButton.type='button';returnButton.className='study-dashboard-all study-return-lesson';returnButton.textContent='← Voltar à aula';
+    chat.prepend(returnButton);
+   }
+   const returnButton=chat?.querySelector('.study-return-lesson');
+   if(returnButton){returnButton.onclick=()=>showMathLesson(dashboard,topic);returnButton.hidden=false;}
+   const status=p.querySelector('.leo-ai-status');
+   if(status)status.textContent='Sua dúvida sobre '+topic.title+' está pronta. Revise e clique em Enviar pergunta.';
+  });
   dashboard.append(back,title,intro,example,question,answers,result,help);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
  function showMathTopics(dashboard){
