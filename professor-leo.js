@@ -563,6 +563,100 @@ function leoPtRender(){
 }
 leoPtRender();
 
+// Ciências Humanas — exercícios demonstrativos, correção, reforço e histórico local.
+const leoHuQuestions=[
+ {text:'A Constituição Federal de 1988 é conhecida como Constituição Cidadã porque:',choices:['Ampliou direitos e garantias fundamentais','Eliminou a participação popular','Restringiu o direito ao voto'],correct:0,why:'A Constituição de 1988 consolidou direitos civis, políticos e sociais e fortaleceu a democracia.'},
+ {text:'Qual é uma forma de participação direta da população nas decisões políticas?',choices:['Plebiscito','Censura à imprensa','Suspensão de eleições'],correct:0,why:'O plebiscito consulta os cidadãos sobre uma questão política antes de uma decisão.'},
+ {text:'Os movimentos sociais contribuem para a democracia principalmente ao:',choices:['Reivindicar direitos e ampliar o debate público','Impedir toda forma de diálogo','Substituir permanentemente as instituições'],correct:0,why:'Movimentos sociais organizam demandas coletivas e pressionam por reconhecimento e políticas públicas.'},
+ {text:'A urbanização acelerada, sem infraestrutura suficiente, pode provocar:',choices:['Segregação socioespacial e problemas de mobilidade','Distribuição igualitária automática dos serviços','Desaparecimento das periferias'],correct:0,why:'O crescimento urbano desigual pode concentrar serviços em certas áreas e dificultar acesso a transporte e moradia.'},
+ {text:'No Brasil, a abolição da escravidão ocorreu em 1888. Qual afirmação é historicamente adequada?',choices:['A abolição não eliminou imediatamente as desigualdades sociais','Todos os ex-escravizados receberam terras e renda','O racismo deixou de existir com a Lei Áurea'],correct:0,why:'A Lei Áurea extinguiu juridicamente a escravidão, mas não garantiu reparação, terras ou inclusão social.'}
+];
+const leoHuKey='decola-vestibular:leo-humanas:v1';
+const leoHuHistoryKey='decola-vestibular:leo-humanas-history:v1';
+let leoHuAnswers=leoPtRead(leoHuKey,Array(leoHuQuestions.length).fill(null));
+if(!Array.isArray(leoHuAnswers)||leoHuAnswers.length!==leoHuQuestions.length||!leoHuAnswers.every(x=>x===null||typeof x==='boolean'))leoHuAnswers=Array(leoHuQuestions.length).fill(null);
+let leoHuHistory=leoPtRead(leoHuHistoryKey,[]);
+if(!Array.isArray(leoHuHistory))leoHuHistory=[];
+leoHuHistory=leoHuHistory.filter(x=>x&&Number.isInteger(x.correct)&&x.correct>=0&&x.correct<=leoHuQuestions.length&&x.total===leoHuQuestions.length).slice(-20);
+let leoHuIndex=Math.max(0,leoHuAnswers.findIndex(x=>x===null));
+let leoHuRecorded=leoHuAnswers.every(x=>x!==null);
+let leoHuRecovery={};
+const leoHuBox=document.createElement('section');
+leoHuBox.className='leo-practice leo-humanas';
+leoHuBox.setAttribute('aria-label','Treino de Ciências Humanas');
+leoPtBox.after(leoHuBox);
+function leoHuRender(){
+  leoHuBox.replaceChildren();
+  const heading=document.createElement('h3');heading.textContent='🌎 Ciências Humanas e suas Tecnologias';
+  const count=leoHuAnswers.filter(x=>x!==null).length;
+  const score=leoHuAnswers.filter(x=>x===true).length;
+  const summary=document.createElement('p');summary.textContent='Rodada: '+count+' de '+leoHuQuestions.length+' questões respondidas · '+score+' acerto(s).';
+  leoHuBox.append(heading,summary);
+  const q=leoHuQuestions[leoHuIndex];
+  const question=document.createElement('p');question.textContent='Questão '+(leoHuIndex+1)+' de '+leoHuQuestions.length+': '+q.text;
+  question.style.fontWeight='600';leoHuBox.append(question);
+  const choices=document.createElement('div');choices.className='leo-practice-options';
+  q.choices.forEach((option,i)=>{
+    const button=document.createElement('button');button.type='button';
+    button.textContent=String.fromCharCode(65+i)+') '+option;
+    button.disabled=leoHuAnswers[leoHuIndex]!==null;
+    button.addEventListener('click',()=>{
+      if(leoHuAnswers[leoHuIndex]!==null)return;
+      leoHuAnswers[leoHuIndex]=i===q.correct;
+      try{localStorage.setItem(leoHuKey,JSON.stringify(leoHuAnswers));}catch(_error){}
+      if(leoHuAnswers.every(x=>x!==null)&&!leoHuRecorded){
+        leoHuHistory.push({correct:leoHuAnswers.filter(Boolean).length,total:leoHuQuestions.length});
+        leoHuHistory=leoHuHistory.slice(-20);
+        try{localStorage.setItem(leoHuHistoryKey,JSON.stringify(leoHuHistory));}catch(_error){}
+        leoHuRecorded=true;
+      }
+      leoHuRender();
+    });choices.append(button);
+  });leoHuBox.append(choices);
+  const answered=leoHuAnswers[leoHuIndex]!==null;
+  if(answered){
+    const feedback=document.createElement('div');
+    feedback.className='leo-feedback '+(leoHuAnswers[leoHuIndex]?'correct':'incorrect');
+    feedback.textContent=(leoHuAnswers[leoHuIndex]?'✓ Muito bem! ':'Vamos revisar. ')+q.why;
+    leoHuBox.append(feedback);
+    if(!leoHuAnswers[leoHuIndex]){
+      const help=document.createElement('section');help.className='leo-reinforcement';
+      const title=document.createElement('h4');title.textContent='📚 Recuperação personalizada';
+      const explain=document.createElement('p');explain.textContent='Entenda: '+q.why;
+      const retry=document.createElement('p');retry.textContent='Agora tente novamente: '+q.text;
+      const opts=document.createElement('div');opts.className='leo-practice-options';
+      q.choices.forEach((option,i)=>{
+        const btn=document.createElement('button');btn.type='button';btn.textContent=String.fromCharCode(65+i)+') '+option;
+        btn.disabled=leoHuRecovery[leoHuIndex]===true;
+        btn.addEventListener('click',()=>{
+          if(leoHuRecovery[leoHuIndex])return;
+          if(i===q.correct){leoHuRecovery[leoHuIndex]=true;leoHuRender();}
+          else{const msg=help.querySelector('.leo-humanas-hint');if(msg)msg.textContent='Ainda não. '+q.why;}
+        });opts.append(btn);
+      });
+      const hint=document.createElement('p');hint.className='leo-humanas-hint';
+      if(leoHuRecovery[leoHuIndex])hint.textContent='✓ Conteúdo recuperado! Você acertou a revisão.';
+      help.append(title,explain,retry,opts,hint);leoHuBox.append(help);
+    }
+    const actions=document.createElement('div');actions.className='leo-practice-options';
+    const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
+    next.addEventListener('click',()=>{leoHuIndex=(leoHuIndex+1)%leoHuQuestions.length;leoHuRender();});
+    const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
+    restart.addEventListener('click',()=>{leoHuAnswers=Array(leoHuQuestions.length).fill(null);leoHuIndex=0;leoHuRecorded=false;leoHuRecovery={};try{localStorage.setItem(leoHuKey,JSON.stringify(leoHuAnswers));}catch(_error){}leoHuRender();});
+    const ask=document.createElement('button');ask.type='button';ask.textContent='💬 Peça ajuda ao Leo';
+    ask.addEventListener('click',()=>{leoReturnView='humanas';leoShowView('chat');const input=root.querySelector('#leo-question-input');if(input){input.value='Professor Leo, explique de forma simples esta questão de Ciências Humanas: '+q.text+' '+q.why;input.focus();}});
+    actions.append(next,ask,restart);leoHuBox.append(actions);
+  }
+  if(count===leoHuQuestions.length){
+    const result=document.createElement('h4');result.textContent='📊 Resultado: '+score+' de '+leoHuQuestions.length+' acertos ('+Math.round(score/leoHuQuestions.length*100)+'%)';leoHuBox.append(result);
+  }
+  const history=document.createElement('section');history.className='leo-reinforcement';
+  const title=document.createElement('h4');title.textContent='📈 Histórico de Ciências Humanas';history.append(title);
+  const detail=document.createElement('p');detail.textContent=leoHuHistory.length?leoHuHistory.length+' rodada(s) registrada(s). Última: '+leoHuHistory[leoHuHistory.length-1].correct+' de '+leoHuQuestions.length+' acertos.':'Conclua a rodada para registrar seu primeiro resultado.';
+  history.append(detail);leoHuBox.append(history);
+}
+leoHuRender();
+
 // Painel consolidado: lê somente os resultados locais já existentes, sem alterar notas.
 const leoDashboard=document.createElement('section');
 leoDashboard.className='leo-dashboard';
@@ -571,12 +665,13 @@ leoPtBox.after(leoDashboard);
 function leoRenderDashboard(){
   leoDashboard.replaceChildren();
   const heading=document.createElement('h3');heading.textContent='📊 Meu painel de evolução';
-  const intro=document.createElement('p');intro.textContent='Acompanhe Matemática e Português no mesmo lugar. Dados demonstrativos guardados somente neste navegador.';
+  const intro=document.createElement('p');intro.textContent='Acompanhe Matemática, Português e Ciências Humanas no mesmo lugar. Dados demonstrativos guardados somente neste navegador.';
   leoDashboard.append(heading,intro);
   const cards=document.createElement('div');cards.className='leo-dashboard-grid';
   const areas=[
     {name:'Matemática',history:leoPracticeHistory,answers:leoPracticeAnswers,questions:leoPracticeQuestions,recovered:leoReadRecoveryProgress()},
-    {name:'Português',history:leoPtHistory,answers:leoPtAnswers,questions:leoPtQuestions,recovered:null}
+    {name:'Português',history:leoPtHistory,answers:leoPtAnswers,questions:leoPtQuestions,recovered:null},
+    {name:'Humanas',history:leoHuHistory,answers:leoHuAnswers,questions:leoHuQuestions,recovered:null}
   ];
   let recommended=null;
   areas.forEach(area=>{
@@ -593,7 +688,10 @@ function leoRenderDashboard(){
     track.setAttribute('aria-valuenow',String(pct));
     const fill=document.createElement('span');fill.style.width=pct+'%';track.append(fill);
     const recovery=document.createElement('p');
-    if(area.name==='Matemática'){
+    if(area.name==='Humanas'){
+      const wrong=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
+      recovery.textContent=wrong.length?'Recuperação nesta sessão: '+wrong.filter(i=>leoHuRecovery[i]).length+' de '+wrong.length+' erro(s) revisado(s).':'Recuperação: sem erros na rodada atual.';
+    }else if(area.name==='Matemática'){
       const r=area.recovered;
       recovery.textContent=r&&r.total?'Reforço: '+r.mastered+' de '+r.total+' tópico(s) recuperado(s).':'Reforço: ainda sem resultado registrado.';
     }else{
@@ -601,11 +699,11 @@ function leoRenderDashboard(){
       const mastered=missed.filter(i=>leoPtRecoveryDone[i]).length;
       recovery.textContent=missed.length?'Recuperação nesta sessão: '+mastered+' de '+missed.length+' questão(ões) com erro.':'Recuperação: sem erros na rodada atual.';
     }
-    const button=document.createElement('button');button.type='button';button.textContent='Estudar '+area.name;button.addEventListener('click',()=>leoShowView(area.name==='Matemática'?'practice':'portuguese'));
+    const button=document.createElement('button');button.type='button';button.textContent='Estudar '+area.name;button.addEventListener('click',()=>leoShowView(area.name==='Matemática'?'practice':area.name==='Humanas'?'humanas':'portuguese'));
     card.append(title,score,detail,track,recovery,button);cards.append(card);
     const missed=area.answers.map((x,i)=>x===false?i:-1).filter(i=>i>=0);
-    const pending=area.name==='Matemática'?missed:missed.filter(i=>!leoPtRecoveryDone[i]);
-    if(pending.length&&!recommended)recommended={area:area.name,topic:area.name==='Matemática'?'Porcentagem e resolução de problemas':'Interpretação de texto',view:area.name==='Matemática'?'practice':'portuguese'};
+    const pending=area.name==='Matemática'?missed:area.name==='Humanas'?missed.filter(i=>!leoHuRecovery[i]):missed.filter(i=>!leoPtRecoveryDone[i]);
+    if(pending.length&&!recommended)recommended={area:area.name,topic:area.name==='Matemática'?'Porcentagem e resolução de problemas':area.name==='Humanas'?'Cidadania e sociedade':'Interpretação de texto',view:area.name==='Matemática'?'practice':area.name==='Humanas'?'humanas':'portuguese'};
   });
   leoDashboard.append(cards);
   const summary=document.createElement('section');summary.className='leo-dashboard-next';
@@ -640,10 +738,10 @@ function leoRenderDashboard(){
       weekly.append(detail);
       const actions=document.createElement('div');actions.className='leo-dashboard-actions';
       const id=area.id;
-      if(id==='matematica'||id==='linguagens'){
+      if(id==='matematica'||id==='linguagens'||id==='humanas'){
         const start=document.createElement('button');start.type='button';
-        start.textContent=id==='matematica'?'Praticar Matemática':'Praticar Português';
-        start.addEventListener('click',()=>leoShowView(id==='matematica'?'practice':'portuguese'));
+        start.textContent=id==='matematica'?'Praticar Matemática':id==='humanas'?'Estudar Humanas':'Praticar Português';
+        start.addEventListener('click',()=>leoShowView(id==='matematica'?'practice':id==='humanas'?'humanas':'portuguese'));
         actions.append(start);
       }else{
         const info=document.createElement('p');
@@ -686,6 +784,7 @@ const leoViews=[
   ['lesson','📖 Aprender uma matéria','Aulas explicadas com exemplos e dicas.'],
   ['practice','🧮 Fazer exercícios de Matemática','Treino de Matemática com correção e reforço.'],
    ['portuguese','📖 Exercícios de Português','Interpretação de texto, correção e histórico de acertos.'],
+  ['humanas','🌎 Exercícios de Ciências Humanas','Cidadania, história, geografia e movimentos sociais.'],
   ['chat','💬 Conversar com o Professor Leo','Tire suas dúvidas com a IA em teste.'],
   ['dashboard','📊 Minha evolução','Veja seu desempenho em Matemática e Português e recomendações de estudo.']
 ];
@@ -718,7 +817,7 @@ leoResume.textContent='🧮 Voltar aos exercícios';
 leoResume.setAttribute('aria-label','Retomar os exercícios sem perder o progresso');
 root.querySelector('.leo-top').insertBefore(leoResume,root.querySelector('.leo-close'));
 leoResume.addEventListener('click',()=>leoShowView(leoReturnView));
-leoTalk.addEventListener('click',()=>{if(leoCurrentView==='practice'||leoCurrentView==='lesson'||leoCurrentView==='portuguese')leoReturnView=leoCurrentView;leoShowView('chat')});
+leoTalk.addEventListener('click',()=>{if(leoCurrentView==='practice'||leoCurrentView==='lesson'||leoCurrentView==='portuguese'||leoCurrentView==='humanas')leoReturnView=leoCurrentView;leoShowView('chat')});
 leoBack.addEventListener('click',()=>leoShowView('menu'));
 function leoShowView(view){
   const previousView=leoCurrentView;
@@ -728,7 +827,7 @@ function leoShowView(view){
   leoBack.hidden=menu;
   leoTalk.hidden=view==='chat';
   leoResume.hidden=view!=='chat';
-  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat',isPortuguese=view==='portuguese',isDashboard=view==='dashboard';
+  const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat',isPortuguese=view==='portuguese',isHumanas=view==='humanas',isDashboard=view==='dashboard';
    if(isDashboard)leoRenderDashboard();
    leoDashboard.hidden=!isDashboard;
   leoMessage.hidden=true;
@@ -738,6 +837,7 @@ function leoShowView(view){
   lessonBox.hidden=!isLesson;
   leoPractice.hidden=!isPractice;
    leoPtBox.hidden=!isPortuguese;
+  leoHuBox.hidden=!isHumanas;
   leoChat.hidden=!isChat;
   if(isPractice && previousView!=='chat'){
     selector.value='0';
