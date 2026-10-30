@@ -60,7 +60,9 @@
     chat.prepend(returnButton);
    }
    const returnButton=chat?.querySelector('.study-return-lesson');
-   if(returnButton){returnButton.onclick=()=>{showMathLesson(dashboard,topic);p.querySelector('.leo-resume')?.setAttribute('hidden','');};returnButton.hidden=false;}\n   const resume=[...p.querySelectorAll('button')].find(b=>b.textContent.includes('Voltar aos exercícios'));\n   if(resume)resume.hidden=true;
+   if(returnButton){returnButton.onclick=()=>{showMathLesson(dashboard,topic);p.querySelector('.leo-resume')?.setAttribute('hidden','');};returnButton.hidden=false;}
+   const resume=[...p.querySelectorAll('button')].find(b=>b.textContent.includes('Voltar aos exercícios'));
+   if(resume)resume.hidden=true;
    const status=p.querySelector('.leo-ai-status');
    if(status)status.textContent='Sua dúvida sobre '+topic.title+' está pronta. Revise e clique em Enviar pergunta.';
   });
