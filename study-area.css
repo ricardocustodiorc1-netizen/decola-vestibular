@@ -103,3 +103,15 @@ body.leo-study-open{overflow:hidden}
 .leo-widget .study-smart-feedback{min-height:24px;color:#264778}
 .leo-widget .study-topic-answers button.study-smart-selected{background:#e0eaff;border:2px solid #2454d6;font-weight:700}
 @media(max-width:650px){.leo-widget .study-smart-card{padding:17px}.leo-widget .study-smart-card h3{font-size:18px}}
+
+/* Aula Inteligente 1.1 — feedback pedagógico com leitura confortável */
+.leo-widget .study-smart-feedback{font-size:17px!important;line-height:1.65!important;margin-top:14px;color:#1c355e}
+.leo-widget .study-smart-feedback strong{display:block;font-size:19px!important;line-height:1.45;margin:0 0 8px}
+.leo-widget .study-smart-feedback p{font-size:17px!important;line-height:1.7!important;margin:8px 0}
+.leo-widget .study-smart-feedback.study-smart-correct{border-left:4px solid #20865c;background:#eefaf3;padding:14px 17px;border-radius:9px}
+.leo-widget .study-smart-feedback.study-smart-wrong{border-left:4px solid #d38a18;background:#fff8e9;padding:14px 17px;border-radius:9px}
+.leo-widget .study-smart-retry{margin:10px 0 4px;padding:12px 18px;font-size:16px;font-weight:700;border-radius:10px;border:1px solid #1744c3;background:#edf3ff;color:#1744c3}
+.leo-widget .study-smart-retry[hidden]{display:none!important}
+.leo-widget .study-smart-question>strong{font-size:17px;line-height:1.5}
+.leo-widget .study-smart-card>p,.leo-widget .study-smart-card .study-topic-example{font-size:16px;line-height:1.7}
+@media(max-width:600px){.leo-widget .study-smart-feedback,.leo-widget .study-smart-feedback p{font-size:16px!important}.leo-widget .study-smart-feedback strong{font-size:18px!important}}
