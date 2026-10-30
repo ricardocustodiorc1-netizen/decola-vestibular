@@ -37,7 +37,7 @@
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
   const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
-  const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.0');
+  const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.1');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
   const lesson=make('section','study-smart-card');
@@ -50,18 +50,42 @@
    {q:'Uma camiseta de R$ 80 tem 10% de desconto. Qual o preço final?',opts:['R$ 72','R$ 70','R$ 78'],answer:0,why:'10% de 80 = 8. Preço final: 80 − 8 = R$ 72.'},
    {q:'Um produto de R$ 120 aumentou 25%. Qual é o novo preço?',opts:['R$ 125','R$ 145','R$ 150'],answer:2,why:'25% de 120 = 30. Novo preço: 120 + 30 = R$ 150.'}
   ];
-  const key='decola-smart-percent-v1';let progress={};try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}
+  const key='decola-smart-percent-v2';let progress={};
+  try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){progress={};}
+  // Recupera acertos anteriores sem apagar o histórico da versão 1.0.
+  try{const old=JSON.parse(localStorage.getItem('decola-smart-percent-v1')||'{}')||{};questions.forEach((q,i)=>{if(progress[i]===undefined&&old[i]===q.answer)progress[i]={choice:q.answer,attempts:1,done:true};});}catch(e){}
+  const save=()=>{try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}};
   const score=make('p','study-smart-score');score.setAttribute('aria-live','polite');
-  const updateScore=()=>{const done=questions.filter((q,i)=>Number.isInteger(progress[i])).length;const correct=questions.filter((q,i)=>progress[i]===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões respondidas • '+correct+' acerto(s). Salvo neste navegador.';};
+  const updateScore=()=>{const done=questions.filter((q,i)=>progress[i]?.done).length;const correct=questions.filter((q,i)=>progress[i]?.done&&progress[i]?.choice===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões concluídas • '+correct+' acerto(s). Salvo neste navegador.';};
   practice.append(score);
+  const hints=[
+   ['20% significa 20 de cada 100. Transforme 20% em decimal antes de multiplicar.','Calcule 10% de 150 e depois dobre esse valor.'],
+   ['Desconto diminui o preço, não aumenta. Descubra primeiro 10% de 80.','10% de 80 é 8. Subtraia esse desconto do preço original.'],
+   ['Aumento significa somar ao valor inicial. Primeiro descubra 25% de 120.','25% é um quarto: divida 120 por 4 e some o resultado a 120.']
+  ];
   questions.forEach((q,i)=>{
    const card=make('div','study-smart-question');card.append(make('strong','',('Questão '+(i+1)+' de '+questions.length+': ')+q.q));
    const options=make('div','study-topic-answers');
-   const feedback=make('p','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
-   const buttons=q.opts.map((opt,j)=>{const btn=make('button','',opt);btn.type='button';btn.addEventListener('click',()=>{progress[i]=j;try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}render();updateScore();});options.append(btn);return btn;});
-   const render=()=>{buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',progress[i]===j);btn.setAttribute('aria-pressed',String(progress[i]===j));});feedback.textContent=Number.isInteger(progress[i])?(progress[i]===q.answer?'✅ Muito bem! ':'🔎 Vamos revisar juntos. ')+q.why:'';};
-   card.append(options,feedback);practice.append(card);render();
-  });updateScore();
+   const feedback=make('div','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+   const retry=make('button','study-smart-retry','Tentar novamente');retry.type='button';
+   const buttons=q.opts.map((opt,j)=>{const btn=make('button','',opt);btn.type='button';btn.addEventListener('click',()=>{
+    const previous=progress[i];if(previous?.done)return;
+    const attempts=(previous?.attempts||0)+1;
+    progress[i]={choice:j,attempts,done:j===q.answer||attempts>=2};
+    save();render();updateScore();
+   });options.append(btn);return btn;});
+   retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();});
+   const render=()=>{
+    const p=progress[i];const selected=Number.isInteger(p?.choice);const right=selected&&p.choice===q.answer;
+    buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',selected&&p.choice===j);btn.setAttribute('aria-pressed',String(selected&&p.choice===j));btn.disabled=!!p?.done;});
+    feedback.replaceChildren();retry.hidden=true;
+    if(!selected)return;
+    if(right){feedback.classList.add('study-smart-correct');feedback.classList.remove('study-smart-wrong');feedback.append(make('strong','','✅ Muito bem! Resposta correta.'),make('p','',q.why));}
+    else if(!p.done){feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','🔎 Ainda não. Você tem mais uma tentativa!'),make('p','',hints[i][0]),make('p','','Dica extra: '+hints[i][1]));retry.hidden=false;}
+    else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
+   };
+   card.append(options,feedback,retry);practice.append(card);render();
+  });save();updateScore();
   const help=make('section','study-smart-card');help.append(make('h3','','3. Precisa de ajuda?'));
   const helpText=make('p','','O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.');help.append(helpText);
   const helpBtn=make('button','study-dashboard-all','🎓 Pedir ajuda ao Professor Leo');helpBtn.type='button';helpBtn.addEventListener('click',()=>{
@@ -71,7 +95,7 @@
    const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Porcentagem. Aprendi que 20% = 0,20 e que 20% de 150 = 30. Pode me ajudar a compreender porcentagens passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
    const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showMathLesson(dashboard,topic);}
   });help.append(helpBtn);
-  const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, leia a explicação e tente novamente. Seus resultados desta aula ficam salvos somente neste navegador.'));
+  const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
   const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
   steps.append(lesson,practice,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
