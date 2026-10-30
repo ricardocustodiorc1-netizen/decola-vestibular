@@ -528,10 +528,54 @@ const leoMissionStorageKey='decola-vestibular:leo:daily-mission:v1';
 function leoMissionToday(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
 function leoMissionRead(){try{return JSON.parse(localStorage.getItem(leoMissionStorageKey)||'null');}catch(_error){return null;}}
 function leoMissionSave(record){try{localStorage.setItem(leoMissionStorageKey,JSON.stringify(record));}catch(_error){}}
+// Conquistas locais: uma missão por dia, sem penalidades por pausas.
+const leoAchievementKey='decola-vestibular:leo:achievements:v1';
+function leoAchievementDates(){
+  try{const a=JSON.parse(localStorage.getItem(leoAchievementKey)||'[]');return Array.isArray(a)?Array.from(new Set(a.filter(d=>typeof d==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(d)))).sort():[];}catch(_error){return [];}
+}
+function leoAchievementMark(date,completed){
+  const dates=new Set(leoAchievementDates());
+  if(completed)dates.add(date);else dates.delete(date);
+  try{localStorage.setItem(leoAchievementKey,JSON.stringify([...dates].sort()));}catch(_error){}
+}
+function leoAchievementStreak(dates){
+  const days=new Set(dates), today=leoMissionToday();
+  const cursor=new Date(today+'T12:00:00');
+  if(!days.has(today))cursor.setDate(cursor.getDate()-1);
+  let streak=0;
+  for(let n=0;n<3660;n++){
+    const key=[cursor.getFullYear(),String(cursor.getMonth()+1).padStart(2,'0'),String(cursor.getDate()).padStart(2,'0')].join('-');
+    if(!days.has(key))break;
+    streak++;cursor.setDate(cursor.getDate()-1);
+  }
+  return streak;
+}
+function leoAchievementPanel(){
+  const dates=leoAchievementDates(),total=dates.length,streak=leoAchievementStreak(dates);
+  const box=document.createElement('section');box.className='leo-dashboard-next';
+  const title=document.createElement('h4');title.textContent='🏅 Minhas conquistas e sequência de estudos';
+  const stats=document.createElement('p');
+  stats.textContent='📅 '+total+' dia(s) com missão concluída · 🔥 '+streak+' dia(s) na sequência atual.';
+  const note=document.createElement('p');
+  note.textContent='Cada dia com missão concluída conta uma vez. Fazer uma pausa não apaga suas conquistas; você pode recomeçar no seu ritmo.';
+  note.style.fontSize='12px';
+  box.append(title,stats,note);
+  const medals=[{days:1,icon:'🌱',name:'Primeiro passo'},{days:3,icon:'🥉',name:'Explorador'},{days:7,icon:'🥈',name:'Persistente'},{days:15,icon:'🥇',name:'Dedicado'},{days:30,icon:'🏆',name:'Decolando'}];
+  const grid=document.createElement('div');grid.className='leo-dashboard-grid';
+  medals.forEach(m=>{
+    const card=document.createElement('div');card.className='leo-dashboard-card';
+    const name=document.createElement('strong');name.textContent=m.icon+' '+m.name;
+    const detail=document.createElement('p');detail.textContent=total>=m.days?'✓ Conquistada!':m.days+' dia(s) de missão para conquistar';
+    card.append(name,detail);grid.append(card);
+  });
+  box.append(grid);
+  return box;
+}
 function leoMissionRecoverySucceeded(view,index){
   const record=leoMissionRead();
   if(!record||record.date!==leoMissionToday()||!record.started||record.completed||record.view!==view||record.index!==index)return;
   leoMissionSave({...record,completed:true,automatic:true,completedAt:new Date().toISOString()});
+  leoAchievementMark(record.date,true);
   const host=view==='portuguese'?leoPtBox:view==='humanas'?leoHuBox:leoPractice;
   const notice=document.createElement('p');
   notice.className='leo-practice-feedback leo-feedback-correct';
@@ -833,6 +877,7 @@ function leoRenderDashboard(){
   try{
     const record=JSON.parse(localStorage.getItem(missionKey)||'null');
     missionCompleted=!!(record&&record.date===localDate&&record.completed===true&&(record.started||record.id===missionId));
+    if(missionCompleted)leoAchievementMark(localDate,true);
   }catch(_error){}
   const missionText=document.createElement('p');
   missionText.textContent=missionTarget?'Missão: revisar '+(missionTarget.name||missionTarget.topic)+' em '+missionTarget.area+'. Reserve 15 minutos para estudar e resolver uma questão.':'Missão: pratique Matemática por 15 minutos e identifique um conteúdo para reforçar.';
@@ -858,6 +903,7 @@ function leoRenderDashboard(){
   missionFinish.addEventListener('click',()=>{
     missionCompleted=!missionCompleted;
     leoMissionSave({date:localDate,id:missionId,view:missionTarget?missionTarget.view:'practice',index:missionTarget&&missionTarget.index!==undefined?missionTarget.index:null,started:false,completed:missionCompleted,automatic:false});
+    leoAchievementMark(localDate,missionCompleted);
     missionStatus.textContent=missionCompleted?'✅ Missão marcada como concluída hoje. Parabéns!':'⏳ Missão de hoje ainda não concluída.';
     missionFinish.textContent=missionCompleted?'Desmarcar conclusão':'Marcar como concluída';
   });
@@ -868,6 +914,7 @@ function leoRenderDashboard(){
   missionNote.style.fontSize='12px';
   mission.append(missionNote);
   leoDashboard.append(mission);
+  leoDashboard.append(leoAchievementPanel());
   // Integração somente de leitura com o plano semanal gerado pelo Decola.
   const weekly=document.createElement('section');weekly.className='leo-dashboard-next';
   const weeklyTitle=document.createElement('h4');weeklyTitle.textContent='📅 Meu plano semanal de estudos';
