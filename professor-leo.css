@@ -347,3 +347,10 @@
 .leo-top .leo-current-location{display:block;margin-top:4px;font-size:11px;font-weight:700;color:#fff;line-height:1.35;max-width:265px}
 .leo-top>div{min-width:0}
 @media(max-width:550px){.leo-top .leo-current-location{font-size:10px;max-width:170px}}
+
+/* Recuperação: separar a explicação da nova tentativa e facilitar o acesso */
+.leo-recovery-focus{scroll-margin-top:18px}
+.leo-recovery-new-question{background:#fff;border:2px solid #7b9dff;border-left:6px solid #1744c3;border-radius:10px;padding:13px 14px;margin:15px 0 10px;font-weight:750;color:#102d72;line-height:1.55}
+.leo-recovery-jump{display:inline-block;margin:10px 0;padding:10px 13px;border:1px solid #1744c3;border-radius:9px;background:#eaf0ff;color:#123eb6;font-weight:750;cursor:pointer}
+.leo-recovery-jump:hover{background:#dbe7ff}
+.leo-recovery-jump:focus-visible{outline:3px solid #e7a51b;outline-offset:2px}
