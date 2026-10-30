@@ -831,7 +831,7 @@ function leoRenderSmartPlan(parent){
   leoMockQuestions.forEach((q,i)=>{
    if(leoMockState.answers[i]===q.correct)return;
    const done=leoMasteryStage(i);
-   if(done<3)tasks.push({priority:1,subject:q.area,heading:'Recuperar '+q.topic,detail:'Domínio progressivo: '+done+' de 3 desafios concluídos.',action:'Continuar recuperação',run:()=>{leoMockRecoveryOpen=i;leoShowView('simulado');leoMockRender();}});
+   if(done<3)tasks.push({priority:1,subject:q.area,heading:'Recuperar '+q.topic,detail:'Domínio progressivo: '+done+' de 3 desafios concluídos.',action:'Continuar recuperação',run:()=>{leoMockRecoveryOpen=i;leoShowView('simulado');const target=leoMockBox.querySelector('[data-leo-recovery-target="'+i+'"]');if(target){target.scrollIntoView({block:'start',behavior:'auto'});target.focus({preventScroll:true});}}});
    else{
     const record=leoSpacedRecord(i);
     const attempts=record.attempts.filter(a=>a&&a.correct===true).length;
@@ -1448,7 +1448,7 @@ function leoMockRender(){
   const recommendation=document.createElement('section');recommendation.className='leo-dashboard-next';
   const h=document.createElement('h4');h.textContent=errors.length?'🎯 Seu plano de revisão':'🎉 Parabéns!';recommendation.append(h);
   const summary=document.createElement('p');summary.textContent=errors.length?'Revise primeiro os conteúdos abaixo. As explicações são comentadas pelo Professor Leo e não alteram sua pontuação.':'Você acertou todas as questões! Continue praticando com outros exercícios.';recommendation.append(summary);
-  errors.forEach(({q,i})=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+q.area+' — '+q.topic+': '+q.why;recommendation.append(p);const button=document.createElement('button');button.type='button';button.textContent='📖 Aprender com meu erro · Questão '+(i+1);button.style.margin='4px 8px 8px 0';button.addEventListener('click',()=>{leoMockRecoveryOpen=leoMockRecoveryOpen===i?null:i;leoMockRender();});recommendation.append(button);if(leoMockRecoveryOpen===i)leoMockRecoveryRender(recommendation,i);});
+  errors.forEach(({q,i})=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+q.area+' — '+q.topic+': '+q.why;recommendation.append(p);const button=document.createElement('button');button.type='button';button.textContent='📖 Aprender com meu erro · Questão '+(i+1);button.dataset.leoRecoveryTarget=String(i);button.style.margin='4px 8px 8px 0';button.addEventListener('click',()=>{leoMockRecoveryOpen=leoMockRecoveryOpen===i?null:i;leoMockRender();});recommendation.append(button);if(leoMockRecoveryOpen===i)leoMockRecoveryRender(recommendation,i);});
   leoMockBox.append(recommendation);
   leoRenderMasteryPanel(leoMockBox);
   const review=document.createElement('h4');review.textContent='📖 Gabarito comentado';leoMockBox.append(review);
