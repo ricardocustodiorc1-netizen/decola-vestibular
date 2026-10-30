@@ -630,7 +630,8 @@ const leoViews=[
   ['lesson','📖 Aprender uma matéria','Aulas explicadas com exemplos e dicas.'],
   ['practice','🧮 Fazer exercícios de Matemática','Treino de Matemática com correção e reforço.'],
    ['portuguese','📖 Exercícios de Português','Interpretação de texto, correção e histórico de acertos.'],
-  ['chat','💬 Conversar com o Professor Leo','Tire suas dúvidas com a IA em teste.']
+  ['chat','💬 Conversar com o Professor Leo','Tire suas dúvidas com a IA em teste.'],
+  ['dashboard','📊 Minha evolução','Veja seu desempenho em Matemática e Português e recomendações de estudo.']
 ];
 leoViews.forEach(([view,label,description])=>{
   const button=document.createElement('button');
