@@ -788,7 +788,7 @@ function leoStudyHint(subject,stage){
  };
  const box=document.createElement('div');box.className='leo-study-hint';
  const button=document.createElement('button');button.type='button';button.className='leo-study-hint-button';
- button.textContent='💡 Preciso de uma dica';button.setAttribute('aria-expanded','false');
+ button.textContent=stage===2?'💡 Rever dica do Professor Leo':'💡 Preciso de uma dica';button.setAttribute('aria-expanded','false');
  const panel=document.createElement('aside');panel.className='leo-focused-hint';panel.hidden=true;panel.setAttribute('role','note');
  const title=document.createElement('strong');title.className='leo-focused-hint-title';title.textContent='💡 Dica do Professor Leo';
  const description=document.createElement('p');description.textContent=hints[subject][stage===1?1:0];
@@ -838,7 +838,7 @@ function leoPtRender(){
   if(leoPtAnswers.every(x=>x!==null)&&!leoPtRecorded){leoPtRecorded=true;leoPtHistory.push({correct:leoPtAnswers.filter(Boolean).length,total:leoPtQuestions.length,date:new Date().toISOString()});leoPtHistory=leoPtHistory.slice(-20);try{localStorage.setItem(leoPtHistoryKey,JSON.stringify(leoPtHistory));}catch{}}
   leoPtRender();
  });options.append(b);});
- leoPtBox.append(passage,title);if(!answered)leoPtBox.append(leoStudyHint('portuguese',0));leoPtBox.append(options);
+ leoPtBox.append(passage,title);leoPtBox.append(leoStudyHint('portuguese',answered?2:0));leoPtBox.append(options);
  if(answered){const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(leoPtAnswers[leoPtIndex]?'leo-feedback-correct':'leo-feedback-wrong');feedback.setAttribute('role','status');feedback.textContent=(leoPtAnswers[leoPtIndex]?'✓ Você acertou! ':'Vamos revisar. ')+q.why;leoPtBox.append(feedback);}
  if(answered&&!leoPtAnswers[leoPtIndex])leoPtBox.append(leoPtRecoveryPanel(leoPtIndex));
  const actions=document.createElement('div');actions.className='leo-practice-actions';
@@ -895,7 +895,7 @@ function leoHuRender(){
   leoHuBox.append(heading,summary);
   const q=leoHuQuestions[leoHuIndex];
   const question=document.createElement('p');question.textContent='Questão '+(leoHuIndex+1)+' de '+leoHuQuestions.length+': '+q.text;
-  question.style.fontWeight='600';leoHuBox.append(question);if(leoHuAnswers[leoHuIndex]===null)leoHuBox.append(leoStudyHint('humanas',0));
+  question.style.fontWeight='600';leoHuBox.append(question);leoHuBox.append(leoStudyHint('humanas',leoHuAnswers[leoHuIndex]===null?0:2));
   const choices=document.createElement('div');choices.className='leo-choices leo-humanas-choices';
   q.choices.forEach((option,i)=>{
     const button=document.createElement('button');button.type='button';
@@ -1752,6 +1752,11 @@ leoTalk.className='leo-talk';
 leoTalk.textContent='💬 Falar com Leo';
 leoTalk.setAttribute('aria-label','Conversar com o Professor Leo');
 root.querySelector('.leo-top').insertBefore(leoTalk,root.querySelector('.leo-close'));
+const leoLocation=document.createElement('span');
+leoLocation.className='leo-current-location';
+leoLocation.setAttribute('role','status');
+leoLocation.setAttribute('aria-live','polite');
+root.querySelector('.leo-top > div').append(leoLocation);
 let leoReturnView='practice';
 let leoCurrentView='menu';
 const leoResume=document.createElement('button');
@@ -1772,6 +1777,8 @@ function leoOpenTopic(view,index){
 function leoShowView(view){
   const previousView=leoCurrentView;
   leoCurrentView=view;
+  const locationLabels={menu:'Menu de estudos',lesson:'Aula de '+(lessons[Number(selector.value)]?.area||'uma matéria'),practice:'Exercícios de Matemática',portuguese:'Exercícios de Português',humanas:'Exercícios de Ciências Humanas',simulado:'Simulado Inteligente do ENEM',chat:'Conversa com o Professor Leo',dashboard:'Minha evolução'};
+  leoLocation.textContent='📍 Você está em: '+(locationLabels[view]||'Área de estudos');
   const menu=view==='menu';
   leoMenu.hidden=!menu;
   leoBack.hidden=menu;
@@ -1802,7 +1809,7 @@ leoShowView('menu');
 selector.addEventListener('change',renderLeoPractice);
 launch.addEventListener('click',()=>{panel.hidden=false;launch.hidden=true;launch.setAttribute('aria-expanded','true');recommend();renderLesson();leoShowView('menu');root.querySelector('.leo-close').focus();});
 root.querySelector('.leo-close').addEventListener('click',()=>{panel.hidden=true;launch.hidden=false;launch.setAttribute('aria-expanded','false');launch.focus();});
-selector.addEventListener('change',renderLesson);
+selector.addEventListener('change',()=>{renderLesson();if(leoCurrentView==='lesson')leoLocation.textContent='📍 Você está em: Aula de '+(lessons[Number(selector.value)]?.area||'uma matéria');});
 
 // Integração segura: a chave da OpenAI permanece somente no Cloudflare Worker.
 const leoAsk=root.querySelector('.leo-ask');
