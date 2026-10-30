@@ -320,13 +320,25 @@ leoTalk.className='leo-talk';
 leoTalk.textContent='💬 Falar com Leo';
 leoTalk.setAttribute('aria-label','Conversar com o Professor Leo');
 root.querySelector('.leo-top').insertBefore(leoTalk,root.querySelector('.leo-close'));
-leoTalk.addEventListener('click',()=>leoShowView('chat'));
+let leoReturnView='practice';
+let leoCurrentView='menu';
+const leoResume=document.createElement('button');
+leoResume.type='button';
+leoResume.className='leo-talk';
+leoResume.textContent='🧮 Voltar aos exercícios';
+leoResume.setAttribute('aria-label','Retomar os exercícios sem perder o progresso');
+root.querySelector('.leo-top').insertBefore(leoResume,root.querySelector('.leo-close'));
+leoResume.addEventListener('click',()=>leoShowView(leoReturnView));
+leoTalk.addEventListener('click',()=>{if(leoCurrentView==='practice'||leoCurrentView==='lesson')leoReturnView=leoCurrentView;leoShowView('chat')});
 leoBack.addEventListener('click',()=>leoShowView('menu'));
 function leoShowView(view){
+  const previousView=leoCurrentView;
+  leoCurrentView=view;
   const menu=view==='menu';
   leoMenu.hidden=!menu;
   leoBack.hidden=menu;
   leoTalk.hidden=view==='chat';
+  leoResume.hidden=view!=='chat';
   const isLesson=view==='lesson',isPractice=view==='practice',isChat=view==='chat';
   leoMessage.hidden=true;
   leoRecommendation.hidden=!isLesson;
@@ -335,7 +347,7 @@ function leoShowView(view){
   lessonBox.hidden=!isLesson;
   leoPractice.hidden=!isPractice;
   leoChat.hidden=!isChat;
-  if(isPractice){
+  if(isPractice && previousView!=='chat'){
     selector.value='0';
     renderLeoPractice();
   }
