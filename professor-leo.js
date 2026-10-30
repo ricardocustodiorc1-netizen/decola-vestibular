@@ -944,7 +944,7 @@ function leoRenderDashboard(){
   const performanceTitle=document.createElement('h4');
   performanceTitle.textContent='📈 Desempenho por matéria';
   const performanceIntro=document.createElement('p');
-  performanceIntro.textContent='Compare seus acertos nas últimas rodadas. Cada barra representa uma rodada concluída; a meta de referência é 70%.';
+  performanceIntro.textContent='Cada barra mostra a nota original de uma rodada concluída (até 8 por matéria). A linha pontilhada indica a referência de estudo de 70%; recuperar erros depois não modifica essas notas.';
   performance.append(performanceTitle,performanceIntro);
   const performanceGrid=document.createElement('div');
   performanceGrid.className='leo-performance-grid';
@@ -993,6 +993,7 @@ function leoRenderDashboard(){
         graph.append(column);
       });
       card.append(graph);
+      const chartNote=document.createElement('p');chartNote.className='leo-performance-caption';chartNote.textContent='Rodadas 1 a '+entries.length+' (da mais antiga à mais recente). Verde: 70% ou mais; azul: abaixo da referência.';card.append(chartNote);
       const trend=document.createElement('p');
       const previous=entries.length>1?Math.round(entries[entries.length-2].correct/entries[entries.length-2].total*100):null;
       const recent=entries.slice(-3);
@@ -1304,6 +1305,33 @@ function leoRenderDashboard(){
     pane.className='leo-dashboard-pane';pane.setAttribute('role','tabpanel');
     pane.setAttribute('aria-labelledby',button.id);
     tab.indices.forEach(index=>{if(sections[index])pane.append(sections[index]);});
+    if(tab.id==='desempenho'){
+      const overview=document.createElement('section');
+      overview.className='leo-dashboard-next leo-performance-summary';
+      overview.setAttribute('aria-label','Resumo do Professor Leo');
+      const title=document.createElement('h4');title.textContent='🎓 Professor Leo · Seu resumo de evolução';
+      const recentAreas=[
+        {name:'Matemática',history:leoPracticeHistory,view:'practice'},
+        {name:'Português',history:leoPtHistory,view:'portuguese'},
+        {name:'Ciências Humanas',history:leoHuHistory,view:'humanas'}
+      ].map(area=>{
+        const valid=area.history.filter(item=>item&&Number.isFinite(item.correct)&&Number.isFinite(item.total)&&item.total>0);
+        return {...area,score:valid.length?Math.round(valid[valid.length-1].correct/valid[valid.length-1].total*100):null};
+      });
+      const measured=recentAreas.filter(area=>area.score!==null);
+      const positive=measured.filter(area=>area.score>=70);
+      const attention=measured.filter(area=>area.score<70).sort((a,b)=>a.score-b.score);
+      const message=document.createElement('p');
+      message.textContent=measured.length?'Você já tem resultados em '+measured.length+' matéria(s). '+(positive.length?'Boa conquista: '+positive.map(area=>area.name).join(' e ')+' atingiu a referência de 70%. ':'')+(attention.length?'Seu próximo foco pode ser '+attention[0].name+' ('+attention[0].score+'% na última rodada). Vamos revisar os erros e praticar no seu ritmo.':'Continue praticando para manter a evolução!'):'Comece um treino para receber orientações personalizadas com base nos seus acertos.';
+      const explanation=document.createElement('p');
+      explanation.textContent='📊 Acertos das rodadas são notas originais; recuperação dos erros e domínio progressivo são acompanhamentos separados. Revisar não altera a nota já registrada.';
+      overview.append(title,message,explanation);
+      if(attention.length){
+        const action=document.createElement('button');action.type='button';action.textContent='🎯 Praticar '+attention[0].name;
+        action.addEventListener('click',()=>leoShowView(attention[0].view));overview.append(action);
+      }
+      pane.prepend(overview);
+    }
     button.addEventListener('click',()=>{leoDashboardActiveTab=tab.id;activate(tab.id);});
     button.addEventListener('keydown',event=>{
       if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
