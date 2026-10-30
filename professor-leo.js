@@ -819,11 +819,60 @@ const leoDashboard=document.createElement('section');
 leoDashboard.className='leo-dashboard';
 leoDashboard.setAttribute('aria-label','Meu painel de evolução');
 leoPtBox.after(leoDashboard);
+// Plano inteligente: recomendações calculadas a partir dos dados locais já existentes.
+function leoRenderSmartPlan(parent){
+ const section=document.createElement('section');
+ section.className='leo-dashboard-next leo-smart-plan';
+ const title=document.createElement('h4');title.textContent='🧭 Meu plano de estudos inteligente';
+ const intro=document.createElement('p');intro.textContent='Uma sequência sugerida com base nos erros, nas revisões e no desempenho. Estude no seu ritmo: as atividades não alteram suas notas anteriores.';
+ section.append(title,intro);
+ const tasks=[];
+ if(leoMockState.finished){
+  leoMockQuestions.forEach((q,i)=>{
+   if(leoMockState.answers[i]===q.correct)return;
+   const done=leoMasteryStage(i);
+   if(done<3)tasks.push({priority:1,subject:q.area,heading:'Recuperar '+q.topic,detail:'Domínio progressivo: '+done+' de 3 desafios concluídos.',action:'Continuar recuperação',run:()=>{leoMockRecoveryOpen=i;leoShowView('simulado');leoMockRender();}});
+   else{
+    const record=leoSpacedRecord(i);
+    const attempts=record.attempts.filter(a=>a&&a.correct===true).length;
+    if(attempts>=3)return;
+    const due=record.masteredAt+[1,3,7][attempts]*86400000;
+    tasks.push({priority:Date.now()>=due?0:4,subject:q.area,heading:'Revisar '+q.topic,detail:Date.now()>=due?'Revisão espaçada disponível agora.':'Próxima revisão: '+leoSpacedDate(due)+'.',action:Date.now()>=due?'Fazer revisão':'Ver revisão',run:()=>leoShowView('dashboard')});
+   }
+  });
+ }
+ const subjects=[
+  {name:'Matemática',view:'practice',history:leoPracticeHistory},
+  {name:'Português',view:'portuguese',history:leoPtHistory},
+  {name:'Ciências Humanas',view:'humanas',history:leoHuHistory}
+ ];
+ subjects.forEach(area=>{
+  const last=area.history.length?area.history[area.history.length-1]:null;
+  const pct=last&&last.total>0?Math.round(last.correct/last.total*100):null;
+  tasks.push({priority:pct===null?3:pct<70?2:5,subject:area.name,heading:pct===null?'Iniciar treino de '+area.name:pct<70?'Reforçar '+area.name:'Manter prática de '+area.name,detail:pct===null?'Ainda não há uma rodada concluída.':'Última rodada: '+pct+'% de acertos. Referência de estudo: 70%.',action:'Estudar agora',run:()=>leoShowView(area.view)});
+ });
+ if(!leoMockState.finished)tasks.push({priority:2,subject:'ENEM',heading:'Fazer simulado diagnóstico',detail:'Descubra quais conteúdos precisam de atenção.',action:'Começar simulado',run:()=>leoShowView('simulado')});
+ tasks.sort((a,b)=>a.priority-b.priority);
+ const top=tasks.slice(0,4);
+ const list=document.createElement('div');list.className='leo-dashboard-grid';
+ top.forEach((task,i)=>{
+  const card=document.createElement('article');card.className='leo-dashboard-card';
+  const h=document.createElement('h4');h.textContent=(i===0?'🎯 Próximo passo: ':'')+task.heading;
+  const subject=document.createElement('p');subject.textContent=task.subject+' · Sugestão de 15 a 25 minutos';
+  const detail=document.createElement('p');detail.textContent=task.detail;
+  const button=document.createElement('button');button.type='button';button.textContent=task.action;button.addEventListener('click',task.run);
+  card.append(h,subject,detail,button);list.append(card);
+ });
+ section.append(list);
+ const note=document.createElement('p');note.textContent='As sugestões são recalculadas ao abrir este painel, usando somente os dados guardados neste navegador. Não são uma previsão de nota no ENEM.';
+ section.append(note);parent.append(section);
+}
 function leoRenderDashboard(){
   leoDashboard.replaceChildren();
   const heading=document.createElement('h3');heading.textContent='📊 Meu painel de evolução';
   const intro=document.createElement('p');intro.textContent='Acompanhe Matemática, Português e Ciências Humanas no mesmo lugar. Dados demonstrativos guardados somente neste navegador.';
   leoDashboard.append(heading,intro);
+  leoRenderSmartPlan(leoDashboard);
   leoRenderMasteryPanel(leoDashboard);
   const cards=document.createElement('div');cards.className='leo-dashboard-grid';
   const areas=[
