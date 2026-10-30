@@ -30,3 +30,16 @@ body.leo-study-open{overflow:hidden}
 .study-nav-link{border:0;background:#e9f0ff;color:#1744c3;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
 .study-nav-link:hover{background:#dbe7ff}
 @media(max-width:850px){.header nav{flex-wrap:wrap;justify-content:flex-end}.study-nav-link{padding:9px}}
+
+/* Entrada simplificada: quatro caminhos claros, sem remover os recursos anteriores. */
+.study-dashboard{max-width:1100px;margin:0 auto;padding:12px 0 30px}
+.study-dashboard[hidden]{display:none!important}
+.study-dashboard h2{font-size:clamp(27px,4vw,40px);color:#14254c;margin:0 0 8px}
+.study-dashboard>p{color:#526584;font-size:16px;margin:0 0 24px}
+.study-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.study-dashboard-card{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:12px;padding:26px;min-height:165px;background:#fff;color:#14254c;border:1px solid #dce5f7;border-radius:18px;box-shadow:0 8px 22px #153fa00d;cursor:pointer}
+.study-dashboard-card:hover,.study-dashboard-card:focus-visible{border-color:#1744c3;box-shadow:0 12px 26px #153fa01a}
+.study-dashboard-icon{font-size:28px}.study-dashboard-card strong{font-size:20px}.study-dashboard-card small{font-size:14px;color:#526584;line-height:1.5}
+.study-dashboard-all{margin-top:22px;padding:12px 18px;border-radius:10px;border:1px solid #b8c9f1;background:#e9f0ff;color:#1744c3;font-weight:700;cursor:pointer}
+.leo-body:has(>.study-dashboard:not([hidden]))>*:not(.study-dashboard){display:none!important}
+@media(max-width:600px){.study-dashboard-grid{grid-template-columns:1fr;gap:12px}.study-dashboard-card{min-height:115px;padding:18px}}
