@@ -396,6 +396,30 @@ leoInput.addEventListener('keydown',event=>{
     leoAsk.click();
   }
 });
+// Histórico curto enviado ao backend para permitir continuidade, se suportado.
+const leoHistory=[];
+function leoCleanMath(text){
+  return text.replace(/\\\\\[/g,'').replace(/\\\\\]/g,'').replace(/\\\\\(/g,'').replace(/\\\\\)/g,'').replace(/\\\\times/g,'×').replace(/\\\\div/g,'÷').replace(/\\\\cdot/g,'·').replace(/\\\\%/g,'%');
+}
+function leoLearningChallenge(question,answer){
+  const source=question+' '+answer;
+  if(!/porcent|\\d+\\s*%/i.test(source))return;
+  const box=document.createElement('div');box.className='leo-bubble leo-bubble-teacher leo-learning-check';
+  const heading=document.createElement('strong');heading.textContent='🎯 Agora é sua vez!';
+  const task=document.createElement('p');task.textContent='Quanto é 15% de 200? Tente calcular antes de ver a resposta.';
+  const input=document.createElement('input');input.type='number';input.placeholder='Sua resposta';input.setAttribute('aria-label','Resposta do exercício de fixação');
+  const button=document.createElement('button');button.type='button';button.textContent='Conferir resposta';
+  const feedback=document.createElement('p');feedback.setAttribute('role','status');
+  button.addEventListener('click',()=>{
+    if(!input.value.trim()){feedback.textContent='Digite sua resposta para conferir.';return;}
+    const correct=Number(input.value)===30;
+    feedback.className=correct?'leo-feedback-correct':'leo-feedback-wrong';
+    feedback.textContent=correct?'✓ VOCÊ ACERTOU! Parabéns! 15% de 200 = 30.':'✗ AINDA NÃO. Revise: 10% de 200 = 20 e 5% = 10; somando, 15% = 30. Você consegue!';
+    button.disabled=true;
+  });
+  box.append(heading,task,input,button,feedback);
+  leoThread.append(box);
+}
 let leoBusy=false;
 let leoLastRequest=0;
 leoAsk.addEventListener('click',async()=>{
@@ -410,13 +434,13 @@ leoAsk.addEventListener('click',async()=>{
     const timer=setTimeout(()=>controller.abort(),25000);
     let response;
     try{response=await fetch('https://professor-leo-api.ricardocustodio-rc1.workers.dev/chat',{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:question,mensagem:question}),signal:controller.signal
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:question,mensagem:question,history:leoHistory.slice(-8),historico:leoHistory.slice(-8)}),signal:controller.signal
     });}finally{clearTimeout(timer);}
     const data=await response.json();
     if(!response.ok)throw new Error(data.error||'Não foi possível obter uma resposta.');
     const answer=data.answer||data.resposta||data.reply||data.message;
     if(typeof answer!=='string'||!answer.trim())throw new Error('A resposta veio vazia.');
-    leoBubble('teacher',answer);leoAiStatus.textContent='Pode continuar perguntando abaixo.';
+    leoBubble('teacher',leoCleanMath(answer));leoHistory.push({role:'user',content:question},{role:'assistant',content:answer});if(leoHistory.length>16)leoHistory.splice(0,leoHistory.length-16);leoLearningChallenge(question,answer);leoAiStatus.textContent='Pode continuar perguntando abaixo.';
   }catch(error){leoAiStatus.textContent='Não foi possível responder agora. Tente novamente em instantes.';}
   finally{leoBusy=false;leoAsk.disabled=false;}
 });
