@@ -33,6 +33,7 @@
   {title:'Estatística',summary:'Média e interpretação de dados.',explanation:'A média aritmética simples é a soma dos valores dividida pela quantidade de valores. Ela ajuda a resumir conjuntos de dados.',example:'Média de 4, 6 e 8 = (4 + 6 + 8) ÷ 3 = 6.',question:'Qual a média de 5, 7 e 9?',choices:['6','7','8'],correct:1,feedback:'(5 + 7 + 9) ÷ 3 = 7.'}
  ];
  function showMathLesson(dashboard,topic){
+  if(topic.title==='Frações')return showFractionsSmartLesson(dashboard,topic);
   if(topic.title!=='Porcentagem')return showBasicMathLesson(dashboard,topic);
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
@@ -128,6 +129,104 @@
    if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
    const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Porcentagem. Aprendi que 20% = 0,20 e que 20% de 150 = 30. Pode me ajudar a compreender porcentagens passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
    const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showMathLesson(dashboard,topic);}
+  });help.append(helpBtn);
+  const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
+  const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
+  steps.append(lesson,practice,report,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+ }
+ function showFractionsSmartLesson(dashboard,topic){
+  hideLegacyViews(panel());dashboard.replaceChildren();
+  const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const title=make('h2','','📘 Frações — Aula Inteligente 1.2');
+  const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
+  const steps=make('div','study-smart-steps');
+  const lesson=make('section','study-smart-card');
+  lesson.append(make('h3','','1. Aprender: o que são frações?'),make('p','','Uma fração representa partes iguais de um todo. O numerador mostra quantas partes usamos; o denominador mostra em quantas partes o todo foi dividido. Para calcular 3/4 de 20, dividimos 20 por 4 e multiplicamos por 3: 15.'));
+  const example=make('div','study-topic-example','Exemplo do cotidiano: uma pizza dividida em 8 fatias iguais. Comer 3 fatias significa comer 3/8 da pizza.');
+  lesson.append(example,make('p','','Dica: para encontrar uma fração de uma quantidade, divida pelo denominador e multiplique pelo numerador.'));
+  const practice=make('section','study-smart-card');practice.append(make('h3','','2. Praticar: resolva as questões'));
+  const questions=[
+   {q:'Quanto é 1/2 de 36?',opts:['12','18','24'],answer:1,why:'Divida 36 em 2 partes iguais: 36 ÷ 2 = 18.'},
+   {q:'Quanto é 3/4 de 20?',opts:['12','15','16'],answer:1,why:'Divida 20 por 4 e multiplique por 3: 20 ÷ 4 × 3 = 15.'},
+   {q:'Uma pizza tem 12 fatias. Ana comeu 2/3 delas. Quantas fatias ela comeu?',opts:['6','8','9'],answer:1,why:'12 ÷ 3 = 4; 4 × 2 = 8 fatias.'}
+  ];
+  const key='decola-smart-fractions-v1';let progress={};
+  try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){progress={};}
+  const save=()=>{try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}};
+  const score=make('p','study-smart-score');score.setAttribute('aria-live','polite');
+  const updateScore=()=>{const done=questions.filter((q,i)=>progress[i]?.done).length;const correct=questions.filter((q,i)=>progress[i]?.done&&progress[i]?.choice===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões concluídas • '+correct+' acerto(s). Salvo neste navegador.';};
+  practice.append(score);
+  const hints=[
+   ['O denominador 2 indica duas partes iguais. Divida 36 por 2.','Metade é dividir por 2.'],
+   ['Primeiro divida 20 pelo denominador 4.','Depois multiplique o resultado pelo numerador 3.'],
+   ['Divida as 12 fatias em 3 grupos iguais.','Agora conte 2 desses grupos: multiplique por 2.']
+  ];
+  questions.forEach((q,i)=>{
+   const card=make('div','study-smart-question');card.append(make('strong','',('Questão '+(i+1)+' de '+questions.length+': ')+q.q));
+   const options=make('div','study-topic-answers');
+   const feedback=make('div','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+   const retry=make('button','study-smart-retry','Tentar novamente');retry.type='button';
+   const buttons=q.opts.map((opt,j)=>{const btn=make('button','',opt);btn.type='button';btn.addEventListener('click',()=>{
+    const previous=progress[i];if(previous?.done||(previous?.attempts===1&&previous?.choice!==null&&previous?.choice!==undefined))return;
+    const attempts=(previous?.attempts||0)+1;
+    progress[i]={choice:j,attempts,done:j===q.answer||attempts>=2};
+    save();render();updateScore();updateReport();
+   });options.append(btn);return btn;});
+   retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();buttons[0]?.focus();});
+   const render=()=>{
+    const p=progress[i];const selected=Number.isInteger(p?.choice);const right=selected&&p.choice===q.answer;
+    buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',selected&&p.choice===j);btn.setAttribute('aria-pressed',String(selected&&p.choice===j));btn.disabled=!!p?.done||(p?.attempts===1&&selected&&!p?.done);});
+    feedback.replaceChildren();retry.hidden=true;
+    if(!selected)return;
+    if(right){feedback.classList.add('study-smart-correct');feedback.classList.remove('study-smart-wrong');feedback.append(make('strong','','✅ Muito bem! Resposta correta.'),make('p','',q.why));}
+    else if(!p.done){feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','🔎 Ainda não. Você tem mais uma tentativa!'),make('p','',hints[i][0]));retry.hidden=false;}
+    else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Dica: '+hints[i][1]),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
+   };
+   card.append(options,feedback,retry);practice.append(card);render();
+  });save();updateScore();
+  // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.
+  const report=make('section','study-smart-card study-smart-report');
+  report.setAttribute('aria-live','polite');
+  function updateReport(){
+   const completed=questions.every((q,i)=>progress[i]?.done);
+   report.replaceChildren();report.hidden=!completed;
+   if(!completed)return;
+   const firstTry=questions.filter((q,i)=>progress[i]?.choice===q.answer&&progress[i]?.attempts===1).length;
+   const eventual=questions.filter((q,i)=>progress[i]?.choice===q.answer).length;
+   const reinforced=questions.map((q,i)=>({q,i,p:progress[i]})).filter(x=>x.p?.attempts>1||x.p?.choice!==x.q.answer);
+   report.append(make('h3','','🎓 Aula concluída! Seu relatório com o Professor Leo'));
+   report.append(make('p','study-smart-report-stats',
+    'Questões concluídas: 3 de 3 • Acertos finais: '+eventual+' de 3 • Acertos na primeira tentativa: '+firstTry+' de 3 • Questões que exigiram reforço: '+reinforced.length+'.'));
+   report.append(make('p','','Parabéns por concluir a prática! Acertar depois de uma dica também é aprender. Vamos revisar os pontos que exigiram mais atenção.'));
+   const guidance=make('div','study-smart-guidance');
+   guidance.append(make('h4','','Seu reforço personalizado'));
+   if(!reinforced.length)guidance.append(make('p','','Você acertou tudo na primeira tentativa. Continue praticando para consolidar frações.'));
+   reinforced.forEach(({i})=>{
+    const messages=[
+     'Metade de um número: divida o total em 2 partes iguais.',
+     'Fração de uma quantidade: divida pelo denominador e multiplique pelo numerador.',
+     'Problema com frações: identifique o total, divida pelo denominador e multiplique pelo numerador.'
+    ];
+    guidance.append(make('p','','Questão '+(i+1)+': '+messages[i]));
+   });
+   report.append(guidance);
+   const actions=make('div','study-smart-report-actions');
+   const review=make('button','study-dashboard-all','🔁 Revisar esta aula');review.type='button';
+   review.addEventListener('click',()=>{lesson.scrollIntoView({behavior:'smooth',block:'start'});});
+   const next=make('button','study-dashboard-all','➡️ Próxima aula: Equações');next.type='button';
+   next.addEventListener('click',()=>showMathLesson(dashboard,mathTopics[2]));
+   actions.append(review,next);report.append(actions);
+  }
+  updateReport();
+  const help=make('section','study-smart-card');help.append(make('h3','','3. Precisa de ajuda?'));
+  const helpText=make('p','','O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.');help.append(helpText);
+  const helpBtn=make('button','study-dashboard-all','🎓 Pedir ajuda ao Professor Leo');helpBtn.type='button';helpBtn.addEventListener('click',()=>{
+   const p=panel();if(!p)return;dashboard.hidden=true;
+   const chatOption=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Conversar com o Professor Leo'));
+   if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
+   const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Frações. Aprendi que 3/4 de 20 é 15. Pode me ajudar a compreender frações passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
+   const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showFractionsSmartLesson(dashboard,topic);}
   });help.append(helpBtn);
   const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
   const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
