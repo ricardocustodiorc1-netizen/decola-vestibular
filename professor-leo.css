@@ -294,3 +294,8 @@
 .leo-performance-fill{position:absolute;bottom:0;left:0;right:0;background:#2450c5;border-radius:4px 4px 0 0}
 .leo-performance-fill.leo-performance-good{background:#18865b}
 .leo-performance-panel>small{display:block;color:#52648b;font-size:11px;line-height:1.5}
+
+/* Referência visual de 70% e ações do diagnóstico adaptativo. */
+.leo-performance-track::after{content:'';position:absolute;left:0;right:0;bottom:70%;border-top:1px dashed #c76b15;z-index:1;pointer-events:none}
+.leo-performance-action{display:block;width:100%;margin-top:9px;padding:8px 5px;border:1px solid #a7bcff;border-radius:7px;background:#f3f6ff;color:#1745bc;font-weight:600;cursor:pointer;white-space:normal;text-align:center}
+.leo-performance-action:hover,.leo-performance-action:focus-visible{background:#e1eaff}
