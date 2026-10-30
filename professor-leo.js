@@ -775,24 +775,38 @@ if(!leoPtRecoveryDone||typeof leoPtRecoveryDone!=='object'||Array.isArray(leoPtR
 function leoPtSaveRecovery(){try{localStorage.setItem(leoPtRecoveryKey,JSON.stringify(leoPtRecoveryDone));}catch{}}
 
 // Dicas progressivas e acessíveis, sem antecipar a alternativa correta.
-function leoStudyHint(subject,stage){
- const hints={
-  portuguese:[
-   'Leia o trecho mais uma vez. Procure a palavra que conecta as ideias e observe se elas se opõem, se explicam ou se completam.',
-   'Compare cada alternativa com o que está escrito no texto. Elimine as que acrescentam informações não mencionadas.'
-  ],
-  humanas:[
-   'Identifique o tema central: direitos, participação, movimentos sociais, urbanização ou desigualdade. Pense no significado do conceito antes de escolher.',
-   'Leia cada alternativa e descarte as afirmações extremas ou que contrariem os direitos e os fatos históricos estudados.'
-  ]
+// Dicas vinculadas à questão, sem revelar a alternativa correta.
+const leoSpecificHints={
+ portuguese:[
+  ['Observe a expressão "apesar da chuva": a chuva dificultaria a ida à biblioteca, mas a turma foi mesmo assim. Que relação existe entre as duas ideias?','Compare a ação esperada em um dia chuvoso com o que realmente aconteceu. Uma dificuldade impediu a ação ou foi superada?'],
+  ['O trecho cita vocabulário, imaginação e novas perspectivas. Procure a alternativa que reúne todas essas ideias, não apenas uma.','Uma ideia principal abrange o texto inteiro. Qual opção resume os três efeitos positivos apresentados?'],
+  ['Marina viu o trem se afastando e consultou o próximo horário. Que situação essas duas pistas sugerem?','Use apenas as pistas da narrativa. Por que alguém procuraria o horário de outro trem?'],
+  ['Uma frase informa um horário verificável; a outra faz uma avaliação pessoal. Identifique qual depende do gosto de alguém.','Pergunte: isso pode ser conferido objetivamente ou duas pessoas poderiam discordar sem que uma esteja mentindo?'],
+  ['Leia "pegou um livro emprestado e prometeu devolvê-lo". O que Júlia poderia devolver nessa frase?','Substitua "lo" pelo nome de cada alternativa e veja qual mantém o sentido original.']
+ ],
+ humanas:[
+  ['A Constituição de 1988 marcou a redemocratização do Brasil. Pense no que uma constituição voltada à cidadania deve garantir às pessoas.','Compare as alternativas: uma constituição democrática costuma ampliar ou reduzir direitos e participação?'],
+  ['Participação direta significa que os cidadãos se manifestam sobre uma decisão política, e não apenas escolhem representantes.','Procure o mecanismo em que a população é consultada diretamente sobre uma questão pública.'],
+  ['Pense em grupos organizados que defendem causas coletivas, como moradia, educação ou igualdade. Qual é o papel deles no debate democrático?','Movimentos sociais costumam ampliar a discussão pública e reivindicar mudanças ou impedir a participação?'],
+  ['Imagine uma cidade que cresce rapidamente, mas não amplia transporte, saneamento e moradia na mesma velocidade. O que pode acontecer?','Compare o acesso aos serviços entre bairros bem atendidos e periferias. O crescimento garante igualdade automaticamente?'],
+  ['A Lei Áurea encerrou juridicamente a escravidão em 1888. Reflita se uma mudança na lei resolve, sozinha, desigualdades acumuladas por séculos.','Diferencie o fim legal da escravidão da garantia concreta de trabalho, terra, educação e inclusão social.']
+ ]
+};
+function leoStudyHint(subject,stage,questionIndex){
+ const generic={
+  portuguese:['Procure as pistas no trecho e compare as alternativas sem acrescentar informações ao texto.','Leia novamente e identifique a relação entre as ideias antes de escolher.'],
+  humanas:['Identifique o tema histórico ou social e compare as alternativas com o conceito estudado.','Descarte as alternativas que contradizem os direitos ou o contexto histórico da questão.']
  };
+ const index=Number.isInteger(questionIndex)?questionIndex:-1;
+ const specific=leoSpecificHints[subject]&&leoSpecificHints[subject][index];
+ const hints=specific||generic[subject]||generic.portuguese;
  const box=document.createElement('div');box.className='leo-study-hint';
  const button=document.createElement('button');button.type='button';button.className='leo-study-hint-button';
  button.textContent=stage===2?'💡 Rever dica do Professor Leo':'💡 Preciso de uma dica';button.setAttribute('aria-expanded','false');
  const panel=document.createElement('aside');panel.className='leo-focused-hint';panel.hidden=true;panel.setAttribute('role','note');
  const title=document.createElement('strong');title.className='leo-focused-hint-title';title.textContent='💡 Dica do Professor Leo';
- const description=document.createElement('p');description.textContent=hints[subject][stage===1?1:0];
- const encouragement=document.createElement('p');encouragement.className='leo-focused-hint-prompt';encouragement.textContent='Agora tente responder com calma. Você consegue!';
+ const description=document.createElement('p');description.textContent=hints[stage===1?1:0];
+ const encouragement=document.createElement('p');encouragement.className='leo-focused-hint-prompt';encouragement.textContent='Pense nas pistas e tente responder com calma. Você consegue!';
  panel.append(title,description,encouragement);
  button.addEventListener('click',()=>{panel.hidden=false;button.hidden=true;button.setAttribute('aria-expanded','true');});
  box.append(button,panel);return box;
@@ -803,7 +817,7 @@ function leoPtRecoveryPanel(index){
  const heading=document.createElement('h4');heading.textContent='📚 Recuperação personalizada';box.append(heading);
  const explanation=document.createElement('p');explanation.textContent='1. Entenda: '+lesson;box.append(explanation);
  const excerpt=document.createElement('blockquote');excerpt.className='leo-portuguese-passage';excerpt.textContent=passage;box.append(excerpt);
- const prompt=document.createElement('p');prompt.textContent='2. Tente outra questão: '+question;box.append(prompt);box.append(leoStudyHint('portuguese',1));
+ const prompt=document.createElement('p');prompt.textContent='2. Tente outra questão: '+question;box.append(prompt);box.append(leoStudyHint('portuguese',1,index));
  const choices=document.createElement('div');choices.className='leo-choices leo-portuguese-choices';box.append(choices);
  const feedback=document.createElement('p');feedback.setAttribute('role','status');box.append(feedback);
  function renderChoices(){
@@ -838,7 +852,7 @@ function leoPtRender(){
   if(leoPtAnswers.every(x=>x!==null)&&!leoPtRecorded){leoPtRecorded=true;leoPtHistory.push({correct:leoPtAnswers.filter(Boolean).length,total:leoPtQuestions.length,date:new Date().toISOString()});leoPtHistory=leoPtHistory.slice(-20);try{localStorage.setItem(leoPtHistoryKey,JSON.stringify(leoPtHistory));}catch{}}
   leoPtRender();
  });options.append(b);});
- leoPtBox.append(passage,title);leoPtBox.append(leoStudyHint('portuguese',answered?2:0));leoPtBox.append(options);
+ leoPtBox.append(passage,title);leoPtBox.append(leoStudyHint('portuguese',answered?2:0,leoPtIndex));leoPtBox.append(options);
  if(answered){const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(leoPtAnswers[leoPtIndex]?'leo-feedback-correct':'leo-feedback-wrong');feedback.setAttribute('role','status');feedback.textContent=(leoPtAnswers[leoPtIndex]?'✓ Você acertou! ':'Vamos revisar. ')+q.why;leoPtBox.append(feedback);}
  if(answered&&!leoPtAnswers[leoPtIndex])leoPtBox.append(leoPtRecoveryPanel(leoPtIndex));
  const actions=document.createElement('div');actions.className='leo-practice-actions';
@@ -895,7 +909,7 @@ function leoHuRender(){
   leoHuBox.append(heading,summary);
   const q=leoHuQuestions[leoHuIndex];
   const question=document.createElement('p');question.textContent='Questão '+(leoHuIndex+1)+' de '+leoHuQuestions.length+': '+q.text;
-  question.style.fontWeight='600';leoHuBox.append(question);leoHuBox.append(leoStudyHint('humanas',leoHuAnswers[leoHuIndex]===null?0:2));
+  question.style.fontWeight='600';leoHuBox.append(question);leoHuBox.append(leoStudyHint('humanas',leoHuAnswers[leoHuIndex]===null?0:2,leoHuIndex));
   const choices=document.createElement('div');choices.className='leo-choices leo-humanas-choices';
   q.choices.forEach((option,i)=>{
     const button=document.createElement('button');button.type='button';
