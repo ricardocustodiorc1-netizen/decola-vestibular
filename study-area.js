@@ -1,10 +1,10 @@
 // Painel de entrada do aluno: preserva os módulos e o progresso existentes.
 (function(){
  const cards=[
-  {icon:'📚',title:'Matérias',detail:'Escolha uma área do ENEM e comece a estudar.',terms:['matérias','conteúdos','matemática']},
-  {icon:'✏️',title:'Exercícios',detail:'Treinos, simulados e recuperação guiada.',terms:['exercícios','treinos','simulado']},
-  {icon:'📈',title:'Minha evolução',detail:'Veja seu desempenho e plano de estudos.',terms:['minha evolução','evolução','painel']},
-  {icon:'🎓',title:'Professor Leo',detail:'Converse com o tutor em uma tela ampla.',terms:['conversar','pergunte','professor leo']}
+  {icon:'📚',title:'Matérias',detail:'Escolha uma área do ENEM e comece a estudar.',terms:['aprender uma matéria']},
+  {icon:'✏️',title:'Exercícios',detail:'Treinos, simulados e recuperação guiada.',terms:['fazer exercícios de matemática']},
+  {icon:'📈',title:'Minha evolução',detail:'Veja seu desempenho e plano de estudos.',terms:['minha evolução']},
+  {icon:'🎓',title:'Professor Leo',detail:'Converse com o tutor em uma tela ampla.',terms:['conversar com o professor leo']}
  ];
  const panel=()=>document.querySelector('.leo-panel');
  const launcher=()=>document.querySelector('.leo-launch');
@@ -58,6 +58,10 @@
   if(p){
    const sync=()=>{document.body.classList.toggle('leo-study-open',!p.hidden);if(p.hidden){const dashboard=p.querySelector('.study-dashboard');if(dashboard)dashboard.hidden=true;}};
    new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['hidden']});sync();
+   const header=p.querySelector('.leo-top strong');
+   const location=p.querySelector('.leo-current-location');
+   const updateHeader=()=>{if(header)header.textContent=location?.textContent?.includes('Conversa com o Professor Leo')?'🎓 Professor Leo':'🚀 Decola Vestibular — Área de estudos';};
+   if(location)new MutationObserver(updateHeader).observe(location,{childList:true,characterData:true,subtree:true});updateHeader();
   }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attach);else attach();
