@@ -229,3 +229,20 @@
 .leo-portuguese-bar-track{width:30px;height:84px;background:#e4eaf6;border-radius:5px;display:flex;align-items:flex-end;overflow:hidden}
 .leo-portuguese-bar-fill{width:100%;background:#1744c3;border-radius:4px 4px 0 0}
 .leo-portuguese-history small{display:block;margin-top:8px}
+
+/* Painel consolidado de evolução do estudante */
+.leo-dashboard{padding:4px 0 12px}
+.leo-dashboard>h3{margin:4px 0 8px;color:#173c9c}
+.leo-dashboard>p{font-size:13px;line-height:1.5;margin:0 0 14px}
+.leo-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.leo-dashboard-card,.leo-dashboard-next{border:1px solid #c6d5fc;border-radius:12px;background:#f2f6ff;padding:14px}
+.leo-dashboard-card h4,.leo-dashboard-next h4{margin:0 0 12px;color:#173c9c;font-size:15px}
+.leo-dashboard-card strong{display:block;color:#1744c3;font-size:25px;line-height:1.2}
+.leo-dashboard-card p,.leo-dashboard-next p{font-size:12px;line-height:1.5;margin:9px 0}
+.leo-dashboard-track{height:10px;border-radius:8px;background:#dfe7f7;overflow:hidden;margin:12px 0}
+.leo-dashboard-track span{display:block;height:100%;background:#1b8b58;border-radius:8px}
+.leo-dashboard-card button,.leo-dashboard-next button{border:1px solid #a8c0ff;border-radius:8px;background:white;color:#1744c3;padding:10px 12px;font-weight:700;cursor:pointer;max-width:100%}
+.leo-dashboard-card button:hover,.leo-dashboard-next button:hover{background:#e4edff}
+.leo-dashboard-next{margin:14px 0;background:#eaf1ff}
+.leo-dashboard>small{display:block;font-size:11px;color:#566681;line-height:1.5}
+@media(max-width:560px){.leo-dashboard-grid{grid-template-columns:1fr}}
