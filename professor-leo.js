@@ -614,6 +614,62 @@ function leoRenderDashboard(){
   p.textContent=recommended?'Reforce '+recommended.topic+' em '+recommended.area+'. Revise os erros e tente novamente.':'Continue praticando Matemática e Português para identificar os próximos conteúdos de reforço.';
   const go=document.createElement('button');go.type='button';go.textContent=recommended?'Ir para '+recommended.area:'Começar por Matemática';go.addEventListener('click',()=>leoShowView(recommended?recommended.view:'practice'));
   summary.append(h,p,go);leoDashboard.append(summary);
+  // Integração somente de leitura com o plano semanal gerado pelo Decola.
+  const weekly=document.createElement('section');weekly.className='leo-dashboard-next';
+  const weeklyTitle=document.createElement('h4');weeklyTitle.textContent='📅 Meu plano semanal de estudos';
+  weekly.append(weeklyTitle);
+  let savedPlan=null;
+  try{
+    const saved=JSON.parse(localStorage.getItem('decola-vestibular:progress:v1')||'null');
+    if(saved&&saved.profile&&saved.plan&&Array.isArray(saved.plan.sessions)&&saved.plan.sessions.length){
+      savedPlan={sessions:saved.plan.sessions,completed:Array.isArray(saved.completed)?saved.completed:[]};
+    }
+  }catch(_error){}
+  if(savedPlan){
+    const sessions=savedPlan.sessions;
+    const completed=savedPlan.completed;
+    const count=sessions.filter(session=>completed.includes(session.day)).length;
+    const progress=document.createElement('p');
+    progress.textContent=count+' de '+sessions.length+' dia(s) de estudo concluído(s) nesta semana.';
+    weekly.append(progress);
+    const next=sessions.find(session=>!completed.includes(session.day));
+    if(next){
+      const detail=document.createElement('p');
+      const area=next.area||{};
+      detail.textContent='Próxima atividade — Dia '+next.day+': '+(area.short||area.title||'Estudo')+' · '+(area.topic||'Revisão')+' · '+next.minutes+' minutos.';
+      weekly.append(detail);
+      const actions=document.createElement('div');actions.className='leo-dashboard-actions';
+      const id=area.id;
+      if(id==='matematica'||id==='linguagens'){
+        const start=document.createElement('button');start.type='button';
+        start.textContent=id==='matematica'?'Praticar Matemática':'Praticar Português';
+        start.addEventListener('click',()=>leoShowView(id==='matematica'?'practice':'portuguese'));
+        actions.append(start);
+      }else{
+        const info=document.createElement('p');
+        info.textContent='Esta área ainda não possui treino específico no Professor Leo. Consulte o plano para seguir a atividade.';
+        weekly.append(info);
+      }
+      const open=document.createElement('button');open.type='button';
+      open.textContent='Abrir meu plano completo';
+      open.addEventListener('click',()=>{
+        panel.hidden=true;launch.hidden=false;launch.setAttribute('aria-expanded','false');
+        location.hash='#plano';
+      });
+      actions.append(open);weekly.append(actions);
+    }else{
+      const done=document.createElement('p');done.textContent='Parabéns! Você concluiu todas as sessões previstas no plano desta semana.';weekly.append(done);
+      const open=document.createElement('button');open.type='button';open.textContent='Rever meu plano';
+      open.addEventListener('click',()=>{panel.hidden=true;launch.hidden=false;launch.setAttribute('aria-expanded','false');location.hash='#plano';});
+      weekly.append(open);
+    }
+  }else{
+    const empty=document.createElement('p');empty.textContent='Monte seu plano de estudos no Decola para ver aqui a próxima atividade da semana.';weekly.append(empty);
+    const open=document.createElement('button');open.type='button';open.textContent='Montar meu plano';
+    open.addEventListener('click',()=>{panel.hidden=true;launch.hidden=false;launch.setAttribute('aria-expanded','false');location.hash='#perfil';});
+    weekly.append(open);
+  }
+  leoDashboard.append(weekly);
   const note=document.createElement('small');note.textContent='As notas das rodadas e os reforços são indicadores separados. O painel não altera resultados anteriores nem envia dados.';leoDashboard.append(note);
 }
 
