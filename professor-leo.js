@@ -498,6 +498,41 @@ if(!Array.isArray(leoPtHistory))leoPtHistory=[];
 leoPtHistory=leoPtHistory.filter(x=>x&&Number.isInteger(x.correct)&&x.correct>=0&&x.correct<=leoPtQuestions.length).slice(-20);
 let leoPtIndex=Math.max(0,leoPtAnswers.findIndex(x=>x===null)),leoPtRecorded=leoPtAnswers.every(x=>x!==null);
 const leoPtBox=document.createElement('section');leoPtBox.className='leo-practice leo-portuguese';leoPtBox.setAttribute('aria-label','Treino de Português');leoPractice.after(leoPtBox);
+
+const leoPtRecovery=[
+ ['Concessão indica contraste: uma dificuldade não impediu a ação.','Mesmo com a chuva, Bia foi ao parque.','A expressão "mesmo com" indica:',['Contraste','Causa','Conclusão'],0,'A chuva não impediu a ida ao parque.'],
+ ['A ideia principal resume todo o texto, não apenas um detalhe.','A leitura melhora o vocabulário e estimula a imaginação.','Qual é a ideia central?',['Ler traz benefícios','Ler serve só para memorizar','Ler impede a imaginação'],0,'O texto apresenta benefícios da leitura.'],
+ ['Inferir é concluir a partir de pistas do texto.','João olhou o céu escuro e levou um guarda-chuva.','O que se pode inferir?',['João previu chuva','João perdeu o guarda-chuva','O céu estava ensolarado'],0,'O céu escuro sugere possibilidade de chuva.'],
+ ['Fato é verificável; opinião expressa avaliação pessoal.','O museu abre às nove. É o lugar mais bonito da cidade.','Qual trecho é opinião?',['Abre às nove','É o lugar mais bonito','O museu tem horário'],1,'Mais bonito é uma avaliação subjetiva.'],
+ ['Um pronome pode retomar um termo já mencionado.','Lia comprou uma caneta e a guardou na mochila.','O pronome "a" retoma:',['A caneta','A mochila','Lia'],0,'O pronome substitui caneta.']
+];
+let leoPtRecoveryDone={};
+function leoPtRecoveryPanel(index){
+ const [lesson,passage,question,answers,correct,why]=leoPtRecovery[index];
+ const box=document.createElement('section');box.className='leo-portuguese-recovery';
+ const heading=document.createElement('h4');heading.textContent='📚 Recuperação personalizada';box.append(heading);
+ const explanation=document.createElement('p');explanation.textContent='1. Entenda: '+lesson;box.append(explanation);
+ const excerpt=document.createElement('blockquote');excerpt.className='leo-portuguese-passage';excerpt.textContent=passage;box.append(excerpt);
+ const prompt=document.createElement('p');prompt.textContent='2. Tente outra questão: '+question;box.append(prompt);
+ const choices=document.createElement('div');choices.className='leo-choices leo-portuguese-choices';box.append(choices);
+ const feedback=document.createElement('p');feedback.setAttribute('role','status');box.append(feedback);
+ function renderChoices(){
+  choices.replaceChildren();
+  answers.forEach((answer,i)=>{
+   const button=document.createElement('button');button.type='button';button.textContent=String.fromCharCode(65+i)+') '+answer;
+   button.disabled=leoPtRecoveryDone[index]===true;
+   button.addEventListener('click',()=>{
+    if(leoPtRecoveryDone[index])return;
+    if(i===correct){leoPtRecoveryDone[index]=true;feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='✓ Conteúdo recuperado! '+why;}
+    else{feedback.className='leo-practice-feedback leo-feedback-wrong';feedback.textContent='Vamos tentar de novo. '+lesson;}
+    renderChoices();
+   });choices.append(button);
+  });
+ }
+ if(leoPtRecoveryDone[index]){feedback.className='leo-practice-feedback leo-feedback-correct';feedback.textContent='✓ Conteúdo recuperado! '+why;}
+ renderChoices();return box;
+}
+
 function leoPtRender(){
  leoPtBox.replaceChildren();
  const h=document.createElement('h3');h.textContent='📖 Português e Interpretação de Texto';leoPtBox.append(h);
@@ -515,10 +550,11 @@ function leoPtRender(){
  });options.append(b);});
  leoPtBox.append(passage,title,options);
  if(answered){const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(leoPtAnswers[leoPtIndex]?'leo-feedback-correct':'leo-feedback-wrong');feedback.setAttribute('role','status');feedback.textContent=(leoPtAnswers[leoPtIndex]?'✓ Você acertou! ':'Vamos revisar. ')+q.why;leoPtBox.append(feedback);}
+ if(answered&&!leoPtAnswers[leoPtIndex])leoPtBox.append(leoPtRecoveryPanel(leoPtIndex));
  const actions=document.createElement('div');actions.className='leo-practice-actions';
  if(answered){const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';next.addEventListener('click',()=>{leoPtIndex=(leoPtIndex+1)%leoPtQuestions.length;leoPtRender();leoBody.scrollTop=0;});actions.append(next);
  const help=document.createElement('button');help.type='button';help.textContent='💬 Peça ajuda ao Leo';help.addEventListener('click',()=>{leoReturnView='portuguese';leoShowView('chat');leoInput.value='Professor Leo, explique esta questão de interpretação: '+q.text+' Pergunta: '+q.question+' Resposta correta: '+q.choices[q.correct]+'.';leoInput.focus({preventScroll:true});});actions.append(help);}
- const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';restart.addEventListener('click',()=>{leoPtAnswers=Array(leoPtQuestions.length).fill(null);leoPtIndex=0;leoPtRecorded=false;try{localStorage.removeItem(leoPtKey);}catch{}leoPtRender();});actions.append(restart);leoPtBox.append(actions);
+ const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';restart.addEventListener('click',()=>{leoPtAnswers=Array(leoPtQuestions.length).fill(null);leoPtIndex=0;leoPtRecorded=false;leoPtRecoveryDone={};try{localStorage.removeItem(leoPtKey);}catch{}leoPtRender();});actions.append(restart);leoPtBox.append(actions);
  if(count===leoPtQuestions.length){const result=document.createElement('h4');result.textContent='📊 Resultado: '+score+' de '+leoPtQuestions.length+' acertos ('+Math.round(score/leoPtQuestions.length*100)+'%)';leoPtBox.append(result);}
  const history=document.createElement('div');history.className='leo-portuguese-history';const hh=document.createElement('h4');hh.textContent='📈 Histórico de Português';history.append(hh);
  if(!leoPtHistory.length){const p=document.createElement('p');p.textContent='Conclua a rodada para começar seu histórico.';history.append(p);}
