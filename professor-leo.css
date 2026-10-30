@@ -79,3 +79,17 @@
 @media(min-width:701px){.leo-panel{width:min(560px,calc(100vw - 36px));max-height:min(820px,calc(100dvh - 92px))}}
 .leo-reinforcement-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .leo-reinforcement-actions button{border:1px solid #b9cafa;border-radius:8px;padding:10px;background:#eaf0ff;color:#1744c3;font-weight:700;cursor:pointer;min-height:42px}
+
+/* Menu de navegação do Professor Leo: uma atividade por vez. */
+.leo-menu[hidden],.leo-back[hidden],.leo-body [hidden]{display:none!important}
+.leo-menu h3{margin:4px 0 8px;font-size:19px}
+.leo-menu>p{color:#53627c;margin:0 0 16px}
+.leo-menu-option{display:block;width:100%;text-align:left;border:1px solid #cbd8f2;border-radius:12px;background:#f8faff;padding:16px;margin:10px 0;color:#14254c;cursor:pointer;min-height:80px}
+.leo-menu-option strong,.leo-menu-option small{display:block}
+.leo-menu-option strong{font-size:15px;margin-bottom:6px}
+.leo-menu-option small{font-size:12px;color:#53627c;line-height:1.5}
+.leo-menu-option:hover,.leo-menu-option:focus-visible{background:#eaf0ff;border-color:#1744c3}
+.leo-back{border:1px solid #b9cafa;border-radius:8px;background:#f0f5ff;color:#1744c3;font-weight:700;padding:10px 12px;margin-bottom:12px;cursor:pointer;min-height:42px}
+.leo-lesson h3{margin-top:8px}
+.leo-chat{margin-top:0;padding-top:0;border-top:0}
+.leo-practice{margin-top:0}
