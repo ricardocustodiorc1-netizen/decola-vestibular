@@ -596,7 +596,7 @@
   try{
    const obj=JSON.parse(localStorage.getItem(path.key)||'{}');
    const entries=[0,1,2].map(i=>obj?.[i]);
-   return {done:entries.filter(v=>v?.done).length,correct:entries.filter(v=>v?.done&&v?.choice===undefined?false:v?.done).length};
+   return {done:entries.filter(v=>v?.done).length,correct:entries.filter(v=>v?.done).length};
   }catch{return {done:0,correct:0};}
  }
  function launchLesson(path){
