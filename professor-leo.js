@@ -569,6 +569,50 @@ function leoAchievementPanel(){
     card.append(name,detail);grid.append(card);
   });
   box.append(grid);
+  const next=medals.find(m=>total<m.days);
+  const nextText=document.createElement('p');
+  nextText.className='leo-calendar-next';
+  nextText.textContent=next?'🎯 Próxima medalha: '+next.icon+' '+next.name+' — faltam '+(next.days-total)+' dia(s) de missão concluída.':'🏆 Todas as medalhas conquistadas! Continue no seu ritmo.';
+  box.append(nextText);
+  const calendar=document.createElement('div');
+  calendar.className='leo-calendar';
+  calendar.setAttribute('aria-label','Calendário de missões concluídas');
+  const controls=document.createElement('div');controls.className='leo-calendar-controls';
+  const prev=document.createElement('button');prev.type='button';prev.textContent='‹';prev.setAttribute('aria-label','Mês anterior');
+  const monthLabel=document.createElement('strong');monthLabel.setAttribute('aria-live','polite');
+  const following=document.createElement('button');following.type='button';following.textContent='›';following.setAttribute('aria-label','Próximo mês');
+  controls.append(prev,monthLabel,following);
+  const weekdays=document.createElement('div');weekdays.className='leo-calendar-weekdays';
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(day=>{const label=document.createElement('span');label.textContent=day;weekdays.append(label);});
+  const daysGrid=document.createElement('div');daysGrid.className='leo-calendar-days';
+  const legend=document.createElement('p');legend.className='leo-calendar-legend';legend.textContent='● Missão concluída  ·  Hoje destacado  ·  Sem punição por pausas';
+  calendar.append(controls,weekdays,daysGrid,legend);box.append(calendar);
+  const now=new Date();const currentMonth=new Date(now.getFullYear(),now.getMonth(),1);
+  let visibleMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth(),1);
+  const completedDays=new Set(dates);
+  function drawCalendar(){
+    monthLabel.textContent=visibleMonth.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    following.disabled=visibleMonth.getFullYear()===currentMonth.getFullYear()&&visibleMonth.getMonth()===currentMonth.getMonth();
+    daysGrid.replaceChildren();
+    const year=visibleMonth.getFullYear(),month=visibleMonth.getMonth();
+    const offset=new Date(year,month,1).getDay();
+    for(let i=0;i<offset;i++){const empty=document.createElement('span');empty.className='leo-calendar-empty';empty.setAttribute('aria-hidden','true');daysGrid.append(empty);}
+    const count=new Date(year,month+1,0).getDate();
+    for(let day=1;day<=count;day++){
+      const dateKey=[year,String(month+1).padStart(2,'0'),String(day).padStart(2,'0')].join('-');
+      const cell=document.createElement('span');cell.className='leo-calendar-day';
+      cell.textContent=String(day);
+      const complete=completedDays.has(dateKey);
+      if(complete)cell.classList.add('leo-calendar-done');
+      if(dateKey===leoMissionToday())cell.classList.add('leo-calendar-today');
+      cell.setAttribute('aria-label',day+' de '+monthLabel.textContent+(complete?', missão concluída':', sem missão registrada'));
+      cell.title=complete?'Missão concluída':'Sem missão registrada';
+      daysGrid.append(cell);
+    }
+  }
+  prev.addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1);drawCalendar();});
+  following.addEventListener('click',()=>{if(!following.disabled){visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);drawCalendar();}});
+  drawCalendar();
   return box;
 }
 function leoMissionRecoverySucceeded(view,index){
