@@ -27,8 +27,20 @@
   const heading=document.createElement('h2');heading.textContent='📚 Escolha sua matéria';
   const intro=document.createElement('p');intro.textContent='Selecione uma área do ENEM para abrir a aula introdutória.';
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
-  ['Matemática','Linguagens','Ciências Humanas','Ciências da Natureza','Redação'].forEach((name,index)=>{
-   const button=document.createElement('button');button.type='button';button.className='study-dashboard-card';button.textContent=name;
+  const subjects=[
+   {name:'Matemática',icon:'∑',subtitle:'Números, lógica e resolução de problemas',tone:'math'},
+   {name:'Linguagens',icon:'📚',subtitle:'Leitura, interpretação e comunicação',tone:'language'},
+   {name:'Ciências Humanas',icon:'🌎',subtitle:'História, geografia, filosofia e sociedade',tone:'human'},
+   {name:'Ciências da Natureza',icon:'🧬',subtitle:'Biologia, física e química',tone:'nature'},
+   {name:'Redação',icon:'✍️',subtitle:'Argumentação, repertório e escrita',tone:'writing'}
+  ];
+  subjects.forEach((subject,index)=>{
+   const button=document.createElement('button');button.type='button';button.className='study-dashboard-card study-subject-card study-subject-'+subject.tone;
+   const artwork=document.createElement('span');artwork.className='study-subject-art';artwork.textContent=subject.icon;artwork.setAttribute('aria-hidden','true');
+   const title=document.createElement('strong');title.textContent=subject.name;
+   const description=document.createElement('small');description.textContent=subject.subtitle;
+   const action=document.createElement('span');action.className='study-subject-action';action.textContent='Começar aula →';
+   button.append(artwork,title,description,action);
    button.addEventListener('click',()=>{
     const p=panel();const option=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Aprender uma matéria'));
     if(!option)return;
