@@ -158,6 +158,7 @@ function renderLeoPractice(){
   });
   const restart=document.createElement('button');restart.type='button';restart.textContent='Recomeçar treino';
   restart.addEventListener('click',()=>{
+    leoPractice.classList.remove('leo-recovery-mode');
     leoPracticeAnswers=Array(leoPracticeQuestions.length).fill(null);
     leoReinforcementAnswers={};
     leoChallengeResult=null;
@@ -264,14 +265,23 @@ function renderLeoPractice(){
       const missedIndices=leoPracticeQuestions.map((q,i)=>leoPracticeAnswers[i]===false?i:-1).filter(i=>i>=0);
       function showRecoveryStep(){
         content.replaceChildren();
+        const stepLabel=document.createElement('p');
+        stepLabel.className='leo-recovery-progress';
+        stepLabel.textContent=recoveryStep>=missedIndices.length?'Etapa final: resultado da recuperação':'Etapa '+(recoveryStep+1)+' de '+missedIndices.length+' · Explicação → Exercício → Correção';
+        content.append(stepLabel);
         if(recoveryStep>=missedIndices.length){
+          leoPractice.classList.remove('leo-recovery-mode');
           const finish=document.createElement('h4');
           finish.textContent='🎉 Recuperação concluída!';
           const result=document.createElement('p');
           result.textContent='Você acertou '+recoveryCorrect+' de '+missedIndices.length+' exercícios de reforço. '+(recoveryCorrect===missedIndices.length?'Muito bem! Agora você pode tentar outra rodada.':'Se ainda tiver dúvidas, converse com o Professor Leo e tente novamente.');
           const retry=document.createElement('button');retry.type='button';retry.textContent='Repetir reforço';
-          retry.addEventListener('click',()=>{recoveryStep=0;recoveryCorrect=0;showRecoveryStep();});
-          content.append(finish,result,retry);return;
+          retry.addEventListener('click',()=>{recoveryStep=0;recoveryCorrect=0;leoPractice.classList.add('leo-recovery-mode');showRecoveryStep();});
+          content.append(finish,result,retry);
+          const challengeAfter=report.querySelector('.leo-adaptive');
+          if(challengeAfter){const nextNote=document.createElement('p');nextNote.textContent='Agora você pode continuar com o próximo desafio, logo abaixo.';content.append(nextNote);}
+          content.scrollIntoView({block:'nearest',behavior:'smooth'});
+          return;
         }
         const index=missedIndices[recoveryStep];
         const exercise=leoReinforcement[index];
@@ -300,7 +310,9 @@ function renderLeoPractice(){
         content.append(lesson,explain,question,choices,status);
       }
       start.addEventListener('click',()=>{
-        content.hidden=false;start.hidden=true;showRecoveryStep();
+        content.hidden=false;start.hidden=true;
+        leoPractice.classList.add('leo-recovery-mode');
+        showRecoveryStep();
         content.scrollIntoView({block:'nearest',behavior:'smooth'});
       });
       recovery.append(start,content);
