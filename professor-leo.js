@@ -245,7 +245,18 @@ function leoFocusedMathPanel(){
   const exercise=leoReinforcement[index];
   const topic=document.createElement('p');
   topic.textContent='Conteúdo: '+original.topic+' · Revisão da questão '+(index+1);
-  const hint=document.createElement('p');hint.textContent='💡 Dica: '+exercise.steps;
+  const hint=document.createElement('p');
+  hint.textContent='💡 Dica: '+exercise.steps;
+  hint.hidden=true;
+  const hintButton=document.createElement('button');
+  hintButton.type='button';
+  hintButton.textContent='💡 Preciso de uma dica';
+  hintButton.setAttribute('aria-expanded','false');
+  hintButton.addEventListener('click',()=>{
+    hint.hidden=false;
+    hintButton.hidden=true;
+    hintButton.setAttribute('aria-expanded','true');
+  });
   const question=document.createElement('p');question.className='leo-question';question.textContent=exercise.question;
   const options=document.createElement('div');options.className='leo-choices';
   const result=document.createElement('p');result.setAttribute('role','status');
@@ -297,7 +308,7 @@ function leoFocusedMathPanel(){
       attempts+=1;
       if(attempts===1){
         button.disabled=true;
-        setFeedback('Boa tentativa! Vamos descobrir juntos. '+exercise.steps+' Você pode tentar mais uma vez.',false);
+        setFeedback('Boa tentativa! Pense com calma e tente outra alternativa. Se precisar, use o botão de dica.',false);
         showHelp();
       }else{
         lockOptions();
@@ -316,7 +327,7 @@ function leoFocusedMathPanel(){
   });
   const regular=makeAction('Voltar ao treino completo',()=>{leoFocusedMathIndex=null;renderLeoPractice();});
   actions.append(next,regular);
-  box.append(title,intro,topic,hint,question,options,result,guidance,actions);
+  box.append(title,intro,topic,question,hintButton,hint,options,result,guidance,actions);
   return box;
 }
 function renderLeoPractice(){
