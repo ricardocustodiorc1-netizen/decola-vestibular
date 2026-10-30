@@ -187,3 +187,10 @@
 .leo-recovery .leo-recovery-start{width:100%;background:#1744c3;color:#fff}
 .leo-recovery h4{margin:8px 0}
 .leo-recovery [hidden]{display:none!important}
+
+/* Foco pedagógico: durante a recuperação, apenas a etapa atual fica visível. */
+.leo-practice.leo-recovery-mode > :not(.leo-practice-report){display:none!important}
+.leo-practice.leo-recovery-mode .leo-practice-report > :not(.leo-recovery){display:none!important}
+.leo-practice.leo-recovery-mode .leo-recovery{margin:0;background:#f0f5ff}
+.leo-recovery-progress{font-size:12px;font-weight:700;color:#1744c3;background:#dfe9ff;padding:8px 10px;border-radius:7px}
+.leo-recovery .leo-choices button{min-height:44px}
