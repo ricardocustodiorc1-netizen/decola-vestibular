@@ -313,7 +313,7 @@ leoBody.prepend(leoMenu);
 const leoBack=document.createElement('button');
 leoBack.type='button';leoBack.className='leo-back';
 leoBack.textContent='← Voltar ao menu';
-leoMenu.after(leoBack);
+root.querySelector('.leo-top').insertBefore(leoBack,root.querySelector('.leo-close'));
 leoBack.addEventListener('click',()=>leoShowView('menu'));
 function leoShowView(view){
   const menu=view==='menu';
