@@ -944,8 +944,16 @@ function leoRenderDashboard(){
       const action=document.createElement('button');
       action.type='button';
       action.className='leo-performance-action';
-      const wrongIndex=area.answers.findIndex(answer=>answer===false);
-      action.textContent=wrongIndex>=0?'Revisar questão com erro':'Praticar '+area.name;
+      const recoveredIndices=area.view==='practice'?leoReadMathRecoveryTopics():null;
+      const isRecovered=index=>area.view==='practice'?recoveredIndices.includes(index):area.view==='portuguese'?leoPtRecoveryDone[index]===true:leoHuRecovery[index]===true;
+      const wrongIndex=area.answers.findIndex((answer,index)=>answer===false&&!isRecovered(index));
+      const recoveredErrors=area.answers.filter((answer,index)=>answer===false&&isRecovered(index)).length;
+      const pendingErrors=area.answers.filter((answer,index)=>answer===false&&!isRecovered(index)).length;
+      const recoveryInfo=document.createElement('p');
+      recoveryInfo.className='leo-performance-recovery-status';
+      recoveryInfo.textContent='Recuperação nesta rodada: '+recoveredErrors+' conteúdo(s) recuperado(s) · '+pendingErrors+' erro(s) aguardando reforço. A nota original é preservada.';
+      card.append(recoveryInfo);
+      action.textContent=wrongIndex>=0?'📚 Iniciar recuperação guiada':'Praticar '+area.name;
       action.addEventListener('click',()=>wrongIndex>=0?leoOpenTopic(area.view,wrongIndex):leoShowView(area.view));
       card.append(action);
     }
