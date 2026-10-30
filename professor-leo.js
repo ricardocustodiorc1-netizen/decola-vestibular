@@ -346,7 +346,10 @@ function renderLeoPractice(){
     const title=document.createElement('h4');title.textContent='📊 Relatório desta rodada';
     const score=document.createElement('p');score.textContent=correct+' de '+leoPracticeQuestions.length+' acertos ('+Math.round(correct/leoPracticeQuestions.length*100)+'%).';
     const guidance=document.createElement('p');
-    guidance.textContent=correct===leoPracticeQuestions.length?'Parabéns! Você acertou todas. Continue praticando novos desafios.':'Revisão recomendada: porcentagem, especialmente cálculos com descontos, aumentos e situações do cotidiano. Releia as explicações e tente outra rodada.';
+    const missedIndices=leoPracticeAnswers.map((answer,index)=>answer===false?index:-1).filter(index=>index>=0);
+    const recoveredIndices=leoReadMathRecoveryTopics();
+    const allRecovered=missedIndices.length>0&&missedIndices.every(index=>recoveredIndices.includes(index));
+    guidance.textContent=correct===leoPracticeQuestions.length?'Parabéns! Você acertou todas. Continue praticando novos desafios.':allRecovered?'🎉 Parabéns! Você recuperou todos os conteúdos desta rodada. Sua nota original permanece '+correct+' de '+leoPracticeQuestions.length+'. Avance para o próximo desafio.':'Revisão recomendada: porcentagem, especialmente cálculos com descontos, aumentos e situações do cotidiano. Releia as explicações e tente outra rodada.';
     const bar=document.createElement('div');
     bar.className='leo-score-track';bar.setAttribute('role','progressbar');
     bar.setAttribute('aria-label','Acertos nesta rodada');
@@ -786,8 +789,14 @@ function leoRenderDashboard(){
   const summary=document.createElement('section');summary.className='leo-dashboard-next';
   const h=document.createElement('h4');h.textContent='🎯 Próximo estudo recomendado';
   const p=document.createElement('p');
-  p.textContent=pendingTopic?'Prioridade: '+pendingTopic.name+' em '+pendingTopic.area+'. Revise este conteúdo e faça a recuperação.':recommended?'Reforce '+recommended.topic+' em '+recommended.area+'. Revise os erros e tente novamente.':'Continue praticando para identificar os próximos conteúdos de reforço.';
-  const go=document.createElement('button');go.type='button';go.textContent=pendingTopic?'Ir para '+pendingTopic.area:recommended?'Ir para '+recommended.area:'Começar por Matemática';go.addEventListener('click',()=>pendingTopic?leoOpenTopic(pendingTopic.view,pendingTopic.index):leoShowView(recommended?recommended.view:'practice'));
+  // Prioriza lacunas reais; não modifica o plano original nem as notas armazenadas.
+  const currentMathMissed=leoPracticeAnswers.map((answer,index)=>answer===false?index:-1).filter(index=>index>=0);
+  const mathAllRecovered=currentMathMissed.length>0&&currentMathMissed.every(index=>leoReadMathRecoveryTopics().includes(index));
+  const adaptiveTarget=pendingTopic||recommended;
+  p.textContent=pendingTopic?'Prioridade: '+pendingTopic.name+' em '+pendingTopic.area+'. Revise este conteúdo e faça a recuperação.':recommended?'Reforce '+recommended.topic+' em '+recommended.area+'. Revise os erros e tente novamente.':mathAllRecovered?'🎉 Você recuperou todos os conteúdos de Matemática desta rodada! Avance para um novo desafio ou siga seu plano semanal.':'Continue praticando para identificar os próximos conteúdos de reforço.';
+  const go=document.createElement('button');go.type='button';
+  go.textContent=pendingTopic?'Revisar '+pendingTopic.name:recommended?'Ir para '+recommended.area:mathAllRecovered?'Avançar em Matemática':'Começar por Matemática';
+  go.addEventListener('click',()=>pendingTopic?leoOpenTopic(pendingTopic.view,pendingTopic.index):leoShowView(recommended?recommended.view:'practice'));
   summary.append(h,p,go);leoDashboard.append(summary);
   // Integração somente de leitura com o plano semanal gerado pelo Decola.
   const weekly=document.createElement('section');weekly.className='leo-dashboard-next';
@@ -807,6 +816,20 @@ function leoRenderDashboard(){
     const progress=document.createElement('p');
     progress.textContent=count+' de '+sessions.length+' dia(s) de estudo concluído(s) nesta semana.';
     weekly.append(progress);
+    // Sugestão adaptativa adicional: a agenda original permanece intacta.
+    if(adaptiveTarget){
+      const adaptive=document.createElement('p');
+      adaptive.textContent='🎯 Reforço adaptativo sugerido: '+(adaptiveTarget.name||adaptiveTarget.topic)+' — '+adaptiveTarget.area+'. Faça uma revisão curta antes de continuar o cronograma.';
+      weekly.append(adaptive);
+      const review=document.createElement('button');review.type='button';
+      review.textContent='Revisar agora';
+      review.addEventListener('click',()=>adaptiveTarget.index!==undefined?leoOpenTopic(adaptiveTarget.view,adaptiveTarget.index):leoShowView(adaptiveTarget.view));
+      weekly.append(review);
+    }else if(mathAllRecovered){
+      const achieved=document.createElement('p');
+      achieved.textContent='🎉 Reforço de Matemática concluído nesta rodada. Siga a próxima atividade planejada.';
+      weekly.append(achieved);
+    }
     const next=sessions.find(session=>!completed.includes(session.day));
     if(next){
       const detail=document.createElement('p');
