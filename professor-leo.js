@@ -584,9 +584,12 @@ function leoAchievementPanel(){
   controls.append(prev,monthLabel,following);
   const weekdays=document.createElement('div');weekdays.className='leo-calendar-weekdays';
   ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(day=>{const label=document.createElement('span');label.textContent=day;weekdays.append(label);});
+  const monthlySummary=document.createElement('div');
+  monthlySummary.className='leo-calendar-summary';
+  monthlySummary.setAttribute('aria-live','polite');
   const daysGrid=document.createElement('div');daysGrid.className='leo-calendar-days';
   const legend=document.createElement('p');legend.className='leo-calendar-legend';legend.textContent='● Missão concluída  ·  Hoje destacado  ·  Sem punição por pausas';
-  calendar.append(controls,weekdays,daysGrid,legend);box.append(calendar);
+  calendar.append(controls,monthlySummary,weekdays,daysGrid,legend);box.append(calendar);
   const now=new Date();const currentMonth=new Date(now.getFullYear(),now.getMonth(),1);
   let visibleMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth(),1);
   const completedDays=new Set(dates);
@@ -595,6 +598,23 @@ function leoAchievementPanel(){
     following.disabled=visibleMonth.getFullYear()===currentMonth.getFullYear()&&visibleMonth.getMonth()===currentMonth.getMonth();
     daysGrid.replaceChildren();
     const year=visibleMonth.getFullYear(),month=visibleMonth.getMonth();
+    const prefix=year+'-'+String(month+1).padStart(2,'0')+'-';
+    const monthlyCount=dates.filter(date=>date.startsWith(prefix)).length;
+    const isCurrent=year===now.getFullYear()&&month===now.getMonth();
+    const elapsed=isCurrent?now.getDate():new Date(year,month+1,0).getDate();
+    const rate=elapsed?Math.round(monthlyCount/elapsed*100):0;
+    monthlySummary.replaceChildren();
+    const values=[
+      ['📅 Missões no mês',monthlyCount+' dia(s)'],
+      ['📈 Frequência',rate+'% dos '+elapsed+' dia(s) transcorridos'],
+      ['🏅 Próxima medalha',next?(next.days-total)+' dia(s) para '+next.name:'Todas conquistadas']
+    ];
+    values.forEach(([label,value])=>{
+      const item=document.createElement('div');item.className='leo-calendar-stat';
+      const heading=document.createElement('span');heading.textContent=label;
+      const amount=document.createElement('strong');amount.textContent=value;
+      item.append(heading,amount);monthlySummary.append(item);
+    });
     const offset=new Date(year,month,1).getDay();
     for(let i=0;i<offset;i++){const empty=document.createElement('span');empty.className='leo-calendar-empty';empty.setAttribute('aria-hidden','true');daysGrid.append(empty);}
     const count=new Date(year,month+1,0).getDate();
@@ -606,7 +626,7 @@ function leoAchievementPanel(){
       if(complete)cell.classList.add('leo-calendar-done');
       if(dateKey===leoMissionToday())cell.classList.add('leo-calendar-today');
       cell.setAttribute('aria-label',day+' de '+monthLabel.textContent+(complete?', missão concluída':', sem missão registrada'));
-      cell.title=complete?'Missão concluída':'Sem missão registrada';
+      cell.title=dateKey+': '+(complete?'missão concluída':'sem missão registrada');
       daysGrid.append(cell);
     }
   }
