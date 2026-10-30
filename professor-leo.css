@@ -133,3 +133,23 @@
 .leo-help-options[hidden]{display:none!important}
 .leo-help-options strong{margin:0 0 3px;color:#14254c}
 .leo-help-options button{width:100%;text-align:left;white-space:normal}
+
+/* Área de estudo ampliada: mais espaço vertical para leitura e respostas. */
+@media (min-width:701px){
+  .leo-panel{
+    position:fixed;
+    top:12px;
+    right:16px;
+    bottom:12px;
+    left:auto;
+    width:min(620px,calc(100vw - 32px));
+    height:calc(100dvh - 24px);
+    max-height:none;
+  }
+  .leo-thread{
+    max-height:clamp(280px,48dvh,540px);
+  }
+}
+@media (max-width:700px){
+  .leo-thread{max-height:42dvh}
+}
