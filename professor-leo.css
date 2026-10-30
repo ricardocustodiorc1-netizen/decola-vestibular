@@ -299,3 +299,12 @@
 .leo-performance-track::after{content:'';position:absolute;left:0;right:0;bottom:70%;border-top:1px dashed #c76b15;z-index:1;pointer-events:none}
 .leo-performance-action{display:block;width:100%;margin-top:9px;padding:8px 5px;border:1px solid #a7bcff;border-radius:7px;background:#f3f6ff;color:#1745bc;font-weight:600;cursor:pointer;white-space:normal;text-align:center}
 .leo-performance-action:hover,.leo-performance-action:focus-visible{background:#e1eaff}
+
+/* Navegação compacta do painel do aluno, com abas acessíveis. */
+.leo-dashboard-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:14px 0 16px;position:sticky;top:0;z-index:2;background:#fff;padding:7px 0}
+.leo-dashboard-tabs button{min-width:0;white-space:normal;font-size:12px;line-height:1.3;padding:10px 5px;border:1px solid #b7c9ff;border-radius:9px;background:#f0f4ff;color:#1744c3;font-weight:700;cursor:pointer}
+.leo-dashboard-tabs button[aria-selected="true"]{background:#1744c3;color:#fff;border-color:#1744c3}
+.leo-dashboard-tabs button:focus-visible{outline:3px solid #ffb700;outline-offset:2px}
+.leo-dashboard-pane[hidden]{display:none!important}
+.leo-dashboard-pane>*{margin-bottom:14px}
+@media(max-width:420px){.leo-dashboard-tabs button{font-size:11px;padding:9px 3px}}
