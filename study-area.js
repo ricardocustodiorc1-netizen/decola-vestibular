@@ -33,6 +33,49 @@
   {title:'Estatística',summary:'Média e interpretação de dados.',explanation:'A média aritmética simples é a soma dos valores dividida pela quantidade de valores. Ela ajuda a resumir conjuntos de dados.',example:'Média de 4, 6 e 8 = (4 + 6 + 8) ÷ 3 = 6.',question:'Qual a média de 5, 7 e 9?',choices:['6','7','8'],correct:1,feedback:'(5 + 7 + 9) ÷ 3 = 7.'}
  ];
  function showMathLesson(dashboard,topic){
+  if(topic.title!=='Porcentagem')return showBasicMathLesson(dashboard,topic);
+  hideLegacyViews(panel());dashboard.replaceChildren();
+  const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.0');
+  const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
+  const steps=make('div','study-smart-steps');
+  const lesson=make('section','study-smart-card');
+  lesson.append(make('h3','','1. Aprender: o que é porcentagem?'),make('p','','Porcentagem significa uma parte de cada 100. Assim, 20% = 20 ÷ 100 = 0,20. Para encontrar 20% de 150, multiplicamos 150 × 0,20 = 30.'));
+  const example=make('div','study-topic-example','Exemplo do cotidiano: uma mochila de R$ 200 com 25% de desconto tem abatimento de R$ 50 (200 × 0,25). O preço final é R$ 150.');
+  lesson.append(example,make('p','','Dica: 10% é dividir por 10; 20% é o dobro de 10%.'));
+  const practice=make('section','study-smart-card');practice.append(make('h3','','2. Praticar: resolva as questões'));
+  const questions=[
+   {q:'Quanto é 20% de 150?',opts:['20','30','35'],answer:1,why:'20 ÷ 100 = 0,20; 150 × 0,20 = 30.'},
+   {q:'Uma camiseta de R$ 80 tem 10% de desconto. Qual o preço final?',opts:['R$ 72','R$ 70','R$ 78'],answer:0,why:'10% de 80 = 8. Preço final: 80 − 8 = R$ 72.'},
+   {q:'Um produto de R$ 120 aumentou 25%. Qual é o novo preço?',opts:['R$ 125','R$ 145','R$ 150'],answer:2,why:'25% de 120 = 30. Novo preço: 120 + 30 = R$ 150.'}
+  ];
+  const key='decola-smart-percent-v1';let progress={};try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){}
+  const score=make('p','study-smart-score');score.setAttribute('aria-live','polite');
+  const updateScore=()=>{const done=questions.filter((q,i)=>Number.isInteger(progress[i])).length;const correct=questions.filter((q,i)=>progress[i]===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões respondidas • '+correct+' acerto(s). Salvo neste navegador.';};
+  practice.append(score);
+  questions.forEach((q,i)=>{
+   const card=make('div','study-smart-question');card.append(make('strong','',('Questão '+(i+1)+' de '+questions.length+': ')+q.q));
+   const options=make('div','study-topic-answers');
+   const feedback=make('p','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+   const buttons=q.opts.map((opt,j)=>{const btn=make('button','',opt);btn.type='button';btn.addEventListener('click',()=>{progress[i]=j;try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}render();updateScore();});options.append(btn);return btn;});
+   const render=()=>{buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',progress[i]===j);btn.setAttribute('aria-pressed',String(progress[i]===j));});feedback.textContent=Number.isInteger(progress[i])?(progress[i]===q.answer?'✅ Muito bem! ':'🔎 Vamos revisar juntos. ')+q.why:'';};
+   card.append(options,feedback);practice.append(card);render();
+  });updateScore();
+  const help=make('section','study-smart-card');help.append(make('h3','','3. Precisa de ajuda?'));
+  const helpText=make('p','','O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.');help.append(helpText);
+  const helpBtn=make('button','study-dashboard-all','🎓 Pedir ajuda ao Professor Leo');helpBtn.type='button';helpBtn.addEventListener('click',()=>{
+   const p=panel();if(!p)return;dashboard.hidden=true;
+   const chatOption=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Conversar com o Professor Leo'));
+   if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
+   const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Porcentagem. Aprendi que 20% = 0,20 e que 20% de 150 = 30. Pode me ajudar a compreender porcentagens passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
+   const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showMathLesson(dashboard,topic);}
+  });help.append(helpBtn);
+  const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, leia a explicação e tente novamente. Seus resultados desta aula ficam salvos somente neste navegador.'));
+  const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
+  steps.append(lesson,practice,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+ }
+ function showBasicMathLesson(dashboard,topic){
   dashboard.replaceChildren();
   const back=document.createElement('button');back.className='study-dashboard-all';back.type='button';back.textContent='← Voltar aos assuntos';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=document.createElement('h2');title.textContent='📘 '+topic.title;
@@ -43,28 +86,11 @@
   const result=document.createElement('p');result.setAttribute('role','status');result.setAttribute('aria-live','polite');
   topic.choices.forEach((choice,index)=>{const b=document.createElement('button');b.type='button';b.textContent=choice;b.addEventListener('click',()=>{result.textContent=(index===topic.correct?'✅ Correto! ':'🔎 Vamos revisar. ')+topic.feedback;});answers.append(b);});
   const help=document.createElement('button');help.type='button';help.className='study-dashboard-all';help.textContent='🎓 Pedir ajuda ao Professor Leo';help.addEventListener('click',()=>{
-   const p=panel();if(!p)return;
-   dashboard.hidden=true;
+   const p=panel();if(!p)return;dashboard.hidden=true;
    const chatOption=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Conversar com o Professor Leo'));
-   if(chatOption)chatOption.click();
-   else p.querySelector('.leo-talk')?.click();
-   const input=p.querySelector('#leo-question-input');
-   if(input){
-    input.value='Professor Leo, estou estudando Matemática, assunto '+topic.title+'. '+topic.explanation+' Exemplo da aula: '+topic.example+' Minha questão é: '+topic.question+' Alternativas: '+topic.choices.join(', ')+'. Pode me ajudar a entender o raciocínio passo a passo, sem entregar a resposta imediatamente?';
-    input.dispatchEvent(new Event('input',{bubbles:true}));
-    input.focus();
-   }
-   const chat=p.querySelector('.leo-chat');
-   if(chat&&!chat.querySelector('.study-return-lesson')){
-    const returnButton=document.createElement('button');returnButton.type='button';returnButton.className='study-dashboard-all study-return-lesson';returnButton.textContent='← Voltar à aula';
-    chat.prepend(returnButton);
-   }
-   const returnButton=chat?.querySelector('.study-return-lesson');
-   if(returnButton){returnButton.onclick=()=>{showMathLesson(dashboard,topic);p.querySelector('.leo-resume')?.setAttribute('hidden','');};returnButton.hidden=false;}
-   const resume=[...p.querySelectorAll('button')].find(b=>b.textContent.includes('Voltar aos exercícios'));
-   if(resume)resume.hidden=true;
-   const status=p.querySelector('.leo-ai-status');
-   if(status)status.textContent='Sua dúvida sobre '+topic.title+' está pronta. Revise e clique em Enviar pergunta.';
+   if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
+   const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou estudando '+topic.title+'. '+topic.explanation+' Minha questão: '+topic.question+' Pode ajudar passo a passo sem entregar a resposta?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
+   const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=document.createElement('button');ret.type='button';ret.className='study-dashboard-all study-return-lesson';ret.textContent='← Voltar à aula';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showMathLesson(dashboard,topic);}
   });
   dashboard.append(back,title,intro,example,question,answers,result,help);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
