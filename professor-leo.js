@@ -1318,7 +1318,22 @@ function leoMockRecoveryRender(parent,index){
  const progress=document.createElement('p');progress.textContent='Etapas concluídas: '+completed+' de 3 · '+(completed===3?'Conteúdo dominado!':'Avance uma etapa por vez.');section.append(progress);
  const bar=document.createElement('progress');bar.max=3;bar.value=completed;bar.style.width='100%';bar.setAttribute('aria-label','Progresso do domínio progressivo');section.append(bar);
  if(completed===3){
-  const success=document.createElement('p');success.className='leo-practice-feedback leo-feedback-correct';success.textContent='🏅 Conteúdo dominado! Você acertou os três desafios progressivos. A nota original do simulado permanece inalterada.';section.append(success);
+  const success=document.createElement('p');success.className='leo-practice-feedback leo-feedback-correct';success.textContent='🏅 Parabéns! Você dominou '+original.topic+' ao concluir os três desafios. O Professor Leo está orgulhoso do seu progresso! Sua nota original do simulado permanece inalterada.';section.append(success);
+  const remaining=leoMockQuestions.map((q,i)=>({q,i})).filter(item=>item.i!==index&&leoMockState.answers[item.i]!==item.q.correct&&leoMasteryStage(item.i)<3);
+  const next=document.createElement('button');next.type='button';next.textContent=remaining.length?'🚀 Ir para meu próximo desafio · '+remaining[0].q.topic:'🚀 Ir para meu próximo desafio';
+  next.addEventListener('click',()=>{
+   if(remaining.length){
+    leoMockRecoveryOpen=remaining[0].i;
+    leoShowView('simulado');
+    const target=leoMockBox.querySelector('[data-leo-recovery-target="'+remaining[0].i+'"]');
+    if(target){target.scrollIntoView({block:'center',behavior:'auto'});target.focus({preventScroll:true});}
+   }else{
+    leoShowView('dashboard');
+    const smart=leoDashboard.querySelector('.leo-smart-plan');
+    if(smart)smart.scrollIntoView({block:'start',behavior:'auto'});
+   }
+  });section.append(next);
+  const hint=document.createElement('p');hint.textContent=remaining.length?'Próxima prioridade: '+remaining[0].q.topic+' · '+remaining[0].q.area+'.':'Você concluiu as recuperações pendentes! O plano inteligente indicará o próximo treino ou revisão.';section.append(hint);
  }else{
   const stage=completed,exercise=stages[stage];
   const label=document.createElement('h4');label.textContent='Desafio '+(stage+1)+' de 3 · '+stageNames[stage];section.append(label);
