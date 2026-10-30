@@ -832,17 +832,17 @@ function leoRecoveryLesson(subject,index){
 }
 function leoRecoverySteps(parent,subject,index,reason){
  const step=document.createElement('p');step.textContent='1. Entenda o conceito: '+reason;
- const example=document.createElement('p');example.textContent='2. Veja um exemplo: '+leoRecoveryLesson(subject,index);
+ const example=document.createElement('p');example.textContent='2. Exemplo prático: '+leoRecoveryLesson(subject,index).replace(/^Exemplo:\s*/i,'');
  const tryAgain=document.createElement('p');tryAgain.textContent='3. Agora tente uma nova questão. Você pode consultar a dica antes de responder.';
  parent.append(step,example,tryAgain);
 }
 function leoPtRecoveryPanel(index){
  const [lesson,passage,question,answers,correct,why]=leoPtRecovery[index];
- const box=document.createElement('section');box.className='leo-portuguese-recovery';
+ const box=document.createElement('section');box.className='leo-portuguese-recovery leo-recovery-focus';box.id='leo-portuguese-recovery-current';
  const heading=document.createElement('h4');heading.textContent='📚 Recuperação personalizada';box.append(heading);
  leoRecoverySteps(box,'portuguese',index,lesson);
  const excerpt=document.createElement('blockquote');excerpt.className='leo-portuguese-passage';excerpt.textContent=passage;box.append(excerpt);
- const prompt=document.createElement('p');prompt.textContent='Nova questão: '+question;box.append(prompt);box.append(leoStudyHint('portuguese',1,index));
+ const prompt=document.createElement('p');prompt.className='leo-recovery-new-question';prompt.textContent='🎯 Sua nova tentativa: '+question;box.append(prompt);box.append(leoStudyHint('portuguese',1,index));
  const choices=document.createElement('div');choices.className='leo-choices leo-portuguese-choices';box.append(choices);
  const feedback=document.createElement('p');feedback.setAttribute('role','status');box.append(feedback);
  function renderChoices(){
@@ -879,7 +879,7 @@ function leoPtRender(){
  });options.append(b);});
  leoPtBox.append(passage,title);leoPtBox.append(leoStudyHint('portuguese',answered?2:0,leoPtIndex));leoPtBox.append(options);
  if(answered){const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(leoPtAnswers[leoPtIndex]?'leo-feedback-correct':'leo-feedback-wrong');feedback.setAttribute('role','status');feedback.textContent=(leoPtAnswers[leoPtIndex]?'✓ Você acertou! ':'Vamos revisar. ')+q.why;leoPtBox.append(feedback);}
- if(answered&&!leoPtAnswers[leoPtIndex])leoPtBox.append(leoPtRecoveryPanel(leoPtIndex));
+ if(answered&&!leoPtAnswers[leoPtIndex]){const jump=document.createElement('button');jump.type='button';jump.className='leo-recovery-jump';jump.textContent='🎯 Ir para minha recuperação';jump.addEventListener('click',()=>{const target=leoPtBox.querySelector('.leo-portuguese-recovery');if(target)target.scrollIntoView({block:'start',behavior:'smooth'});});leoPtBox.append(jump,leoPtRecoveryPanel(leoPtIndex));}
  const actions=document.createElement('div');actions.className='leo-practice-actions';
  if(answered){const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';next.addEventListener('click',()=>{leoPtIndex=(leoPtIndex+1)%leoPtQuestions.length;leoPtRender();leoBody.scrollTop=0;});actions.append(next);
  const help=document.createElement('button');help.type='button';help.textContent='💬 Peça ajuda ao Leo';help.addEventListener('click',()=>{leoReturnView='portuguese';leoShowView('chat');leoInput.value='Professor Leo, explique esta questão de interpretação: '+q.text+' Pergunta: '+q.question+' Resposta correta: '+q.choices[q.correct]+'.';leoInput.focus({preventScroll:true});});actions.append(help);}
@@ -960,11 +960,11 @@ function leoHuRender(){
     feedback.textContent=(leoHuAnswers[leoHuIndex]?'✓ Muito bem! ':'Vamos revisar. ')+q.why;
     leoHuBox.append(feedback);
     if(!leoHuAnswers[leoHuIndex]){
-      const help=document.createElement('section');help.className='leo-reinforcement';
+      const help=document.createElement('section');help.className='leo-reinforcement leo-recovery-focus';help.id='leo-humanas-recovery-current';
       const title=document.createElement('h4');title.textContent='📚 Recuperação personalizada';
       const explain=document.createElement('div');leoRecoverySteps(explain,'humanas',leoHuIndex,q.why);
       const review=leoHuReview[leoHuIndex];
-      const retry=document.createElement('p');retry.textContent='Agora aplique o que aprendeu em outra situação: '+review.text;
+      const retry=document.createElement('p');retry.className='leo-recovery-new-question';retry.textContent='🎯 Sua nova tentativa: '+review.text;
       const opts=document.createElement('div');opts.className='leo-choices leo-humanas-choices';
       review.choices.forEach((option,i)=>{
         const btn=document.createElement('button');btn.type='button';btn.textContent=String.fromCharCode(65+i)+') '+option;
@@ -977,7 +977,7 @@ function leoHuRender(){
       });
       const hint=document.createElement('p');hint.className='leo-humanas-hint';
       if(leoHuRecovery[leoHuIndex])hint.textContent='🏅 Parabéns! Você recuperou este conteúdo! '+review.why+' Sua nota original foi preservada.';
-      help.append(title,explain,retry,leoStudyHint('humanas',1),opts,hint);leoHuBox.append(help);
+      help.append(title,explain,retry,leoStudyHint('humanas',1),opts,hint);leoHuBox.append(help);const jump=document.createElement('button');jump.type='button';jump.className='leo-recovery-jump';jump.textContent='🎯 Ir para minha recuperação';jump.addEventListener('click',()=>help.scrollIntoView({block:'start',behavior:'smooth'}));feedback.append(document.createElement('br'),jump);
     }
     const actions=document.createElement('div');actions.className='leo-choices leo-humanas-choices';
     const next=document.createElement('button');next.type='button';next.textContent='Próxima questão →';
