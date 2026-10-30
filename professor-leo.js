@@ -1309,6 +1309,53 @@ function leoMasteryStage(index){
  if(done===2&&record['2']===stages[2].correct)done=3;
  return done;
 }
+const leoSpacedKey='decola-vestibular:revisao-espacada-v1';
+let leoSpaced={};
+try{const saved=JSON.parse(localStorage.getItem(leoSpacedKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))leoSpaced=saved;}catch(_error){}
+function leoSpacedSave(){try{localStorage.setItem(leoSpacedKey,JSON.stringify(leoSpaced));}catch(_error){}}
+function leoSpacedDate(ms){return new Date(ms).toLocaleDateString('pt-BR');}
+function leoSpacedRecord(index){
+ if(leoMasteryStage(index)!==3)return null;
+ const key=String(index),existing=leoSpaced[key];
+ if(existing&&typeof existing==='object'&&Number.isFinite(existing.masteredAt)&&Array.isArray(existing.attempts))return existing;
+ const record={masteredAt:Date.now(),attempts:[]};leoSpaced[key]=record;leoSpacedSave();return record;
+}
+function leoSpacedRenderCard(card,index){
+ const record=leoSpacedRecord(index);if(!record)return;
+ const intervals=[1,3,7],attempts=record.attempts.filter(a=>a&&Number.isFinite(a.at)&&typeof a.correct==='boolean');
+ const done=attempts.length;
+ const due=done<intervals.length?record.masteredAt+intervals[done]*86400000:null;
+ const now=Date.now();
+ const label=document.createElement('p');
+ label.textContent=done>=3?'🏅 Revisões programadas concluídas. Continue praticando regularmente.':(now>=due?'🔔 Revisão disponível agora · etapa '+(done+1)+'/3':'🗓️ Próxima revisão: '+leoSpacedDate(due)+' · etapa '+(done+1)+'/3');
+ card.append(label);
+ if(done>=3)return;
+ const trigger=document.createElement('button');trigger.type='button';trigger.textContent=now>=due?'Fazer revisão inteligente':'Revisar antecipadamente';card.append(trigger);
+ const host=document.createElement('div');host.className='leo-spaced-exercise';card.append(host);
+ trigger.addEventListener('click',()=>{
+  host.replaceChildren();
+  const questions=[leoMockProgressiveQuestions[index][0],leoMockProgressiveQuestions[index][1],leoMockRecoveryQuestions[index]];
+  const exercise=questions[done%questions.length];
+  const heading=document.createElement('h4');heading.textContent='🧠 Revisão de memória · '+(done+1)+'/3';host.append(heading);
+  const prompt=document.createElement('p');prompt.textContent=exercise.q;host.append(prompt);
+  const options=document.createElement('div');options.className='leo-choices leo-humanas-choices';
+  exercise.choices.forEach((choice,i)=>{
+   const b=document.createElement('button');b.type='button';b.textContent=String.fromCharCode(65+i)+') '+choice;
+   b.addEventListener('click',()=>{
+    options.querySelectorAll('button').forEach(btn=>btn.disabled=true);
+    const correct=i===exercise.correct;
+    const feedback=document.createElement('p');feedback.className='leo-practice-feedback '+(correct?'leo-feedback-correct':'leo-feedback-wrong');
+    feedback.textContent=(correct?'✓ Muito bem! ':'Vamos revisar: ')+exercise.why;host.append(feedback);
+    if(correct){
+     record.attempts.push({at:Date.now(),correct:true});leoSpacedSave();
+     const next=document.createElement('button');next.type='button';next.textContent='Atualizar meu painel';next.addEventListener('click',()=>leoShowView('evolucao'));host.append(next);
+    }else{
+     const retry=document.createElement('button');retry.type='button';retry.textContent='Tentar novamente';retry.addEventListener('click',()=>{host.replaceChildren();trigger.click();});host.append(retry);
+    }
+   });options.append(b);
+  });host.append(options);
+ });
+}
 function leoRenderMasteryPanel(parent){
  const section=document.createElement('section');section.className='leo-dashboard-next leo-mastery-panel';section.setAttribute('aria-label','Painel de domínio do aluno');
  const title=document.createElement('h4');title.textContent='🏅 Meu domínio por conteúdo';section.append(title);
@@ -1324,7 +1371,7 @@ function leoRenderMasteryPanel(parent){
   const status=document.createElement('p');status.textContent=['📖 Em aprendizagem','📈 Em evolução','🏅 Dominado'][bucket]+' · '+done+'/3 desafios';card.append(status);
   const bar=document.createElement('progress');bar.max=3;bar.value=done;bar.style.width='100%';bar.setAttribute('aria-label','Etapas concluídas em '+q.topic);card.append(bar);
   if(done<3){const b=document.createElement('button');b.type='button';b.textContent=done?'Continuar desafios':'Começar recuperação';b.addEventListener('click',()=>{leoMockRecoveryOpen=i;leoShowView('simulado');leoMockRender();const target=leoMockBox.querySelector('.leo-dashboard-next');if(target)target.scrollIntoView({block:'start'});});card.append(b);}
-  else{const p=document.createElement('p');p.textContent='Três etapas concluídas. Continue revisando para manter o aprendizado.';card.append(p);}
+  else{leoSpacedRenderCard(card,i);}
   grid.append(card);
  });
  const summary=document.createElement('p');summary.textContent='📖 Em aprendizagem: '+counts[0]+' · 📈 Em evolução: '+counts[1]+' · 🏅 Dominados: '+counts[2];section.append(summary);
@@ -1357,7 +1404,7 @@ function leoMockRender(){
   leoRenderMasteryPanel(leoMockBox);
   const review=document.createElement('h4');review.textContent='📖 Gabarito comentado';leoMockBox.append(review);
   leoMockQuestions.forEach((q,i)=>{const p=document.createElement('p');p.textContent=(i+1)+'. '+(leoMockState.answers[i]===q.correct?'✓ Acertou':'✗ Revise')+' — '+q.q+' Resposta: '+q.choices[q.correct]+'. '+q.why;leoMockBox.append(p);});
-  const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockRecovery={};leoMockProgressive={};leoMockRecoveryOpen=null;leoMockRecoverySave();leoMockProgressiveSave();leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
+  const restart=document.createElement('button');restart.type='button';restart.textContent='🔄 Refazer simulado';restart.addEventListener('click',()=>{leoMockState={answers:Array(10).fill(null),index:0,finished:false};leoMockRecovery={};leoMockProgressive={};leoSpaced={};leoSpacedSave();leoMockRecoveryOpen=null;leoMockRecoverySave();leoMockProgressiveSave();leoMockSave();leoMockRender();});leoMockBox.append(restart);return;
  }
  const index=leoMockState.index,q=leoMockQuestions[index];
  const subtitle=document.createElement('h4');subtitle.textContent='Questão '+(index+1)+' de 10 · '+q.area;leoMockBox.append(subtitle);
