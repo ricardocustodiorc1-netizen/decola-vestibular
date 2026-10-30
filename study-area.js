@@ -71,6 +71,7 @@
    const action=document.createElement('span');action.className='study-subject-action';action.textContent='Começar aula →';
    button.append(artwork,title,description,action);
    button.addEventListener('click',()=>{
+    if(index===0){showMathTopics(dashboard);return;}
     const p=panel();const option=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Aprender uma matéria'));
     if(!option)return;
     dashboard.hidden=true;option.click();
