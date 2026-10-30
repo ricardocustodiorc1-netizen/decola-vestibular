@@ -91,6 +91,9 @@ function navigate(route, save = true) {
   render();
 }
 restoreProgress();
+// Um link direto (#inicio, #perfil etc.) tem prioridade sobre a última tela salva.
+// Assim o estudante sempre consegue voltar à página inicial sem apagar seu progresso.
+if (routes.includes(location.hash)) currentRoute = location.hash;
 const recovery = document.createElement('details');
 recovery.innerHTML = `<summary>Salvar ou recuperar progresso</summary><p>O salvamento automático vale para o mesmo endereço e navegador, quando permitido. Se a prévia bloquear ou trocar o armazenamento, gere uma cópia antes de sair, copie o texto e guarde-o. Ao voltar, cole a cópia abaixo e clique em Recuperar progresso.</p><label>Cópia do progresso<textarea id="progress-copy" rows="5" aria-describedby="recovery-status"></textarea></label><p><button type="button" class="button secondary" id="export-progress">Gerar cópia do progresso</button> <button type="button" class="button secondary" id="import-progress">Recuperar progresso</button></p><p id="recovery-status" role="status"></p>`;
 document.querySelector('footer').append(recovery);
