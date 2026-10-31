@@ -94,7 +94,7 @@
     else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Dica: '+hints[i][1]),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
    };
    card.append(options,feedback,retry);practice.append(card);
-   inline=globalThis.DecolaLeoInline.mount({host:card,dashboard,question:{...q,id:'porcentagem-q'+(i+1)},getState:()=>progress[i]});
+   inline=globalThis.DecolaLeoInline.mount({host:card,dashboard,question:{...q,id:'porcentagem-q'+(i+1),hints:hints[i]},getState:()=>progress[i]});
    render();
   });save();updateScore();
   // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.

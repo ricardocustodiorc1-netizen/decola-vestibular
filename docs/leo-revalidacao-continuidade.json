@@ -1,0 +1,15 @@
+{
+  "method": "HTTP real para o Worker; Origin do site existente autorizado; não é teste E2E do painel no navegador",
+  "headers": [
+    "HTTP/1.1 200 OK",
+    "HTTP/2 200 ",
+    "content-type: application/json",
+    "access-control-allow-origin: https://ricardocustodiorc1-netizen.github.io",
+    "access-control-allow-headers: Content-Type",
+    "access-control-allow-methods: POST, OPTIONS"
+  ],
+  "body": {
+    "answer": "Claro! Para pensar nessa questão, lembre-se que 10% de desconto significa diminuir 10% do valor original da camiseta. \n\nDica: Primeiro, pense em quanto é 10% de R$ 80. Depois, subtraia esse valor do preço inicial para encontrar o preço final.\n\nPergunta orientadora: Quanto é 10% de 80? Como você usa esse valor para encontrar o preço com desconto?"
+  },
+  "exit": 0
+}

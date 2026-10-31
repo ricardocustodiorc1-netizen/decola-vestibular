@@ -66,3 +66,9 @@
 .leo-inline-bubble strong{display:inline!important;font-size:inherit!important}
 .leo-inline button:focus-visible,.leo-inline-trigger:focus-visible,.leo-inline textarea:focus-visible{outline:3px solid #e6a627;outline-offset:3px}
 @media(max-width:650px){.leo-inline{padding:12px}.leo-inline-top button{width:100%}.leo-inline-trigger{width:100%;font-size:15px!important}.leo-inline-actions button{flex:1 1 140px}.leo-inline h4{font-size:17px}}
+
+.leo-inline-local{margin:14px 0;padding:14px;background:#fff8e5;border:1px solid #d9bf78;border-radius:10px}
+.leo-inline-local[hidden]{display:none!important}
+.leo-inline-local summary{min-height:44px;display:list-item;cursor:pointer;font-weight:700;line-height:1.5;padding:8px 0;box-sizing:border-box}
+.leo-inline-local summary:focus-visible{outline:3px solid #e6a627;outline-offset:3px}
+.leo-inline-local p{font-size:16px!important;line-height:1.65!important}

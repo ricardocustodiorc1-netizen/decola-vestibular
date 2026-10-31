@@ -22,9 +22,14 @@
     const retry=document.createElement('button');retry.type='button';retry.textContent='Tentar explicação novamente';retry.hidden=true;
     actions.append(send,retry);
     const status=document.createElement('p');status.setAttribute('role','status');status.className='leo-inline-status';
+    const fallback=document.createElement('details');fallback.className='leo-inline-local';fallback.hidden=true;
+    const fallbackTitle=document.createElement('summary');
+    const fallbackText=document.createElement('p');
+    const fallbackNote=document.createElement('small');fallbackNote.textContent='Conteúdo da aula, disponível sem conexão. Não é uma resposta gerada pela IA.';
+    fallback.append(fallbackTitle,fallbackText,fallbackNote);
     const localNotice=document.createElement('p');localNotice.className='notice leo-inline-environment';localNotice.textContent=api.environmentNotice();localNotice.hidden=!localNotice.textContent;
     const note=document.createElement('small');note.textContent='Sua solicitação e o contexto desta questão serão enviados à API do Professor Leo. Não envie dados pessoais. Confira informações importantes.';
-    box.append(top,mode,localNotice,log,label,input,actions,status,note);host.append(trigger,box);
+    box.append(top,mode,localNotice,log,label,input,actions,status,fallback,note);host.append(trigger,box);
     let signature='',context=null,history=[],controller=null,busy=false,initialized=false,lastStart=0,failedMessage=null,originScroll=0;
     function bubble(who,text){const p=document.createElement('p');p.className='leo-inline-bubble '+who;const name=document.createElement('strong');name.textContent=who==='student'?'Você: ':'Professor Leo: ';const body=document.createElement('span');body.textContent=text;p.append(name,body);log.append(p);}
     function abort(){if(busy)status.textContent='Solicitação interrompida. Abra novamente para continuar.';controller?.abort();controller=null;busy=false;send.disabled=false;retry.disabled=false;}
@@ -33,8 +38,8 @@
       const next=trigger.hidden?'':JSON.stringify([state.choice,state.attempts]);
       if(next===signature)return;
       abort();signature=next;context=null;history=[];initialized=false;lastStart=0;failedMessage=null;
-      log.replaceChildren();input.value='';status.textContent='';retry.hidden=true;box.hidden=true;trigger.setAttribute('aria-expanded','false');
-      if(next){try{context=api.questionContext(question,state);}catch{trigger.hidden=true;return;}mode.textContent=context.mode==='hint'?'Vamos pensar juntos, sem revelar a resposta: você ainda tem uma tentativa.':'Vamos entender a resolução, passo a passo.';}
+      log.replaceChildren();input.value='';status.textContent='';delete status.dataset.errorCode;retry.hidden=true;fallback.hidden=true;fallback.open=false;box.hidden=true;trigger.setAttribute('aria-expanded','false');
+      if(next){try{context=api.questionContext(question,state);}catch{trigger.hidden=true;return;}const guidance=api.localGuidance(question,state);fallbackTitle.textContent=guidance.title;fallbackText.textContent=guidance.text;mode.textContent=context.mode==='hint'?'Vamos pensar juntos, sem revelar a resposta: você ainda tem uma tentativa.':'Vamos entender a resolução, passo a passo.';}
     }
     async function ask(followup=''){
       if(busy||!context)return;
@@ -51,13 +56,14 @@
         if(current!==signature||!host.isConnected||requestController.signal.aborted)return;
         bubble('student',userText);bubble('teacher',answer);
         history.push({role:'user',content:text},{role:'assistant',content:answer});history=history.slice(-8);
-        initialized=true;failedMessage=null;input.value='';status.textContent='Pode fazer outra pergunta sobre esta questão.';
+        initialized=true;failedMessage=null;input.value='';if(!fallback.open)fallback.hidden=true;status.textContent='Pode fazer outra pergunta sobre esta questão.';
       }catch(error){
         if(current!==signature||!host.isConnected||controller!==requestController)return;
         if(box.hidden){status.textContent='Solicitação interrompida ao fechar. Abra novamente para continuar.';return;}
         failedMessage=followup;retry.hidden=false;
         status.dataset.errorCode=error.code||error.name||'unknown';
-        status.textContent=api.errorMessage(error);
+        status.textContent=api.errorMessage(error)+' Você pode continuar pela orientação local abaixo, sem perder sua tentativa.';
+        fallback.hidden=false;
       }finally{
         clearTimeout(timer);
         if(controller===requestController){controller=null;busy=false;send.disabled=false;retry.disabled=false;}

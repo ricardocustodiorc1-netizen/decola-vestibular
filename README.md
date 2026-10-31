@@ -128,3 +128,10 @@ A causa reproduzida no arquivo local é HTTP 403, “Origem não permitida”. O
 respondeu com IA real nos testes HTTP feitos com a origem já autorizada do site.
 [Veja o diagnóstico, as evidências e a autorização necessária para homologação](docs/LEO-API-DIAGNOSTICO-2026-10-31.md).
 Baixar o HTML ou iniciar localhost não altera a política de origens do servidor.
+
+## Continuidade quando a IA falha
+
+O piloto de Porcentagem oferece orientação local identificada como “sem IA” após
+falhas, respeitando o estágio da tentativa. [Veja a nova validação real e a regressão](docs/LEO-CONTINUIDADE-E-REGRESSAO.md).
+O bloqueio de origem do Worker continua dependendo de autorização externa; o HTML
+não remove esse bloqueio.

@@ -85,3 +85,20 @@ test('HTTP 200 contendo erro não é apresentado como uma resposta da IA',async(
  const c=client(async()=>({status:200,ok:true,json:async()=>({error:'upstream failure',message:'não é explicação'})}));
  await assert.rejects(()=>c.request({message:'teste'}),e=>e.code==='api_error');
 });
+test('dica local do primeiro erro usa orientação sem gabarito, sem rede e sem alterar tentativa',()=>{
+ const c=client(()=>{throw new Error('Não deve chamar rede');});
+ const q={...question,hints:['Transforme 20% em decimal antes de multiplicar.','Dobre 10% do total.']};
+ const state={choice:0,attempts:1,done:false},before=JSON.stringify(state);
+ const help=c.localGuidance(q,state);
+ assert.equal(help.mode,'hint');assert.match(help.title,/sem IA/);assert.match(help.text,/primeiro passo/);
+ assert.equal(help.text.includes(q.why),false);assert.equal(help.text.includes('Resposta de referência'),false);assert.equal(JSON.stringify(state),before);
+});
+test('resolução local só é liberada após acerto ou esgotamento de tentativas',()=>{
+ const c=client();for(const state of [{choice:1,attempts:1,done:true},{choice:0,attempts:2,done:true}]){
+  const help=c.localGuidance(question,state);assert.equal(help.mode,'solution');assert.match(help.title,/sem IA/);assert.match(help.text,/Resposta de referência: 30/);assert.ok(help.text.includes(question.why));
+ }
+});
+test('orientação local não altera contexto ou instruções enviados à IA',()=>{
+ const c=client(),state={choice:0,attempts:1},before=c.explanationMessage(c.questionContext(question,state));
+ c.localGuidance(question,state);assert.equal(c.explanationMessage(c.questionContext(question,state)),before);
+});
