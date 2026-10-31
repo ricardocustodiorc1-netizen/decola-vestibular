@@ -1,5 +1,7 @@
 # Professor Leo, me explica! — piloto de Porcentagem
 
+**Atualização posterior:** veja [diagnóstico da API e testes HTTP reais](LEO-API-DIAGNOSTICO-2026-10-31.md). Este documento registra a primeira entrega.
+
 31/10/2026. Branch exclusiva: `dev/navegacao-leo-familias-20261031`.
 Base: `2230ddc01bccf6863b06afc913610dfbe500c16f`.
 Sem alteração da main, merge, deploy, credenciais, cobranças ou dados reais.

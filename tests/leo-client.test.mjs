@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
-function client(fetch){const sandbox={fetch};vm.runInNewContext(readFileSync(new URL('../leo-client.js',import.meta.url),'utf8'),sandbox);return sandbox.DecolaLeoClient;}
+function client(fetch, extra={}){const sandbox={fetch,URL,...extra};vm.runInNewContext(readFileSync(new URL('../leo-client.js',import.meta.url),'utf8'),sandbox);return sandbox.DecolaLeoClient;}
 const question={id:'porcentagem-q1',q:'Quanto é 20% de 150?',opts:['20','30','35'],answer:1,why:'150 × 0,20 = 30.'};
 test('erro na primeira tentativa envia contexto completo sem gabarito ou resolução',()=>{
  const c=client();const context=c.questionContext(question,{choice:0,attempts:1,done:false});
@@ -40,4 +40,48 @@ test('resposta vazia, erro HTTP e falha de rede não viram resposta simulada',as
 });
 test('cancelamento é propagado ao chamador',async()=>{
  const controller=new AbortController();const c=client(async(_url,{signal})=>{if(signal.aborted)throw new DOMException('aborted','AbortError');});controller.abort();await assert.rejects(()=>c.request({message:'teste',signal:controller.signal}),{name:'AbortError'});
+});
+test('negação explícita de origem é diferente de autenticação e indisponibilidade',async()=>{
+ const cases=[
+  [403,{error:'Origem não permitida'},'origin_denied'],[401,{error:'Unauthorized'},'authorization'],
+  [403,{error:'Unauthorized'},'authorization'],[404,{},'endpoint'],[429,{},'rate_limit'],
+  [500,{error:'internal'},'service'],[504,{},'timeout'],[400,{},'invalid_request'],
+  [500,{code:'missing_api_key',error:'configuration'},'configuration']
+ ];
+ for(const [status,data,code] of cases){
+  const c=client(async()=>({status,ok:false,json:async()=>data}));
+  await assert.rejects(()=>c.request({message:'teste'}),error=>error.code===code&&error.status===status);
+ }
+});
+test('resposta não JSON em HTTP 500 continua identificada como falha do serviço',async()=>{
+ const c=client(async()=>({status:500,ok:false,json:async()=>{throw new Error('HTML');}}));
+ await assert.rejects(()=>c.request({message:'teste'}),error=>error.code==='service');
+});
+test('offline é explícito; falha fetch online admite conexão ou CORS sem inventar causa',async()=>{
+ const fetch=async()=>{throw new TypeError('Failed to fetch');};
+ await assert.rejects(()=>client(fetch,{navigator:{onLine:false}}).request({message:'teste'}),e=>e.code==='offline');
+ await assert.rejects(()=>client(fetch,{navigator:{onLine:true}}).request({message:'teste'}),e=>e.code==='connection'&&e.message.includes('não é possível distinguir'));
+});
+test('endpoint inválido ou contendo credenciais é recusado antes de usar a rede',async()=>{
+ let count=0;
+ for(const endpoint of ['', 'http://example.test/chat','https://user:pass@example.test/chat']){
+  await assert.rejects(()=>client(async()=>{count++;},{DecolaLeoConfig:{endpoint}}).request({message:'teste'}),e=>e.code==='configuration');
+ }
+ assert.equal(count,0);
+});
+test('não revela corpo ou mensagem interna arbitrária do backend',async()=>{
+ const c=client(async()=>({status:500,ok:false,json:async()=>({error:'sensitive_internal_detail'})}));
+ await assert.rejects(()=>c.request({message:'teste'}),e=>!c.errorMessage(e).includes('sensitive_internal_detail'));
+});
+test('aviso de arquivo local não afirma que apenas usar localhost resolve autorização',()=>{
+ const local=client(undefined,{location:{protocol:'file:'}});assert.match(local.environmentNotice(),/não concede essa autorização/);
+ assert.equal(client(undefined,{location:{protocol:'https:'}}).environmentNotice(),'');
+});
+test('tempo limite explícito é diferenciado de cancelamento',async()=>{
+ const c=client(async()=>{throw new DOMException('tempo','TimeoutError');});
+ await assert.rejects(()=>c.request({message:'teste'}),e=>e.code==='timeout');
+});
+test('HTTP 200 contendo erro não é apresentado como uma resposta da IA',async()=>{
+ const c=client(async()=>({status:200,ok:true,json:async()=>({error:'upstream failure',message:'não é explicação'})}));
+ await assert.rejects(()=>c.request({message:'teste'}),e=>e.code==='api_error');
 });

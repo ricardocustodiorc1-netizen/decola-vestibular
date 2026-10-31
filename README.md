@@ -121,3 +121,10 @@ A aula de Porcentagem permite conversa contextual na própria questão. Consulte
 `npm test` inclui os testes de contexto e contrato do Worker. Para teste de UI sem
 API, execute `npm run dev` e abra `/tests/leo-inline-review.html`: respostas são
 controladas e rotuladas, não respostas reais de IA.
+
+## Diagnóstico da API — atualização
+
+A causa reproduzida no arquivo local é HTTP 403, “Origem não permitida”. O Worker
+respondeu com IA real nos testes HTTP feitos com a origem já autorizada do site.
+[Veja o diagnóstico, as evidências e a autorização necessária para homologação](docs/LEO-API-DIAGNOSTICO-2026-10-31.md).
+Baixar o HTML ou iniciar localhost não altera a política de origens do servidor.

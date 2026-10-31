@@ -2002,7 +2002,7 @@ leoAsk.addEventListener('click',async()=>{
   leoAiStatus.textContent='Professor Leo está preparando a explicação…';
   try{
     const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),25000);
+    const timer=setTimeout(()=>controller.abort(new DOMException('Tempo limite','TimeoutError')),25000);
     let answer;
     try{answer=await globalThis.DecolaLeoClient.request({
       message:question+'\n\nExplique em português simples, em até 3 etapas curtas. Escreva contas em texto comum (ex.: 20 ÷ 100 = 0,2; 0,2 × 50 = 10). Não use LaTeX nem comandos com barras invertidas. Ao final, pergunte se o aluno entendeu.',
@@ -2010,6 +2010,6 @@ leoAsk.addEventListener('click',async()=>{
       history:leoHistory,signal:controller.signal
     });}finally{clearTimeout(timer);}
     leoBubble('teacher',leoCleanMath(answer));leoHistory.push({role:'user',content:question},{role:'assistant',content:answer});if(leoHistory.length>16)leoHistory.splice(0,leoHistory.length-16);leoLearningChallenge(question,answer);leoAiStatus.textContent='Pode continuar perguntando abaixo.';
-  }catch(error){leoAiStatus.textContent='Não foi possível responder agora. Tente novamente em instantes.';}
+  }catch(error){leoAiStatus.textContent=globalThis.DecolaLeoClient.errorMessage(error);}
   finally{leoBusy=false;leoAsk.disabled=false;}
 });

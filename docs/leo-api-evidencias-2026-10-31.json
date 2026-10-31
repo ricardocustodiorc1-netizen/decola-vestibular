@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-31",
+  "scope": "Diagnóstico HTTP real do Worker existente. Origin explicitamente definido no cliente HTTP; não é teste de ponta a ponta do piloto no navegador.",
+  "endpoint": "https://professor-leo-api.ricardocustodio-rc1.workers.dev/chat",
+  "local_origin_checks": [
+    {
+      "test": "curta",
+      "message_chars": 61,
+      "exit": 0,
+      "headers": [
+        "HTTP/1.1 200 OK",
+        "HTTP/2 403 ",
+        "content-type: application/json",
+        "access-control-allow-origin: null",
+        "access-control-allow-headers: Content-Type",
+        "access-control-allow-methods: POST, OPTIONS"
+      ],
+      "body": "{\"error\":\"Origem não permitida\"}",
+      "transport_error": ""
+    },
+    {
+      "test": "contexto_atual",
+      "message_chars": 747,
+      "exit": 0,
+      "headers": [
+        "HTTP/1.1 200 OK",
+        "HTTP/2 403 ",
+        "content-type: application/json",
+        "access-control-allow-origin: null",
+        "access-control-allow-headers: Content-Type",
+        "access-control-allow-methods: POST, OPTIONS"
+      ],
+      "body": "{\"error\":\"Origem não permitida\"}",
+      "transport_error": ""
+    }
+  ],
+  "authorized_site_origin_checks": [
+    {
+      "test": "contexto_atual_origem_site",
+      "message_chars": 747,
+      "exit": 0,
+      "headers": [
+        "HTTP/1.1 200 OK",
+        "HTTP/2 200 ",
+        "content-type: application/json",
+        "access-control-allow-origin: https://ricardocustodiorc1-netizen.github.io",
+        "access-control-allow-headers: Content-Type",
+        "access-control-allow-methods: POST, OPTIONS"
+      ],
+      "body": "{\"answer\":\"Claro! Para calcular uma porcentagem, pense assim: porcentagem é uma \\\"parte por cem\\\". Então, 20% significa 20 partes de 100.\\n\\nA dica é: multiplique o número total (150) pela porcentagem (20) e depois divida por 100.\\n\\nAgora, minha pergunta para você refletir: se você fizer (150 x 20) dividido por 100, qual resultado vai encontrar? Experimente esse cálculo e veja se a alternativa aparece entre as opções!\"}",
+      "transport_error": ""
+    },
+    {
+      "test": "curta_origem_site",
+      "message_chars": 61,
+      "exit": 0,
+      "headers": [
+        "HTTP/1.1 200 OK",
+        "HTTP/2 200 ",
+        "content-type: application/json",
+        "access-control-allow-origin: https://ricardocustodiorc1-netizen.github.io",
+        "access-control-allow-headers: Content-Type",
+        "access-control-allow-methods: POST, OPTIONS"
+      ],
+      "body": "{\"answer\":\"Porcentagem é uma forma de expressar uma parte de um todo usando a base 100. Ela mostra quantas unidades há em cada 100 unidades do total.\"}",
+      "transport_error": ""
+    }
+  ],
+  "production_client_real_responses": {
+    "method": "HTTP real via Worker; Origin do site já autorizado; sem mock",
+    "records": [
+      {
+        "test": "dica_primeiro_erro",
+        "answer": "Claro! Para pensar em porcentagem, lembre que \"por cento\" significa \"por 100\". Então, calcular 20% de 150 é como encontrar 20 partes de 100 partes de 150.\n\nUma dica: primeiro, transforme 20% em um número decimal (divida 20 por 100) e depois multiplique esse número pelo total (150).\n\nMinha pergunta para você agora é: quanto é 20 dividido por 100? Use isso para continuar o cálculo! Vamos juntos!"
+      },
+      {
+        "test": "pergunta_complementar",
+        "answer": "Claro! A divisão por 100 aparece porque porcentagem significa \"por cento\", ou seja, \"por 100\". Então, para calcular uma porcentagem de um número, você transforma a porcentagem em um número decimal dividindo por 100 e depois multiplica pela quantidade que quer encontrar. \n\nAgora, pense: se você quer 20% de 150, qual é o número decimal que representa 20%? Como você usaria isso para calcular a quantidade desejada? Tente organizar esse raciocínio para sua próxima tentativa!"
+      },
+      {
+        "test": "resolucao_apos_acerto",
+        "answer": "Claro! Vamos pensar juntos nessa questão de porcentagem.\n\nA pergunta é: quanto é 20% de 150?\n\nPrimeiro, saiba que \"porcentagem\" significa \"por cento\", ou seja, \"por cada 100\". Então, 20% quer dizer 20 para cada 100.\n\nPara calcular 20% de 150, você pode seguir esses passos:\n\n1. Transformar a porcentagem em número decimal: 20% é 20 dividido por 100, que dá 0,20.\n\n2. Multiplicar esse número decimal pelo valor total: 0,20 vezes 150.\n\n3. Fazer essa multiplicação: 0,20 × 150 = 30.\n\nPortanto, 20% de 150 é 30.\n\nVocê escolheu a alternativa correta, que é 30! Isso mostra que você entendeu bem o conceito.\n\nContinue praticando assim, que você vai ficar cada vez mais seguro com porcentagem. Qualquer dúvida, é só perguntar!"
+      }
+    ]
+  }
+}

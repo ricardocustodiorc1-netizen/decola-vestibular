@@ -22,8 +22,9 @@
     const retry=document.createElement('button');retry.type='button';retry.textContent='Tentar explicação novamente';retry.hidden=true;
     actions.append(send,retry);
     const status=document.createElement('p');status.setAttribute('role','status');status.className='leo-inline-status';
+    const localNotice=document.createElement('p');localNotice.className='notice leo-inline-environment';localNotice.textContent=api.environmentNotice();localNotice.hidden=!localNotice.textContent;
     const note=document.createElement('small');note.textContent='Sua solicitação e o contexto desta questão serão enviados à API do Professor Leo. Não envie dados pessoais. Confira informações importantes.';
-    box.append(top,mode,log,label,input,actions,status,note);host.append(trigger,box);
+    box.append(top,mode,localNotice,log,label,input,actions,status,note);host.append(trigger,box);
     let signature='',context=null,history=[],controller=null,busy=false,initialized=false,lastStart=0,failedMessage=null,originScroll=0;
     function bubble(who,text){const p=document.createElement('p');p.className='leo-inline-bubble '+who;const name=document.createElement('strong');name.textContent=who==='student'?'Você: ':'Professor Leo: ';const body=document.createElement('span');body.textContent=text;p.append(name,body);log.append(p);}
     function abort(){if(busy)status.textContent='Solicitação interrompida. Abra novamente para continuar.';controller?.abort();controller=null;busy=false;send.disabled=false;retry.disabled=false;}
@@ -42,8 +43,8 @@
       busy=true;lastStart=Date.now();send.disabled=true;retry.disabled=true;retry.hidden=true;
       const current=signature, snapshot=context, text=api.explanationMessage(snapshot,followup);
       const requestController=new AbortController();controller=requestController;
-      const timer=setTimeout(()=>requestController.abort(),25000);
-      status.textContent='O Professor Leo está preparando a explicação…';
+      const timer=setTimeout(()=>requestController.abort(new DOMException('Tempo limite','TimeoutError')),25000);
+      delete status.dataset.errorCode;status.textContent='O Professor Leo está preparando a explicação…';
       const userText=followup||'Professor Leo, me explica esta questão.';
       try{
         const answer=await api.request({message:text,history,signal:requestController.signal});
@@ -55,7 +56,8 @@
         if(current!==signature||!host.isConnected||controller!==requestController)return;
         if(box.hidden){status.textContent='Solicitação interrompida ao fechar. Abra novamente para continuar.';return;}
         failedMessage=followup;retry.hidden=false;
-        status.textContent='Não foi possível obter a explicação agora. Nenhuma resposta de IA foi recebida. Tente novamente em instantes.';
+        status.dataset.errorCode=error.code||error.name||'unknown';
+        status.textContent=api.errorMessage(error);
       }finally{
         clearTimeout(timer);
         if(controller===requestController){controller=null;busy=false;send.disabled=false;retry.disabled=false;}
