@@ -18,7 +18,7 @@ const assert = require('node:assert/strict');
   let frame=await reloadPreview();
   const denied=await frame.locator('main').evaluate(()=>{try{localStorage.getItem('test');return false}catch(e){return e.name}});
   assert.equal(denied,'SecurityError');
-  await frame.getByRole('link',{name:'Começar meu Plano de Aprovação'}).click();
+  await frame.getByRole('link',{name:'Experimentar demonstração',exact:true}).click();
   await frame.locator('[name=name]').selectOption('Estudante Horizonte');
   await frame.locator('[name=days]').selectOption('3');
   await frame.getByRole('button',{name:'Ir para o diagnóstico'}).click();
@@ -47,7 +47,7 @@ const assert = require('node:assert/strict');
   await frame.getByRole('button',{name:'Fechar cópia de segurança'}).click();
   // Voltar ao início não deve iniciar um novo perfil por engano.
   await frame.getByRole('link',{name:'Decola Vestibular, início'}).click();
-  await frame.getByRole('link',{name:'Começar meu Plano de Aprovação'}).click();
+  await frame.getByRole('link',{name:'Experimentar demonstração',exact:true}).click();
   await frame.locator('.session').first().waitFor();
   assert.equal(await frame.locator('.done input').first().isChecked(),true);
   await frame.getByRole('button',{name:'💾 Salvar meu progresso',exact:true}).click();

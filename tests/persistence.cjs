@@ -9,7 +9,7 @@ const KEY = 'decola-vestibular:progress:v1';
    const page = await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
    const read = () => page.evaluate(key=>JSON.parse(localStorage.getItem(key)),KEY);
    await page.goto(`http://127.0.0.1:8000/${file}`);
-   await page.getByRole('link',{name:'Começar meu Plano de Aprovação'}).click();
+   await page.getByRole('link',{name:'Experimentar demonstração',exact:true}).click();
    await page.locator('[name=name]').selectOption('Estudante Estrela');
    await page.locator('[name=course]').selectOption('Engenharia');
    await page.locator('[name=days]').selectOption('3');

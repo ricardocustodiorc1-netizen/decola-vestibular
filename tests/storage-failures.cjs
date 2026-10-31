@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
   for(const mode of ['quota','silent']) {
    const page=await browser.newPage(); const errors=[];page.on('pageerror',e=>errors.push(e.message));
    await page.goto('http://127.0.0.1:8000/demonstracao.html');
-   await page.getByRole('link',{name:'Começar meu Plano de Aprovação'}).click();
+   await page.getByRole('link',{name:'Experimentar demonstração',exact:true}).click();
    await page.getByRole('button',{name:'Ir para o diagnóstico'}).click();
    for(const area of ['linguagens','humanas','natureza','matematica','redacao'])await page.locator(`input[name=${area}]`).first().check();
    await page.getByRole('button',{name:'Ver meu resultado'}).click();

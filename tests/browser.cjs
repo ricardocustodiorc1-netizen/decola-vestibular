@@ -20,7 +20,7 @@ const assert = require('node:assert/strict');
     await page.locator('iframe').evaluate((el,html)=>el.srcdoc=html,html);
     frame=page.frameLocator('iframe');
    } else await page.goto('http://127.0.0.1:8000/');
-   await frame.getByRole('link',{name:'Começar meu Plano de Aprovação'}).click();
+   await frame.getByRole('link',{name:'Experimentar demonstração',exact:true}).click();
    await frame.locator('[name=days]').selectOption('3');
    await frame.locator('[name=hours]').selectOption('2');
    await frame.getByRole('button',{name:'Ir para o diagnóstico'}).click();

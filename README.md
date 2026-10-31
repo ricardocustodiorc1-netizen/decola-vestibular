@@ -4,6 +4,22 @@
 
 Protótipo responsivo em HTML, CSS e JavaScript nativo, sem dependências de aplicação, cadastro, banco de dados, fontes remotas ou integrações externas.
 
+## Desenvolvimento de 31/10/2026
+
+A branch `dev/navegacao-leo-familias-20261031` acrescenta navegação persistente nos
+estudos e a prévia `#familias`. Não há autenticação ou cadastro real. A integração existente do Professor Leo está preservada; perguntas ao tutor
+são enviadas ao Worker externo já utilizado pelo projeto. Aulas e exercícios
+continuam locais. O código da main já possuía um endpoint externo do Leo; trechos
+históricos abaixo que descrevem apenas a versão inicial não representam toda a main.
+
+- [Relatório, testes e pendências](docs/RELATORIO-2026-10-31.md)
+- [Arquitetura proposta de contas e vínculos](docs/ARQUITETURA-CONTAS.md)
+
+`npm run dev` inicia um servidor local (127.0.0.1:8000). `npm run build:preview`
+regera a demonstração completa. Nenhum desses comandos publica o site.
+O CTA inicial atual é **Experimentar demonstração**; referências antigas a outros
+nomes de botão nas instruções abaixo são históricas.
+
 ## Executar
 
 Requer Python 3 para servir os arquivos. No terminal:

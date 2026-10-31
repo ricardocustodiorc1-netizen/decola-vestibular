@@ -12,7 +12,7 @@
   d.replaceChildren();d.hidden=false;
   const panel=d.closest('.leo-panel');
   panel?.querySelectorAll('.leo-menu,.leo-practice,.leo-portuguese,.leo-humanas,.leo-chat,.leo-simulado').forEach(e=>e.hidden=true);
-  const back=make('button','study-dashboard-all','← Voltar às matérias');back.type='button';
+  const back=make('button','study-dashboard-all','← Voltar às matérias');back.type='button';back.dataset.studyBack='';
   back.addEventListener('click',()=>{const btn=panel?.querySelector('.study-top-back');if(btn){const evt=new CustomEvent('decola:choose-subject');document.dispatchEvent(evt);} });
   const title=make('h2','','📘 Interpretação de Textos — Aula Inteligente 2.1');
   const intro=make('p','','Linguagens • ENEM • Leia, interprete e aprenda com suas respostas.');

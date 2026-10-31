@@ -546,7 +546,7 @@
  function showMathTopics(dashboard){
   hideLegacyViews(panel());
   dashboard.replaceChildren();
-  const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar às matérias';back.addEventListener('click',()=>showSubjects(dashboard));
+  const back=document.createElement('button');back.type='button';back.dataset.studyBack='';back.className='study-dashboard-all';back.textContent='← Voltar às matérias';back.addEventListener('click',()=>showSubjects(dashboard));
   const heading=document.createElement('h2');heading.textContent='∑ Matemática';
   const intro=document.createElement('p');intro.textContent='Escolha um assunto. Cada aula tem explicação, exemplo e exercício de fixação.';
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
@@ -556,7 +556,7 @@
  function showSubjects(dashboard){
   hideLegacyViews(panel());
   dashboard.replaceChildren();
-  const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.addEventListener('click',()=>{dashboard.remove();showDashboard();});
+  const back=document.createElement('button');back.type='button';back.dataset.studyBack='';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.addEventListener('click',()=>{dashboard.remove();showDashboard();});
   const heading=document.createElement('h2');heading.textContent='📚 Escolha sua matéria';
   const intro=document.createElement('p');intro.textContent='Escolha uma área do ENEM para explorar os conteúdos.';
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
@@ -613,7 +613,7 @@
  }
  function showStudyProgress(dashboard){
   hideLegacyViews(panel());dashboard.replaceChildren();
-  const back=document.createElement('button');back.type='button';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.onclick=showDashboard;
+  const back=document.createElement('button');back.type='button';back.dataset.studyBack='';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.onclick=showDashboard;
   const title=document.createElement('h2');title.textContent='📈 Meu progresso';
   const intro=document.createElement('p');intro.textContent='Resultados registrados neste navegador. Sua conta e a sincronização entre dispositivos ainda serão implementadas.';
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
@@ -638,7 +638,7 @@
   hideLegacyViews(p);dashboard.replaceChildren();
   const heading=document.createElement('h2');heading.textContent='🚀 Meu Decola';
   const intro=document.createElement('p');intro.textContent='Seu espaço de estudos: escolha um caminho e continue de onde parou.';
-  const recent=(()=>{try{return studyPaths.map(path=>({...path,stats:lessonStats(path)})).filter(x=>x.stats.done>0).sort((a,b)=>a.stats.done-b.stats.done)[0]||studyPaths[0];}catch{return studyPaths[0];}})();
+  const recent=(()=>{try{return studyPaths.map(path=>({...path,stats:lessonStats(path)})).filter(x=>x.stats.done>0).sort((a,b)=>a.stats.done-b.stats.done)[0]||{...studyPaths[0],stats:lessonStats(studyPaths[0])};}catch{return {...studyPaths[0],stats:{done:0,correct:0}};}})();
   const hero=document.createElement('section');hero.className='study-dashboard-hero';
   const heroTitle=document.createElement('h3');heroTitle.textContent='📘 Continue estudando';
   const heroText=document.createElement('p');heroText.textContent=recent.subject+' • '+recent.name+' — '+recent.stats.done+' de 3 questões concluídas';
@@ -669,6 +669,13 @@
   if(!d){showDashboard();d=p.querySelector('.study-dashboard');}
   if(d)showSubjects(d);
  });
+ document.addEventListener('decola:open-study',event=>{
+  const action=event.detail?.view;
+  if(action==='chat'||action==='simulado')openDashboardTool([action==='chat'?'conversar com o professor leo':'simulado']);
+  else if(action==='subjects'){showDashboard();showSubjects(panel().querySelector('.study-dashboard'));}
+  else showDashboard();
+ });
+ document.addEventListener('decola:leo-view',()=>{const d=panel()?.querySelector('.study-dashboard');if(d)d.hidden=true;});
  function attach(){
   const nav=document.querySelector('.header nav');
   if(nav&&!nav.querySelector('[data-open-studies]')){
@@ -687,15 +694,15 @@
    top?.insertBefore(topBack,p.querySelector('.leo-close'));
    const updateTopBack=()=>{
     const d=p.querySelector('.study-dashboard');
-    const inner=d&&!d.hidden?d.querySelector('.study-dashboard-all'):null;
+    const inner=d&&!d.hidden?d.querySelector('[data-study-back]'):null;
     const active=!!inner;
     topBack.hidden=!active;
    };
    topBack.addEventListener('click',()=>{
     const d=p.querySelector('.study-dashboard');
-    const back=d&&!d.hidden?d.querySelector('.study-dashboard-all'):null;
+    const back=d&&!d.hidden?d.querySelector('[data-study-back]'):null;
     if(back)back.click();
-    else p.querySelector('.leo-back')?.click();
+    else showDashboard();
     updateTopBack();
    });
    new MutationObserver(updateTopBack).observe(p.querySelector('.leo-body'),{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});

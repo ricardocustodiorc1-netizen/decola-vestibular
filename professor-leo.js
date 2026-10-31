@@ -1,4 +1,4 @@
-// Professor Leo — demonstração pedagógica local. Não utiliza IA nem envia dados.
+// Professor Leo — exercícios locais e conversa pela API externa existente.
 const lessons = [
   { area:'Matemática', title:'Porcentagem', explanation:'Porcentagem significa uma parte de cada 100. Para calcular 20% de 150, faça 150 × 20 ÷ 100 = 30.', question:'Quanto é 10% de 80?', choices:['8','10','18'], correct:0, hint:'10% é o mesmo que dividir por 10.', feedback:'80 ÷ 10 = 8. Você também pode fazer 80 × 0,10.' },
   { area:'Linguagens', title:'Interpretação de texto', explanation:'Em questões de interpretação, diferencie o que está escrito do que você supõe. Busque palavras que sustentem a resposta.', question:'No trecho “Apesar da chuva, a turma foi à escola”, a expressão “apesar de” indica:', choices:['Causa','Contraste','Conclusão'], correct:1, hint:'A turma foi à escola mesmo com uma condição contrária.', feedback:'“Apesar de” introduz uma concessão, isto é, uma ideia de contraste.' },
@@ -1778,7 +1778,7 @@ const leoViews=[
 ];
 leoViews.forEach(([view,label,description])=>{
   const button=document.createElement('button');
-  button.type='button';button.className='leo-menu-option';
+  button.type='button';button.className='leo-menu-option';button.dataset.leoView=view;
   const title=document.createElement('strong');title.textContent=label;
   const detail=document.createElement('small');detail.textContent=description;
   button.append(title,detail);
@@ -1846,6 +1846,7 @@ function leoShowView(view){
     selector.value='0';
     renderLeoPractice();
   }
+  root.dispatchEvent(new CustomEvent('decola:leo-view',{bubbles:true,detail:{view}}));
   leoBody.scrollTop=0;
   if(!menu)leoBack.focus({preventScroll:true});
 }
