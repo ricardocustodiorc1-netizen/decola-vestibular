@@ -12,7 +12,8 @@ logic = (root / 'plan.js').read_text().replace('export const ', 'const ').replac
 family = (root / 'family-demo.js').read_text().replace('export function ', 'function ')
 app = (root / 'app.js').read_text()
 app = re.sub(r'^import .*?;\n', '', app, flags=re.M)
-scripts = [logic + '\n' + family + '\n' + app]
+scripts = [(root / name).read_text() for name in ['leo-client.js','leo-inline.js']]
+scripts += [logic + '\n' + family + '\n' + app]
 scripts += [(root / name).read_text() for name in ['professor-leo.js', 'study-area.js', 'language-smart.js', 'navigation.js']]
 # Isolate lexical declarations, retaining the explicit document events/window API.
 bundle = '\n'.join('<script>\n(()=>{\n' + source.replace('</script', '<\\/script') + '\n})();\n</script>' for source in scripts)

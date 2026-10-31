@@ -71,6 +71,7 @@
    ['Aumento significa somar ao valor inicial. Primeiro descubra 25% de 120.','25% é um quarto: divida 120 por 4 e some o resultado a 120.']
   ];
   questions.forEach((q,i)=>{
+   let inline;
    const card=make('div','study-smart-question');card.append(make('strong','',('Questão '+(i+1)+' de '+questions.length+': ')+q.q));
    const options=make('div','study-topic-answers');
    const feedback=make('div','study-smart-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
@@ -83,6 +84,7 @@
    });options.append(btn);return btn;});
    retry.addEventListener('click',()=>{const p=progress[i];if(!p||p.done)return;progress[i]={...p,choice:null};save();render();buttons[0]?.focus();});
    const render=()=>{
+    inline?.sync();
     const p=progress[i];const selected=Number.isInteger(p?.choice);const right=selected&&p.choice===q.answer;
     buttons.forEach((btn,j)=>{btn.classList.toggle('study-smart-selected',selected&&p.choice===j);btn.setAttribute('aria-pressed',String(selected&&p.choice===j));btn.disabled=!!p?.done||(p?.attempts===1&&selected&&!p?.done);});
     feedback.replaceChildren();retry.hidden=true;
@@ -91,7 +93,9 @@
     else if(!p.done){feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','🔎 Ainda não. Você tem mais uma tentativa!'),make('p','',hints[i][0]));retry.hidden=false;}
     else{feedback.classList.add('study-smart-wrong');feedback.classList.remove('study-smart-correct');feedback.append(make('strong','','📘 Vamos aprender com esse erro.'),make('p','','Dica: '+hints[i][1]),make('p','','Resposta correta: '+q.opts[q.answer]+'. '+q.why));}
    };
-   card.append(options,feedback,retry);practice.append(card);render();
+   card.append(options,feedback,retry);practice.append(card);
+   inline=globalThis.DecolaLeoInline.mount({host:card,dashboard,question:{...q,id:'porcentagem-q'+(i+1)},getState:()=>progress[i]});
+   render();
   });save();updateScore();
   // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.
   const report=make('section','study-smart-card study-smart-report');

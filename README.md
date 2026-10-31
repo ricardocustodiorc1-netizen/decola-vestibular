@@ -113,3 +113,11 @@ A gravação ocorre a cada marcação/desmarcação, alteração de perfil ou re
 Veja [correções e testes da experiência do aluno](docs/REVISAO-MOBILE-2026-10-31.md).
 Baixe `demonstracao.html` para experimentar sem publicar. Para comparar larguras,
 salve `revisao.html` na mesma pasta e abra-o no navegador.
+
+## Piloto “Professor Leo, me explica!”
+
+A aula de Porcentagem permite conversa contextual na própria questão. Consulte
+[implementação, testes e limites da integração real](docs/LEO-ME-EXPLICA-PILOTO.md).
+`npm test` inclui os testes de contexto e contrato do Worker. Para teste de UI sem
+API, execute `npm run dev` e abra `/tests/leo-inline-review.html`: respostas são
+controladas e rotuladas, não respostas reais de IA.

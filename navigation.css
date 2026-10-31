@@ -48,3 +48,21 @@
  .leo-widget .leo-top{padding:6px 10px}
  .study-shortcuts{padding:5px}
 }
+
+/* Pilot: opt-in Leo conversation stays inside its question, never a modal route. */
+.leo-inline{margin:14px 0 8px;padding:18px;border:1px solid #a9c3f7;border-radius:14px;background:#f4f8ff;color:#162b54;min-width:0}
+.leo-inline[hidden],.leo-inline-trigger[hidden]{display:none!important}
+.leo-inline-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.leo-inline h4{font-size:18px;margin:0}
+.leo-inline button{min-height:44px;padding:10px 14px;border:1px solid #abc1ed;border-radius:9px;background:#fff;color:#173fa9;font:inherit;cursor:pointer}
+.leo-inline button:disabled{opacity:.65;cursor:wait}
+.leo-inline label{display:block;font-weight:700;margin:14px 0 8px}
+.leo-inline textarea{display:block;width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:12px;border:1px solid #a6bcdf;border-radius:9px;resize:vertical;min-height:84px}
+.leo-inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.leo-inline-actions [hidden]{display:none!important}
+.leo-inline-mode,.leo-inline-status,.leo-inline small{font-size:14px!important;line-height:1.6}
+.leo-inline-bubble{background:white;border:1px solid #d5e1f4;border-radius:10px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px!important;line-height:1.65!important}
+.leo-inline-bubble.student{background:#e6eeff}
+.leo-inline-bubble strong{display:inline!important;font-size:inherit!important}
+.leo-inline button:focus-visible,.leo-inline-trigger:focus-visible,.leo-inline textarea:focus-visible{outline:3px solid #e6a627;outline-offset:3px}
+@media(max-width:650px){.leo-inline{padding:12px}.leo-inline-top button{width:100%}.leo-inline-trigger{width:100%;font-size:15px!important}.leo-inline-actions button{flex:1 1 140px}.leo-inline h4{font-size:17px}}
