@@ -31,7 +31,24 @@ function initialize() {
   const direct = document.createElement('button');
   direct.type = 'button'; direct.className = 'study-nav-link'; direct.textContent = 'Professor Leo';
   direct.addEventListener('click', () => openStudy('chat'));
-  document.querySelector('.header nav').prepend(direct);
+  const publicNav = document.querySelector('.header nav');
+  publicNav.prepend(direct);
+  publicNav.id = 'public-navigation';
+  const menu = document.createElement('button');
+  menu.type = 'button'; menu.className = 'mobile-menu-button';
+  menu.textContent = 'Mais opções'; menu.setAttribute('aria-expanded','false');
+  menu.setAttribute('aria-controls', publicNav.id);
+  menu.addEventListener('click',()=>{
+    const expanded = publicNav.classList.toggle('is-expanded');
+    menu.setAttribute('aria-expanded',String(expanded));
+    menu.textContent = expanded ? 'Fechar opções' : 'Mais opções';
+  });
+  publicNav.append(menu);
+  publicNav.addEventListener('click',event=>{
+    if(event.target.closest('a')){
+      publicNav.classList.remove('is-expanded');menu.setAttribute('aria-expanded','false');menu.textContent='Mais opções';
+    }
+  });
   // Capture the initiating control before the legacy opening code moves focus.
   document.addEventListener('click', event => {
     if (event.isTrusted && panel.hidden && event.target instanceof Element) returnFocus = event.target.closest('button,a,input,select,textarea');

@@ -560,6 +560,44 @@ body.leo-study-open{overflow:hidden}
 #family-preview li{margin:12px 0;line-height:1.6}
 @media(max-width:650px){.header{flex-direction:column;align-items:flex-start;gap:14px}.header nav{justify-content:flex-start;width:100%}.study-shortcuts{gap:6px;padding:10px 12px}.study-shortcuts button{flex:1 1 40%;padding:10px 8px;font-size:14px}.leo-widget .leo-top .leo-close{font-size:13px!important}.leo-widget .leo-top{gap:8px}}
 
+.mobile-menu-button{display:none}
+.study-return-context{padding:10px 12px;min-height:44px;border:1px solid #ffffff80;border-radius:9px;color:white;background:#ffffff18;font-weight:700;cursor:pointer}
+.leo-widget .leo-panel .study-return-context[hidden]{display:none!important}
+.leo-widget .leo-top>div{min-width:0;flex:1 1 180px}
+.leo-widget .leo-top button{min-height:44px}
+.leo-widget .leo-chat textarea,.leo-widget select,.leo-widget input{font-size:16px}
+.leo-widget .leo-body{overflow-wrap:anywhere;overscroll-behavior:contain}
+@media(max-width:650px){
+ .header nav{gap:8px}
+ .header nav .mobile-menu-button{display:inline-flex;align-items:center;min-height:44px;padding:10px 12px;border:1px solid #b9c9e6;border-radius:9px;background:white;color:#173fa9;font:inherit;font-size:14px}
+ .header nav:not(.is-expanded) a:not(.nav-cta),.header nav:not(.is-expanded) [data-backup]{display:none!important}
+ .header nav.is-expanded a{display:inline-flex!important;align-items:center;min-height:44px}
+ .header nav.is-expanded [data-backup]{display:inline-flex}
+ .header nav .study-nav-link{min-height:44px;flex:1 1 40%;font-size:14px;white-space:normal}
+ .header nav .nav-cta{min-height:44px;display:inline-flex;align-items:center}
+ .leo-widget .leo-top{padding:10px 12px;gap:8px}
+ .leo-widget .leo-top strong{font-size:16px!important;line-height:1.3}
+ .leo-widget .leo-top small{display:none}
+ .leo-widget .leo-top .leo-current-location{font-size:11px;margin-top:4px}
+ .leo-widget .leo-top [aria-label="Conversar com o Professor Leo"]{display:none!important}
+ .leo-widget .leo-top .leo-close{min-width:70px!important;max-width:110px;white-space:normal;margin-left:auto}
+ .leo-widget .study-top-back{margin:0;font-size:12px;padding:8px}
+ .study-shortcuts{flex-wrap:nowrap;gap:5px;padding:8px}
+ .study-shortcuts button{flex:1 1 0;min-width:0;padding:9px 3px;font-size:12px;line-height:1.3}
+ .leo-widget .leo-bottom{padding:6px 12px;padding-bottom:max(6px,env(safe-area-inset-bottom))}
+ .leo-widget .leo-bottom small{font-size:10px!important;line-height:1.4}
+ .study-dashboard{padding-top:4px}
+ .study-dashboard>p{margin-bottom:16px}
+ .study-dashboard-hero{padding:16px}
+ .study-dashboard-card{min-height:105px;gap:8px;padding:16px}
+ .study-subject-card{min-height:150px}
+}
+@media(max-height:520px){
+ .leo-widget .leo-top .leo-current-location,.leo-widget .leo-bottom{display:none}
+ .leo-widget .leo-top{padding:6px 10px}
+ .study-shortcuts{padding:5px}
+}
+
 </style>
 
 </head>
@@ -2916,9 +2954,11 @@ leoAsk.addEventListener('click',async()=>{
   {icon:'🎓',title:'Professor Leo',detail:'Converse com o tutor em uma tela ampla.',terms:['conversar com o professor leo']}
  ];
  let selectingLegacySubject=false;
+ let lessonReturn=null;
+ let lessonReturnButton=null;
  const panel=()=>document.querySelector('.leo-panel');
  function hideLegacyViews(p){
-  p?.querySelectorAll('.leo-menu,.leo-practice,.leo-portuguese,.leo-humanas,.leo-chat,.leo-dashboard,.leo-simulado').forEach(el=>{if(!el.classList.contains('study-dashboard'))el.hidden=true;});
+  p?.querySelectorAll('.leo-menu,.leo-lesson,.leo-practice,.leo-portuguese,.leo-humanas,.leo-chat,.leo-dashboard,.leo-simulado').forEach(el=>{if(!el.classList.contains('study-dashboard'))el.hidden=true;});
  }
  const launcher=()=>document.querySelector('.leo-launch');
  function openPanel(){const p=panel();if(p&&p.hidden)launcher()?.click();return p;}
@@ -2928,7 +2968,8 @@ leoAsk.addEventListener('click',async()=>{
  }
  function openModule(card){
   const p=openPanel();if(!p)return;
-  const option=findOption(card.terms);
+  const view=card.terms.includes('conversar com o professor leo')?'chat':card.terms.includes('simulado')?'simulado':null;
+  const option=(view?p.querySelector('[data-leo-view="'+view+'"]'):null)||findOption(card.terms);
   if(option){option.click();return;}
   const menuBack=p.querySelector('.leo-back');
   if(menuBack)menuBack.click();
@@ -2949,7 +2990,7 @@ leoAsk.addEventListener('click',async()=>{
   if(topic.title!=='Porcentagem')return showBasicMathLesson(dashboard,topic);
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.1');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -3049,7 +3090,7 @@ leoAsk.addEventListener('click',async()=>{
  function showFractionsSmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Frações — Aula Inteligente 1.2');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -3147,7 +3188,7 @@ leoAsk.addEventListener('click',async()=>{
  function showEquationsSmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Equações — Aula Inteligente 1.3');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -3245,7 +3286,7 @@ leoAsk.addEventListener('click',async()=>{
  function showGeometrySmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Geometria — Aula Inteligente 1.4');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -3343,7 +3384,7 @@ leoAsk.addEventListener('click',async()=>{
  function showStatisticsSmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Estatística — Aula Inteligente 1.5');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -3435,7 +3476,7 @@ leoAsk.addEventListener('click',async()=>{
  }
  function showBasicMathLesson(dashboard,topic){
   dashboard.replaceChildren();
-  const back=document.createElement('button');back.className='study-dashboard-all';back.type='button';back.textContent='← Voltar aos assuntos';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=document.createElement('button');back.className='study-dashboard-all';back.type='button';back.dataset.studyBack='';back.textContent='← Voltar aos assuntos';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=document.createElement('h2');title.textContent='📘 '+topic.title;
   const intro=document.createElement('p');intro.textContent=topic.explanation;
   const example=document.createElement('div');example.className='study-topic-example';example.textContent='Exemplo resolvido: '+topic.example;
@@ -3537,10 +3578,22 @@ leoAsk.addEventListener('click',async()=>{
  }
  function openDashboardTool(terms){
   const p=openPanel();if(!p)return;
-  const d=p.querySelector('.study-dashboard');if(d)d.hidden=true;
   openModule({terms});
  }
+ function showExerciseMenu(){
+  showDashboard();const p=panel(), d=p.querySelector('.study-dashboard');d.replaceChildren();
+  const back=document.createElement('button');back.type='button';back.dataset.studyBack='';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.onclick=showDashboard;
+  const title=document.createElement('h2');title.textContent='✏️ Exercícios por matéria';
+  const intro=document.createElement('p');intro.textContent='Escolha um treino. Suas respostas e correções ficam salvas neste navegador.';
+  const grid=document.createElement('div');grid.className='study-dashboard-grid';
+  [['practice','Matemática','Porcentagem, questões e reforço'],['portuguese','Português','Interpretação e exercícios comentados'],['humanas','Ciências Humanas','Cidadania, história e geografia']].forEach(([view,label,description])=>{
+   const b=document.createElement('button');b.type='button';b.className='study-dashboard-card';
+   const name=document.createElement('strong');name.textContent=label;const detail=document.createElement('small');detail.textContent=description;b.append(name,detail);
+   b.onclick=()=>p.querySelector('[data-leo-view="'+view+'"]').click();grid.append(b);
+  });d.append(back,title,intro,grid);d.hidden=false;p.querySelector('.leo-body').scrollTo(0,0);
+ }
  function showDashboard(){
+  lessonReturn=null;if(lessonReturnButton)lessonReturnButton.hidden=true;
   const p=openPanel();if(!p)return;
   let dashboard=p.querySelector('.study-dashboard');
   if(!dashboard){dashboard=document.createElement('section');dashboard.className='study-dashboard';dashboard.setAttribute('aria-label','Meu Decola — painel do estudante');p.querySelector('.leo-body')?.prepend(dashboard);}
@@ -3556,6 +3609,7 @@ leoAsk.addEventListener('click',async()=>{
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
   const options=[
    ['📚','Minhas aulas','Matérias e trilhas de aprendizagem',()=>showSubjects(dashboard)],
+   ['✏️','Exercícios','Treinos organizados por matéria',showExerciseMenu],
    ['🎓','Professor Leo','Abra o tutor em uma tela ampla',()=>openDashboardTool(['conversar com o professor leo'])],
    ['📈','Meu progresso','Acompanhe aulas e exercícios concluídos',()=>showStudyProgress(dashboard)],
    ['📝','Simulados','Treine com questões para o ENEM',()=>openDashboardTool(['simulado'])]
@@ -3584,7 +3638,16 @@ leoAsk.addEventListener('click',async()=>{
   else if(action==='subjects'){showDashboard();showSubjects(panel().querySelector('.study-dashboard'));}
   else showDashboard();
  });
- document.addEventListener('decola:leo-view',()=>{const d=panel()?.querySelector('.study-dashboard');if(d)d.hidden=true;});
+ document.addEventListener('decola:leo-view',event=>{
+  const p=panel(), d=p?.querySelector('.study-dashboard');
+  const heading=d?.querySelector('h2');
+  if(event.detail.view==='chat'&&d&&!d.hidden&&heading?.textContent.includes('Aula Inteligente'))lessonReturn={dashboard:d,heading,scrollTop:p.querySelector('.leo-body').scrollTop};
+  const valid=lessonReturn?.dashboard.isConnected&&lessonReturn.dashboard.querySelector('h2')===lessonReturn.heading;
+  if(!valid)lessonReturn=null;
+  if(d)d.hidden=true;
+  if(lessonReturnButton)lessonReturnButton.hidden=event.detail.view!=='chat'||!lessonReturn;
+  if(event.detail.view==='chat'&&lessonReturn)p.querySelector('[aria-label="Retomar os exercícios sem perder o progresso"]').hidden=true;
+ });
  function attach(){
   const nav=document.querySelector('.header nav');
   if(nav&&!nav.querySelector('[data-open-studies]')){
@@ -3597,6 +3660,15 @@ leoAsk.addEventListener('click',async()=>{
   if(p){
    // Voltar no cabeçalho azul: respeita o nível atual da navegação.
    const top=p.querySelector('.leo-top');
+   lessonReturnButton=document.createElement('button');lessonReturnButton.type='button';
+   lessonReturnButton.className='study-return-context';lessonReturnButton.textContent='← Voltar à aula';lessonReturnButton.hidden=true;
+   top?.insertBefore(lessonReturnButton,p.querySelector('.leo-close'));
+   lessonReturnButton.addEventListener('click',()=>{
+    if(!lessonReturn?.dashboard.isConnected||lessonReturn.dashboard.querySelector('h2')!==lessonReturn.heading){lessonReturnButton.hidden=true;lessonReturn=null;return;}
+    hideLegacyViews(p);lessonReturn.dashboard.hidden=false;lessonReturnButton.hidden=true;
+    p.querySelector('.leo-body').scrollTo(0,lessonReturn.scrollTop);
+    const h=lessonReturn.heading;h.tabIndex=-1;h.focus({preventScroll:true});
+   });
    const topBack=document.createElement('button');
    topBack.type='button';topBack.className='study-top-back';topBack.textContent='← Voltar ao menu anterior';
    topBack.setAttribute('aria-label','Voltar ao menu anterior');
@@ -3766,7 +3838,24 @@ function initialize() {
   const direct = document.createElement('button');
   direct.type = 'button'; direct.className = 'study-nav-link'; direct.textContent = 'Professor Leo';
   direct.addEventListener('click', () => openStudy('chat'));
-  document.querySelector('.header nav').prepend(direct);
+  const publicNav = document.querySelector('.header nav');
+  publicNav.prepend(direct);
+  publicNav.id = 'public-navigation';
+  const menu = document.createElement('button');
+  menu.type = 'button'; menu.className = 'mobile-menu-button';
+  menu.textContent = 'Mais opções'; menu.setAttribute('aria-expanded','false');
+  menu.setAttribute('aria-controls', publicNav.id);
+  menu.addEventListener('click',()=>{
+    const expanded = publicNav.classList.toggle('is-expanded');
+    menu.setAttribute('aria-expanded',String(expanded));
+    menu.textContent = expanded ? 'Fechar opções' : 'Mais opções';
+  });
+  publicNav.append(menu);
+  publicNav.addEventListener('click',event=>{
+    if(event.target.closest('a')){
+      publicNav.classList.remove('is-expanded');menu.setAttribute('aria-expanded','false');menu.textContent='Mais opções';
+    }
+  });
   // Capture the initiating control before the legacy opening code moves focus.
   document.addEventListener('click', event => {
     if (event.isTrusted && panel.hidden && event.target instanceof Element) returnFocus = event.target.closest('button,a,input,select,textarea');

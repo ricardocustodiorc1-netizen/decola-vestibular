@@ -7,9 +7,11 @@
   {icon:'🎓',title:'Professor Leo',detail:'Converse com o tutor em uma tela ampla.',terms:['conversar com o professor leo']}
  ];
  let selectingLegacySubject=false;
+ let lessonReturn=null;
+ let lessonReturnButton=null;
  const panel=()=>document.querySelector('.leo-panel');
  function hideLegacyViews(p){
-  p?.querySelectorAll('.leo-menu,.leo-practice,.leo-portuguese,.leo-humanas,.leo-chat,.leo-dashboard,.leo-simulado').forEach(el=>{if(!el.classList.contains('study-dashboard'))el.hidden=true;});
+  p?.querySelectorAll('.leo-menu,.leo-lesson,.leo-practice,.leo-portuguese,.leo-humanas,.leo-chat,.leo-dashboard,.leo-simulado').forEach(el=>{if(!el.classList.contains('study-dashboard'))el.hidden=true;});
  }
  const launcher=()=>document.querySelector('.leo-launch');
  function openPanel(){const p=panel();if(p&&p.hidden)launcher()?.click();return p;}
@@ -19,7 +21,8 @@
  }
  function openModule(card){
   const p=openPanel();if(!p)return;
-  const option=findOption(card.terms);
+  const view=card.terms.includes('conversar com o professor leo')?'chat':card.terms.includes('simulado')?'simulado':null;
+  const option=(view?p.querySelector('[data-leo-view="'+view+'"]'):null)||findOption(card.terms);
   if(option){option.click();return;}
   const menuBack=p.querySelector('.leo-back');
   if(menuBack)menuBack.click();
@@ -40,7 +43,7 @@
   if(topic.title!=='Porcentagem')return showBasicMathLesson(dashboard,topic);
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.1');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -140,7 +143,7 @@
  function showFractionsSmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Frações — Aula Inteligente 1.2');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -238,7 +241,7 @@
  function showEquationsSmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Equações — Aula Inteligente 1.3');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -336,7 +339,7 @@
  function showGeometrySmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Geometria — Aula Inteligente 1.4');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -434,7 +437,7 @@
  function showStatisticsSmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
-  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Estatística — Aula Inteligente 1.5');
   const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
   const steps=make('div','study-smart-steps');
@@ -526,7 +529,7 @@
  }
  function showBasicMathLesson(dashboard,topic){
   dashboard.replaceChildren();
-  const back=document.createElement('button');back.className='study-dashboard-all';back.type='button';back.textContent='← Voltar aos assuntos';back.addEventListener('click',()=>showMathTopics(dashboard));
+  const back=document.createElement('button');back.className='study-dashboard-all';back.type='button';back.dataset.studyBack='';back.textContent='← Voltar aos assuntos';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=document.createElement('h2');title.textContent='📘 '+topic.title;
   const intro=document.createElement('p');intro.textContent=topic.explanation;
   const example=document.createElement('div');example.className='study-topic-example';example.textContent='Exemplo resolvido: '+topic.example;
@@ -628,10 +631,22 @@
  }
  function openDashboardTool(terms){
   const p=openPanel();if(!p)return;
-  const d=p.querySelector('.study-dashboard');if(d)d.hidden=true;
   openModule({terms});
  }
+ function showExerciseMenu(){
+  showDashboard();const p=panel(), d=p.querySelector('.study-dashboard');d.replaceChildren();
+  const back=document.createElement('button');back.type='button';back.dataset.studyBack='';back.className='study-dashboard-all';back.textContent='← Voltar ao Meu Decola';back.onclick=showDashboard;
+  const title=document.createElement('h2');title.textContent='✏️ Exercícios por matéria';
+  const intro=document.createElement('p');intro.textContent='Escolha um treino. Suas respostas e correções ficam salvas neste navegador.';
+  const grid=document.createElement('div');grid.className='study-dashboard-grid';
+  [['practice','Matemática','Porcentagem, questões e reforço'],['portuguese','Português','Interpretação e exercícios comentados'],['humanas','Ciências Humanas','Cidadania, história e geografia']].forEach(([view,label,description])=>{
+   const b=document.createElement('button');b.type='button';b.className='study-dashboard-card';
+   const name=document.createElement('strong');name.textContent=label;const detail=document.createElement('small');detail.textContent=description;b.append(name,detail);
+   b.onclick=()=>p.querySelector('[data-leo-view="'+view+'"]').click();grid.append(b);
+  });d.append(back,title,intro,grid);d.hidden=false;p.querySelector('.leo-body').scrollTo(0,0);
+ }
  function showDashboard(){
+  lessonReturn=null;if(lessonReturnButton)lessonReturnButton.hidden=true;
   const p=openPanel();if(!p)return;
   let dashboard=p.querySelector('.study-dashboard');
   if(!dashboard){dashboard=document.createElement('section');dashboard.className='study-dashboard';dashboard.setAttribute('aria-label','Meu Decola — painel do estudante');p.querySelector('.leo-body')?.prepend(dashboard);}
@@ -647,6 +662,7 @@
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
   const options=[
    ['📚','Minhas aulas','Matérias e trilhas de aprendizagem',()=>showSubjects(dashboard)],
+   ['✏️','Exercícios','Treinos organizados por matéria',showExerciseMenu],
    ['🎓','Professor Leo','Abra o tutor em uma tela ampla',()=>openDashboardTool(['conversar com o professor leo'])],
    ['📈','Meu progresso','Acompanhe aulas e exercícios concluídos',()=>showStudyProgress(dashboard)],
    ['📝','Simulados','Treine com questões para o ENEM',()=>openDashboardTool(['simulado'])]
@@ -675,7 +691,16 @@
   else if(action==='subjects'){showDashboard();showSubjects(panel().querySelector('.study-dashboard'));}
   else showDashboard();
  });
- document.addEventListener('decola:leo-view',()=>{const d=panel()?.querySelector('.study-dashboard');if(d)d.hidden=true;});
+ document.addEventListener('decola:leo-view',event=>{
+  const p=panel(), d=p?.querySelector('.study-dashboard');
+  const heading=d?.querySelector('h2');
+  if(event.detail.view==='chat'&&d&&!d.hidden&&heading?.textContent.includes('Aula Inteligente'))lessonReturn={dashboard:d,heading,scrollTop:p.querySelector('.leo-body').scrollTop};
+  const valid=lessonReturn?.dashboard.isConnected&&lessonReturn.dashboard.querySelector('h2')===lessonReturn.heading;
+  if(!valid)lessonReturn=null;
+  if(d)d.hidden=true;
+  if(lessonReturnButton)lessonReturnButton.hidden=event.detail.view!=='chat'||!lessonReturn;
+  if(event.detail.view==='chat'&&lessonReturn)p.querySelector('[aria-label="Retomar os exercícios sem perder o progresso"]').hidden=true;
+ });
  function attach(){
   const nav=document.querySelector('.header nav');
   if(nav&&!nav.querySelector('[data-open-studies]')){
@@ -688,6 +713,15 @@
   if(p){
    // Voltar no cabeçalho azul: respeita o nível atual da navegação.
    const top=p.querySelector('.leo-top');
+   lessonReturnButton=document.createElement('button');lessonReturnButton.type='button';
+   lessonReturnButton.className='study-return-context';lessonReturnButton.textContent='← Voltar à aula';lessonReturnButton.hidden=true;
+   top?.insertBefore(lessonReturnButton,p.querySelector('.leo-close'));
+   lessonReturnButton.addEventListener('click',()=>{
+    if(!lessonReturn?.dashboard.isConnected||lessonReturn.dashboard.querySelector('h2')!==lessonReturn.heading){lessonReturnButton.hidden=true;lessonReturn=null;return;}
+    hideLegacyViews(p);lessonReturn.dashboard.hidden=false;lessonReturnButton.hidden=true;
+    p.querySelector('.leo-body').scrollTo(0,lessonReturn.scrollTop);
+    const h=lessonReturn.heading;h.tabIndex=-1;h.focus({preventScroll:true});
+   });
    const topBack=document.createElement('button');
    topBack.type='button';topBack.className='study-top-back';topBack.textContent='← Voltar ao menu anterior';
    topBack.setAttribute('aria-label','Voltar ao menu anterior');

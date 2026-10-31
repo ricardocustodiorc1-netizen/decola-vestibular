@@ -107,3 +107,9 @@ No topo do plano, **💾 Salvar meu progresso** abre uma janela com a cópia já
 A gravação ocorre a cada marcação/desmarcação, alteração de perfil ou resposta e navegação. O código confere a gravação por leitura e preserva a experiência em memória em caso de falha; o aviso é removido após uma nova gravação confirmada. Não é usado banco de dados ou serviço externo. Visual, perguntas e etapas permanecem iguais.
 
 `node tests/storage-failures.cjs` testa falta de espaço e gravações que falham sem lançar erro, preservação do backup e recuperação após o armazenamento voltar a funcionar. Requer o servidor local e o mesmo Playwright/Chromium dos demais testes. A prévia integrada do Codex não está acessível às ferramentas desta sessão; os testes de iframe são simulações com restrições reais do navegador.
+
+## Revisão móvel
+
+Veja [correções e testes da experiência do aluno](docs/REVISAO-MOBILE-2026-10-31.md).
+Baixe `demonstracao.html` para experimentar sem publicar. Para comparar larguras,
+salve `revisao.html` na mesma pasta e abra-o no navegador.

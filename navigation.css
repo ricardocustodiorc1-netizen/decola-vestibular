@@ -10,3 +10,41 @@
 .header a[aria-current="page"]{text-decoration:underline;text-underline-offset:5px}
 #family-preview li{margin:12px 0;line-height:1.6}
 @media(max-width:650px){.header{flex-direction:column;align-items:flex-start;gap:14px}.header nav{justify-content:flex-start;width:100%}.study-shortcuts{gap:6px;padding:10px 12px}.study-shortcuts button{flex:1 1 40%;padding:10px 8px;font-size:14px}.leo-widget .leo-top .leo-close{font-size:13px!important}.leo-widget .leo-top{gap:8px}}
+
+.mobile-menu-button{display:none}
+.study-return-context{padding:10px 12px;min-height:44px;border:1px solid #ffffff80;border-radius:9px;color:white;background:#ffffff18;font-weight:700;cursor:pointer}
+.leo-widget .leo-panel .study-return-context[hidden]{display:none!important}
+.leo-widget .leo-top>div{min-width:0;flex:1 1 180px}
+.leo-widget .leo-top button{min-height:44px}
+.leo-widget .leo-chat textarea,.leo-widget select,.leo-widget input{font-size:16px}
+.leo-widget .leo-body{overflow-wrap:anywhere;overscroll-behavior:contain}
+@media(max-width:650px){
+ .header nav{gap:8px}
+ .header nav .mobile-menu-button{display:inline-flex;align-items:center;min-height:44px;padding:10px 12px;border:1px solid #b9c9e6;border-radius:9px;background:white;color:#173fa9;font:inherit;font-size:14px}
+ .header nav:not(.is-expanded) a:not(.nav-cta),.header nav:not(.is-expanded) [data-backup]{display:none!important}
+ .header nav.is-expanded a{display:inline-flex!important;align-items:center;min-height:44px}
+ .header nav.is-expanded [data-backup]{display:inline-flex}
+ .header nav .study-nav-link{min-height:44px;flex:1 1 40%;font-size:14px;white-space:normal}
+ .header nav .nav-cta{min-height:44px;display:inline-flex;align-items:center}
+ .leo-widget .leo-top{padding:10px 12px;gap:8px}
+ .leo-widget .leo-top strong{font-size:16px!important;line-height:1.3}
+ .leo-widget .leo-top small{display:none}
+ .leo-widget .leo-top .leo-current-location{font-size:11px;margin-top:4px}
+ .leo-widget .leo-top [aria-label="Conversar com o Professor Leo"]{display:none!important}
+ .leo-widget .leo-top .leo-close{min-width:70px!important;max-width:110px;white-space:normal;margin-left:auto}
+ .leo-widget .study-top-back{margin:0;font-size:12px;padding:8px}
+ .study-shortcuts{flex-wrap:nowrap;gap:5px;padding:8px}
+ .study-shortcuts button{flex:1 1 0;min-width:0;padding:9px 3px;font-size:12px;line-height:1.3}
+ .leo-widget .leo-bottom{padding:6px 12px;padding-bottom:max(6px,env(safe-area-inset-bottom))}
+ .leo-widget .leo-bottom small{font-size:10px!important;line-height:1.4}
+ .study-dashboard{padding-top:4px}
+ .study-dashboard>p{margin-bottom:16px}
+ .study-dashboard-hero{padding:16px}
+ .study-dashboard-card{min-height:105px;gap:8px;padding:16px}
+ .study-subject-card{min-height:150px}
+}
+@media(max-height:520px){
+ .leo-widget .leo-top .leo-current-location,.leo-widget .leo-bottom{display:none}
+ .leo-widget .leo-top{padding:6px 10px}
+ .study-shortcuts{padding:5px}
+}
