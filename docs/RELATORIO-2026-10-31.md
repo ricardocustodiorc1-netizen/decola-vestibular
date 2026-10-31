@@ -109,3 +109,18 @@ A lógica inteira a partir de `// Integração segura:` e a função de desafios
 comparadas com a main e estão idênticas; apenas IDs/eventos de navegação foram
 acrescentados no restante do módulo. O envio real à API não foi testado.
 Os 3 testes automatizados foram executados novamente e passaram.
+
+## Entrega confirmada após autorização
+
+As alterações foram enviadas exclusivamente à branch de desenvolvimento pela conexão GitHub,
+em commit consolidado `c6896e3`. A main permanece em `73c5db2`.
+Após o envio foram baixados novamente os 10 arquivos principais do site público:
+index.html, app.js, professor-leo.js, study-area.js, language-smart.js, plan.js,
+styles.css, launch.css, professor-leo.css e study-area.css. Os hashes SHA-256
+permanecem iguais aos de antes do envio; todos também correspondem à main.
+Não foi executado merge, deploy ou configuração de cobrança.
+Esta confirmação substitui o estado anterior de entrega apenas local.
+
+O Professor Leo está com sua integração original preservada. Não foi testada uma
+resposta real da IA, nem é possível garantir ausência de toda regressão sem a
+suite completa e validação em homologação. Não foi criada prévia pública da branch.
