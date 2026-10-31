@@ -713,7 +713,7 @@
    const header=p.querySelector('.leo-top strong');
    const location=p.querySelector('.leo-current-location');
    const updateHeader=()=>{if(header)header.textContent=location?.textContent?.includes('Conversa com o Professor Leo')?'🎓 Professor Leo':'🚀 Decola Vestibular — Área de estudos';};
-   if(location)new MutationObserver(updateHeader).observe(location,{childList:true,characterData:true,subtree:true});updateHeader();
+   if(location)new MutationObserver(()=>{updateHeader();if(location.textContent.includes('Conversa com o Professor Leo')){const dashboard=p.querySelector('.study-dashboard');if(dashboard)dashboard.hidden=true;}}).observe(location,{childList:true,characterData:true,subtree:true});updateHeader();
   }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attach);else attach();
