@@ -1990,6 +1990,9 @@ function leoLearningChallenge(question,answer){
   form.append(input,button);box.append(heading,progress,task,form,feedback,help,actions);
   leoThread.append(box);box.scrollIntoView({block:'nearest'});
 }
+// Teste isolado: habilitar somente com ?leo2=teste na URL, sem trocar a API padrão.
+const leoTestMode=new URLSearchParams(window.location.search).get('leo2')==='teste';
+if(leoTestMode)leoAiStatus.textContent='🧪 Modo de teste: Professor Leo 2.0. Não compartilhe dados pessoais.';
 let leoBusy=false;
 let leoLastRequest=0;
 leoAsk.addEventListener('click',async()=>{
@@ -2003,7 +2006,7 @@ leoAsk.addEventListener('click',async()=>{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),25000);
     let response;
-    try{response=await fetch('https://professor-leo-api.ricardocustodio-rc1.workers.dev/chat',{
+    try{response=await fetch(leoTestMode ? 'https://professor-leo-2-teste.ricardocustodio-rc1.workers.dev/chat' : 'https://professor-leo-api.ricardocustodio-rc1.workers.dev/chat',{
       method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:question+'\n\nExplique em português simples, em até 3 etapas curtas. Escreva contas em texto comum (ex.: 20 ÷ 100 = 0,2; 0,2 × 50 = 10). Não use LaTeX nem comandos com barras invertidas. Ao final, pergunte se o aluno entendeu.',mensagem:question+'\n\nResponda brevemente, sem LaTeX, com contas em texto simples.',history:leoHistory.slice(-8),historico:leoHistory.slice(-8)}),signal:controller.signal
     });}finally{clearTimeout(timer);}
     const data=await response.json();

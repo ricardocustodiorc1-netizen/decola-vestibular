@@ -641,7 +641,7 @@
   const recent=(()=>{try{return studyPaths.map(path=>({...path,stats:lessonStats(path)})).filter(x=>x.stats.done>0).sort((a,b)=>a.stats.done-b.stats.done)[0]||studyPaths[0];}catch{return studyPaths[0];}})();
   const hero=document.createElement('section');hero.className='study-dashboard-hero';
   const heroTitle=document.createElement('h3');heroTitle.textContent='📘 Continue estudando';
-  const heroText=document.createElement('p');heroText.textContent=recent.subject+' • '+recent.name+' — '+recent.stats.done+' de 3 questões concluídas';
+  const heroText=document.createElement('p');const recentStats=recent.stats||lessonStats(recent)||{done:0};heroText.textContent=recent.subject+' • '+recent.name+' — '+(Number(recentStats.done)||0)+' de 3 questões concluídas';
   const continueBtn=document.createElement('button');continueBtn.type='button';continueBtn.className='study-dashboard-all study-dashboard-primary';continueBtn.textContent='Continuar estudando →';continueBtn.onclick=()=>launchLesson(recent);
   hero.append(heroTitle,heroText,continueBtn);
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
@@ -713,7 +713,7 @@
    const header=p.querySelector('.leo-top strong');
    const location=p.querySelector('.leo-current-location');
    const updateHeader=()=>{if(header)header.textContent=location?.textContent?.includes('Conversa com o Professor Leo')?'🎓 Professor Leo':'🚀 Decola Vestibular — Área de estudos';};
-   if(location)new MutationObserver(updateHeader).observe(location,{childList:true,characterData:true,subtree:true});updateHeader();
+   if(location)new MutationObserver(()=>{updateHeader();if(location.textContent.includes('Conversa com o Professor Leo')){const dashboard=p.querySelector('.study-dashboard');if(dashboard)dashboard.hidden=true;}}).observe(location,{childList:true,characterData:true,subtree:true});updateHeader();
   }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',attach);else attach();
