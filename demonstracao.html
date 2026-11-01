@@ -3578,7 +3578,9 @@ leoAsk.addEventListener('click',async()=>{
    review.addEventListener('click',()=>{lesson.scrollIntoView({behavior:'smooth',block:'start'});});
    const next=make('button','study-dashboard-all','➡️ Próxima aula: Frações');next.type='button';
    next.addEventListener('click',()=>showMathLesson(dashboard,mathTopics[1]));
-   actions.append(review,next);report.append(actions);
+   const memoryJump=make('button','study-dashboard-all','🧠 Ir para o Desafio da Memória');memoryJump.type='button';
+   memoryJump.addEventListener('click',()=>{challengeHost.scrollIntoView({behavior:'smooth',block:'start'});challengeHost.tabIndex=-1;challengeHost.focus({preventScroll:true});});
+   actions.append(review,memoryJump,next);report.append(actions);
   }
   updateReport();
   const help=make('section','study-smart-card');help.append(make('h3','','Ajuda durante a aula'));
