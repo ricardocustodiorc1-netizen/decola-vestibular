@@ -1,0 +1,308 @@
+{
+  "workerVersionReportedByUser": "6b7e89ca",
+  "versionIndependentlyVerified": false,
+  "browserEndToEnd": false,
+  "cors": [
+    {
+      "origin": "http://127.0.0.1:8000",
+      "results": [
+        {
+          "method": "OPTIONS",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 204 "
+          ],
+          "cors": [
+            "access-control-allow-origin: http://127.0.0.1:8000",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "",
+          "exit": 0
+        },
+        {
+          "method": "POST",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 400 "
+          ],
+          "cors": [
+            "access-control-allow-origin: http://127.0.0.1:8000",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "{\"error\":\"Envie uma pergunta de até 1000 caracteres.\"}",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "origin": "http://127.0.0.1:8001",
+      "results": [
+        {
+          "method": "OPTIONS",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 204 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "",
+          "exit": 0
+        },
+        {
+          "method": "POST",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 403 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "{\"error\":\"Origem não permitida\"}",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "origin": "http://localhost:8000",
+      "results": [
+        {
+          "method": "OPTIONS",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 204 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "",
+          "exit": 0
+        },
+        {
+          "method": "POST",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 403 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "{\"error\":\"Origem não permitida\"}",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "origin": "https://example.org",
+      "results": [
+        {
+          "method": "OPTIONS",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 204 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "",
+          "exit": 0
+        },
+        {
+          "method": "POST",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 403 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "{\"error\":\"Origem não permitida\"}",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "origin": "null",
+      "results": [
+        {
+          "method": "OPTIONS",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 204 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "",
+          "exit": 0
+        },
+        {
+          "method": "POST",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 403 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "{\"error\":\"Origem não permitida\"}",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "origin": "*",
+      "results": [
+        {
+          "method": "OPTIONS",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 204 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "",
+          "exit": 0
+        },
+        {
+          "method": "POST",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 403 "
+          ],
+          "cors": [
+            "access-control-allow-origin: null",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "{\"error\":\"Origem não permitida\"}",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "origin": "https://ricardocustodiorc1-netizen.github.io",
+      "results": [
+        {
+          "method": "OPTIONS",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 204 "
+          ],
+          "cors": [
+            "access-control-allow-origin: https://ricardocustodiorc1-netizen.github.io",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "",
+          "exit": 0
+        },
+        {
+          "method": "POST",
+          "status": [
+            "HTTP/1.1 200 OK",
+            "HTTP/2 400 "
+          ],
+          "cors": [
+            "access-control-allow-origin: https://ricardocustodiorc1-netizen.github.io",
+            "access-control-allow-headers: Content-Type",
+            "access-control-allow-methods: POST, OPTIONS"
+          ],
+          "body": "{\"error\":\"Envie uma pergunta de até 1000 caracteres.\"}",
+          "exit": 0
+        }
+      ]
+    }
+  ],
+  "realAPI": [
+    {
+      "name": "erro-primeira-tentativa",
+      "context": {
+        "subject": "Matemática",
+        "topic": "Porcentagem",
+        "questionId": "porcentagem-q1",
+        "question": "Quanto é 20% de 150?",
+        "alternatives": [
+          "20",
+          "30",
+          "35"
+        ],
+        "selectedAnswer": "20",
+        "selectedIndex": 0,
+        "correct": false,
+        "attempts": 1,
+        "attemptsRemaining": 1,
+        "mode": "hint"
+      },
+      "answer": "Claro! Para encontrar uma porcentagem de um número, pense assim: \"se 100% é igual ao número inteiro, quanto é 20% dele?\" \n\nUma dica é transformar a porcentagem em uma fração ou decimal para facilitar o cálculo. Por exemplo, 20% pode ser pensado como 20 dividido por 100, que é 0,2. \n\nAgora, a pergunta para você: qual operação matemática você faz entre 0,2 e 150 para encontrar 20% de 150? Pense nisso e tente novamente!",
+      "realNetwork": true
+    },
+    {
+      "name": "pergunta-complementar",
+      "context": {
+        "subject": "Matemática",
+        "topic": "Porcentagem",
+        "questionId": "porcentagem-q1",
+        "question": "Quanto é 20% de 150?",
+        "alternatives": [
+          "20",
+          "30",
+          "35"
+        ],
+        "selectedAnswer": "20",
+        "selectedIndex": 0,
+        "correct": false,
+        "attempts": 1,
+        "attemptsRemaining": 1,
+        "mode": "hint"
+      },
+      "answer": "Ótima dúvida! Quando falamos em porcentagem, estamos dizendo \"por cento\", ou seja, \"por 100\". Dividir por 100 é o jeito de transformar a porcentagem em um número decimal para poder fazer a multiplicação corretamente.\n\nAgora, pense: se 20% é 20 por 100, como você transformaria isso em um número para multiplicar por 150? Experimente fazer essa transformação e tente calcular novamente! Você consegue?",
+      "realNetwork": true
+    },
+    {
+      "name": "acerto",
+      "context": {
+        "subject": "Matemática",
+        "topic": "Porcentagem",
+        "questionId": "porcentagem-q1",
+        "question": "Quanto é 20% de 150?",
+        "alternatives": [
+          "20",
+          "30",
+          "35"
+        ],
+        "selectedAnswer": "30",
+        "selectedIndex": 1,
+        "correct": true,
+        "attempts": 1,
+        "attemptsRemaining": 0,
+        "mode": "solution",
+        "correctAnswer": "30",
+        "solution": "150 × 0,20 = 30."
+      },
+      "answer": "Claro! Vamos pensar juntos sobre essa questão de porcentagem.\n\nA pergunta é: quanto é 20% de 150?\n\nPasso 1: Entender o que é 20%\n- 20% significa 20 por 100, ou seja, 20 dividido por 100.\n- Em número decimal, 20% é 0,20.\n\nPasso 2: Calcular 20% de 150\n- Para calcular porcentagem de um número, multiplicamos o número pelo valor decimal da porcentagem.\n- Então, fazemos: 150 × 0,20\n\nPasso 3: Fazer a conta\n- 150 × 0,20 = 30\n\nResposta: 20% de 150 é 30.\n\nVocê escolheu a resposta correta, que é 30. Parabéns! Esse raciocínio ajuda muito para outras questões de porcentagem também.\n\nSe quiser, podemos praticar mais exemplos para fixar o conceito!",
+      "realNetwork": true
+    }
+  ]
+}

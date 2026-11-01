@@ -16,7 +16,7 @@
    return {ok:true,json:async()=>({answer:'RESPOSTA CONTROLADA DE TESTE — não é IA. O contexto desta questão foi recebido. Este texto serve apenas para validar a interface e o envio de perguntas complementares.'})};
   };
  };
- const html=await (await fetch('../demonstracao.html')).text();
+ const html=await (await fetch('../demonstracao.html', {cache:'no-store'})).text();
  frame.srcdoc=html.replace('<head>','<head><script>('+setup.toString()+')();</'+'script>');
  document.querySelectorAll('[data-width]').forEach(b=>b.onclick=()=>frame.style.width=b.dataset.width+'px');
  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>frame.contentDocument.documentElement.dataset.leoTestMode=b.dataset.mode);

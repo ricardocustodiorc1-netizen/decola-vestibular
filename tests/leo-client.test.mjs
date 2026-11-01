@@ -102,3 +102,19 @@ test('orientação local não altera contexto ou instruções enviados à IA',()
  const c=client(),state={choice:0,attempts:1},before=c.explanationMessage(c.questionContext(question,state));
  c.localGuidance(question,state);assert.equal(c.explanationMessage(c.questionContext(question,state)),before);
 });
+test('pergunta complementar respeita limite real de 1000 sem cortar contexto ou regras',()=>{
+ const c=client();
+ const questions=[question,{id:'porcentagem-q2',q:'Uma camiseta de R$ 80 tem 10% de desconto. Qual o preço final?',opts:['R$ 72','R$ 70','R$ 78'],answer:0,why:'10% de 80 = 8. Preço final: 80 − 8 = R$ 72.'},{id:'porcentagem-q3',q:'Um produto de R$ 120 aumentou 25%. Qual é o novo preço?',opts:['R$ 125','R$ 145','R$ 150'],answer:2,why:'25% de 120 = 30. Novo preço: 120 + 30 = R$ 150.'}];
+ for(const q of questions)for(const state of [{choice:(q.answer+1)%3,attempts:1,done:false},{choice:q.answer,attempts:1,done:true},{choice:(q.answer+1)%3,attempts:2,done:true}]){
+  const ctx=c.questionContext(q,state),limit=c.followupLimit(ctx);
+  assert.ok(limit>0&&limit<=700);const message=c.explanationMessage(ctx,'a'.repeat(limit));
+  assert.equal(message.length,1000);assert.ok(message.includes(JSON.stringify(ctx)));
+  if(ctx.mode==='hint'){assert.match(message,/NÃO revele/);assert.equal('correctAnswer' in ctx,false);}
+  assert.ok(c.explanationMessage(ctx,'a'.repeat(limit+1)).length>1000);
+ }
+});
+test('mensagem acima do limite é recusada localmente sem rede nem corte silencioso',async()=>{
+ let calls=0;const c=client(async()=>{calls++;});
+ for(const args of [{message:'a'.repeat(1001)},{message:'curta',alternateMessage:'a'.repeat(1001)}])await assert.rejects(()=>c.request(args),e=>e.code==='invalid_request');
+ assert.equal(calls,0);
+});

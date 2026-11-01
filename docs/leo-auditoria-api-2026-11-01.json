@@ -1,0 +1,73 @@
+[
+  {
+    "name": "dica",
+    "status": 200,
+    "ms": 7149,
+    "context": {
+      "subject": "Matemática",
+      "topic": "Porcentagem",
+      "questionId": "porcentagem-q1",
+      "question": "Quanto é 20% de 150?",
+      "alternatives": [
+        "20",
+        "30",
+        "35"
+      ],
+      "selectedAnswer": "20",
+      "selectedIndex": 0,
+      "correct": false,
+      "attempts": 1,
+      "attemptsRemaining": 1,
+      "mode": "hint"
+    },
+    "answer": "Claro! Para pensar em porcentagem, imagine que 20% é o mesmo que 20 a cada 100 partes. Então, para descobrir quanto é 20% de 150, você pode fazer uma “regra de três” ou pensar assim: quanto é 1% de 150? Depois multiplica isso por 20.\n\nMinha pergunta para você: quanto é 1% de 150? A partir daí, o que você faria para encontrar 20%? Tente fazer esse cálculo!"
+  },
+  {
+    "name": "complemento",
+    "status": 200,
+    "ms": 6400,
+    "context": {
+      "subject": "Matemática",
+      "topic": "Porcentagem",
+      "questionId": "porcentagem-q1",
+      "question": "Quanto é 20% de 150?",
+      "alternatives": [
+        "20",
+        "30",
+        "35"
+      ],
+      "selectedAnswer": "20",
+      "selectedIndex": 0,
+      "correct": false,
+      "attempts": 1,
+      "attemptsRemaining": 1,
+      "mode": "hint"
+    },
+    "answer": "Boa pergunta! Quando trabalhamos com porcentagem, o valor é dado em “por cento”, que significa “por cem”. Ou seja, 20% quer dizer 20 em cada 100. Por isso, para encontrar uma porcentagem de um número, você multiplica esse número pela porcentagem e depois divide por 100, para “ajustar” a parte referente a cada 100.\n\nAgora, pense: se você multiplicar 150 por 20 e depois dividir por 100, qual valor dará? Tente esse cálculo para a sua segunda tentativa!"
+  },
+  {
+    "name": "resolução",
+    "status": 200,
+    "ms": 6684,
+    "context": {
+      "subject": "Matemática",
+      "topic": "Porcentagem",
+      "questionId": "porcentagem-q1",
+      "question": "Quanto é 20% de 150?",
+      "alternatives": [
+        "20",
+        "30",
+        "35"
+      ],
+      "selectedAnswer": "30",
+      "selectedIndex": 1,
+      "correct": true,
+      "attempts": 1,
+      "attemptsRemaining": 0,
+      "mode": "solution",
+      "correctAnswer": "30",
+      "solution": "20 ÷ 100 = 0,20; 150 × 0,20 = 30."
+    },
+    "answer": "Claro! Vamos entender juntos como calcular 20% de 150.\n\n**Passo 1:** O que significa 20%?  \nPorcentagem é uma forma de expressar uma parte de um todo, em relação a 100. Então, 20% quer dizer 20 por 100, ou seja, 20 dividido por 100, que é 0,20.\n\n**Passo 2:** Transformar 20% em número decimal  \n20% = 20 ÷ 100 = 0,20.\n\n**Passo 3:** Calcular 20% de 150  \nPara achar 20% de 150, basta multiplicar 150 por 0,20:  \n150 × 0,20 = 30.\n\nEntão, 20% de 150 é 30.\n\nVocê escolheu a resposta certa: 30! Ótimo trabalho! Essa forma de pensar serve para qualquer problema com porcentagem. Sempre transforme a porcentagem em decimal e multiplique pelo valor total. Se quiser, posso ajudar com mais exemplos."
+  }
+]

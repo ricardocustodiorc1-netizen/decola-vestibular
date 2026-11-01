@@ -39,10 +39,11 @@
       if(next===signature)return;
       abort();signature=next;context=null;history=[];initialized=false;lastStart=0;failedMessage=null;
       log.replaceChildren();input.value='';status.textContent='';delete status.dataset.errorCode;retry.hidden=true;fallback.hidden=true;fallback.open=false;box.hidden=true;trigger.setAttribute('aria-expanded','false');
-      if(next){try{context=api.questionContext(question,state);}catch{trigger.hidden=true;return;}const guidance=api.localGuidance(question,state);fallbackTitle.textContent=guidance.title;fallbackText.textContent=guidance.text;mode.textContent=context.mode==='hint'?'Vamos pensar juntos, sem revelar a resposta: você ainda tem uma tentativa.':'Vamos entender a resolução, passo a passo.';}
+      if(next){try{context=api.questionContext(question,state);}catch{trigger.hidden=true;return;}input.maxLength=api.followupLimit(context);label.textContent='Sua pergunta complementar (até '+input.maxLength+' caracteres)';const guidance=api.localGuidance(question,state);fallbackTitle.textContent=guidance.title;fallbackText.textContent=guidance.text;mode.textContent=context.mode==='hint'?'Vamos pensar juntos, sem revelar a resposta: você ainda tem uma tentativa.':'Vamos entender a resolução, passo a passo.';}
     }
     async function ask(followup=''){
       if(busy||!context)return;
+      if(followup.length>api.followupLimit(context)){status.textContent='Encurte sua pergunta para até '+input.maxLength+' caracteres. O contexto da questão será mantido.';return;}
       // Client-side courtesy limit; the server must enforce its own rate/cost limits.
       if(lastStart && Date.now()-lastStart<15000){status.textContent='Aguarde alguns segundos antes de pedir outra explicação.';return;}
       busy=true;lastStart=Date.now();send.disabled=true;retry.disabled=true;retry.hidden=true;
