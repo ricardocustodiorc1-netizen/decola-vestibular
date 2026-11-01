@@ -72,3 +72,15 @@
 .leo-inline-local summary{min-height:44px;display:list-item;cursor:pointer;font-weight:700;line-height:1.5;padding:8px 0;box-sizing:border-box}
 .leo-inline-local summary:focus-visible{outline:3px solid #e6a627;outline-offset:3px}
 .leo-inline-local p{font-size:16px!important;line-height:1.65!important}
+
+/* Same six destinations at every size; the mobile menu takes space in the layout. */
+.study-shortcuts{display:block}
+.study-destinations{display:flex;gap:8px;flex-wrap:wrap}
+.study-menu-toggle{display:none}
+.study-destinations button{flex:1 1 auto}
+@media(max-width:650px){
+ .study-menu-toggle{display:block;width:100%;text-align:left}
+ .study-shortcuts:not(.is-expanded) .study-destinations{display:none}
+ .study-destinations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px;max-height:30vh;overflow:auto;padding:3px}
+ .study-destinations button{min-width:0;min-height:44px;font-size:14px;padding:10px 6px}
+}

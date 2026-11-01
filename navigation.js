@@ -17,16 +17,22 @@ function initialize() {
   const shortcuts = document.createElement('nav');
   shortcuts.className = 'study-shortcuts';
   shortcuts.setAttribute('aria-label', 'Navegação dos estudos');
-  [['dashboard','Meu Decola'],['subjects','Aulas'],['chat','Professor Leo'],['simulado','Simulados']].forEach(([view,label]) => {
+  const destinations=document.createElement('div');destinations.className='study-destinations';destinations.id='study-destinations';
+  const toggle=document.createElement('button');toggle.type='button';toggle.className='study-menu-toggle';toggle.textContent='Menu de estudos';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-controls',destinations.id);
+  const collapse=(focus=false)=>{shortcuts.classList.remove('is-expanded');toggle.setAttribute('aria-expanded','false');if(focus)toggle.focus();};
+  toggle.addEventListener('click',()=>{const expanded=shortcuts.classList.toggle('is-expanded');toggle.setAttribute('aria-expanded',String(expanded));});
+  shortcuts.addEventListener('keydown',event=>{if(event.key==='Escape'&&shortcuts.classList.contains('is-expanded')){event.preventDefault();event.stopPropagation();collapse(true);}});
+  [['dashboard','Meu Decola'],['subjects','Aulas'],['exercises','Exercícios'],['chat','Professor Leo'],['progress','Progresso'],['simulado','Simulados']].forEach(([view,label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.textContent = label; button.dataset.studyView = view;
-    button.addEventListener('click', () => {
-      openStudy(view);
-      shortcuts.querySelectorAll('button').forEach(b => b.removeAttribute('aria-current'));
-      button.setAttribute('aria-current', 'page');
-    });
-    shortcuts.append(button);
+    button.addEventListener('click', () => { collapse();openStudy(view); });
+    destinations.append(button);
   });
+  const setActive=view=>{
+   destinations.querySelectorAll('button').forEach(b=>{if(b.dataset.studyView===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+   const name=destinations.querySelector('[aria-current]')?.textContent||'Estudos';toggle.textContent='Menu de estudos · '+name;
+  };
+  shortcuts.append(toggle,destinations);
   panel.querySelector('.leo-top').after(shortcuts);
   const direct = document.createElement('button');
   direct.type = 'button'; direct.className = 'study-nav-link'; direct.textContent = 'Professor Leo';
@@ -58,7 +64,7 @@ function initialize() {
     if (open === wasOpen) return;
     wasOpen = open;
     if (open) {
-      shortcuts.querySelectorAll('button').forEach(b => b.removeAttribute('aria-current'));
+      collapse();
       background.forEach(el => { inertBefore.set(el, el.inert); el.inert = true; });
       close.focus({ preventScroll: true });
     } else {
@@ -69,7 +75,7 @@ function initialize() {
   };
   new MutationObserver(sync).observe(panel, { attributes: true, attributeFilter: ['hidden'] });
   panel.addEventListener('keydown', event => {
-    if (event.key === 'Escape') { event.preventDefault(); close.click(); return; }
+    if (event.key === 'Escape') { event.preventDefault(); collapse();close.click(); return; }
     if (event.key !== 'Tab') return;
     const focusable = [...panel.querySelectorAll('a[href],button,input,select,textarea,[tabindex="0"]')].filter(el => !el.disabled && el.getClientRects().length);
     const first = focusable[0], last = focusable.at(-1);
@@ -78,10 +84,8 @@ function initialize() {
   });
   // Show the true destination even when an older module switches views.
   document.addEventListener('decola:leo-view', event => {
-    shortcuts.querySelectorAll('button').forEach(b => {
-      if (b.dataset.studyView === event.detail.view) b.setAttribute('aria-current', 'page');
-      else b.removeAttribute('aria-current');
-    });
+    const view=event.detail.view;setActive(['practice','portuguese','humanas'].includes(view)?'exercises':view==='lesson'?'subjects':view==='menu'?'dashboard':view);
+
   });
   const syncDashboard = () => {
     const dashboard = panel.querySelector('.study-dashboard');
@@ -91,10 +95,7 @@ function initialize() {
     panel.querySelector('.leo-back').hidden = true;
     panel.querySelector('[aria-label="Retomar os exercícios sem perder o progresso"]').hidden = true;
     panel.querySelector('.leo-top strong').textContent = '🚀 Decola Vestibular — Área de estudos';
-    shortcuts.querySelectorAll('button').forEach(b => {
-      const active = b.dataset.studyView === (heading.includes('Meu Decola') || heading.includes('progresso') ? 'dashboard' : 'subjects');
-      if (active) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
-    });
+    setActive(heading.includes('Meu Decola')?'dashboard':heading.includes('progresso')?'progress':heading.includes('Exercícios')?'exercises':'subjects');
   };
   new MutationObserver(syncDashboard).observe(panel.querySelector('.leo-body'), {childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
   sync();

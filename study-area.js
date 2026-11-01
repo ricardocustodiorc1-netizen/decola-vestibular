@@ -735,6 +735,8 @@
  document.addEventListener('decola:open-study',event=>{
   const action=event.detail?.view;
   if(action==='chat'||action==='simulado')openDashboardTool([action==='chat'?'conversar com o professor leo':'simulado']);
+  else if(action==='exercises')showExerciseMenu();
+  else if(action==='progress'){showDashboard();showStudyProgress(panel().querySelector('.study-dashboard'));}
   else if(action==='subjects'){showDashboard();showSubjects(panel().querySelector('.study-dashboard'));}
   else showDashboard();
  });
