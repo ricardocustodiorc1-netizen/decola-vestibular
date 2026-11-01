@@ -33,11 +33,11 @@
     status.textContent=api.errorMessage(error)+' Sua resposta foi mantida; a orientação local está disponível abaixo.';fallback.hidden=false;retry.hidden=false;
    }finally{clearTimeout(timer);if(controller===active){controller=null;busy=false;send.disabled=false;retry.disabled=false;}}
   }
-  trigger.addEventListener('click',()=>{origin=scroll?.scrollTop||0;box.hidden=false;trigger.setAttribute('aria-expanded','true');close.focus({preventScroll:true});if(!history.length)ask();});
+  trigger.addEventListener('click',()=>{origin=scroll?.scrollTop||0;box.hidden=false;trigger.setAttribute('aria-expanded','true');box.scrollIntoView({block:'nearest'});close.focus({preventScroll:true});if(!history.length)ask();});
   close.addEventListener('click',hide);box.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();hide();}});
   send.addEventListener('click',()=>{const text=input.value.trim();if(!text){status.textContent='Escreva sua pergunta complementar.';input.focus();return;}ask(text);});retry.addEventListener('click',()=>ask(lastQuestion));
   const panel=host.closest('.leo-panel'),dashboard=host.closest('.study-dashboard');
-  const observer=new MutationObserver(()=>{if(!host.isConnected){abort();observer.disconnect();}else if(panel.hidden||dashboard.hidden){abort();box.hidden=true;trigger.setAttribute('aria-expanded','false');}});
+  const observer=new MutationObserver(()=>{if(!host.isConnected){abort();observer.disconnect();}else if(panel.hidden||dashboard.hidden){abort();if(!box.hidden)box.hidden=true;trigger.setAttribute('aria-expanded','false');}});
   observer.observe(panel,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
  }
  globalThis.DecolaMemoryHelp=Object.freeze({mount});

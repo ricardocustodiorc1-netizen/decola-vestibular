@@ -23,6 +23,7 @@
   const backup=make('textarea');backup.readOnly=true;backup.rows=4;backup.hidden=true;backup.setAttribute('aria-label','Cópia dos dados somente deste desafio');
   tools.append(make('p','','Copiar ou apagar aqui afeta somente o Desafio de Porcentagem e sua preferência de caderno. Suas aulas e simulados permanecem intactos.'),button('Mostrar cópia das minhas respostas',()=>{backup.value=JSON.stringify(store.read(),null,2);backup.hidden=false;backup.focus();backup.select();}),backup,button('Apagar somente os dados deste Desafio',()=>{store.clear();select.value=store.read().notePreference;render();}));
   challengeHost.append(title,intro,privacy,issue,content,tools);
+  challengeHost.addEventListener('keydown',event=>{const expanded=event.target.closest('details');if(event.key==='Escape'&&expanded?.open){event.preventDefault();event.stopPropagation();expanded.open=false;expanded.querySelector('summary')?.focus();}});
   function updateIssue(){issue.textContent=store.issue();issue.hidden=!issue.textContent;}
   function change(action){store.dispatch(action);updateIssue();}
   function focusContent(){if(content.isConnected&&!challengeHost.closest('.study-dashboard')?.hidden){const target=content.querySelector('h4')||content;target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'});}}
@@ -59,7 +60,7 @@
     if(['partial','support','unobserved'].includes(state.assessments[index])||response.notRemembered){
      const reinforce=make('details','memory-reinforce');reinforce.append(make('summary','','Praticar este ponto · reforço sem punição'),make('p','',item.reinforce.question));
      const feedback=make('p');feedback.setAttribute('role','status');
-     const submit=value=>{if(!value.trim()||(!item.reinforce.choices&&!Number.isFinite(Number(value.replace(',','.'))))){feedback.textContent='Digite um número válido.';return;}change({type:'reinforce',index,value});const result=store.read().reinforcement[index].at(-1);feedback.textContent=(result?.correct?'✓ Você aplicou a ideia. ':'Vamos revisar juntos. ')+item.reinforce.why+' Sua resposta inicial continua preservada.';};
+     const submit=value=>{if(store.read().reinforcement[index].length>=20){feedback.textContent='Você já registrou 20 atividades deste reforço. Pode conferir a referência e continuar estudando.';return;}if(!value.trim()||(!item.reinforce.choices&&!Number.isFinite(Number(value.replace(',','.'))))){feedback.textContent='Digite um número válido.';return;}change({type:'reinforce',index,value});const result=store.read().reinforcement[index].at(-1);feedback.textContent=(result?.correct?'✓ Você aplicou a ideia. ':'Vamos revisar juntos. ')+item.reinforce.why+' Sua resposta inicial continua preservada.';};
      if(item.reinforce.choices)item.reinforce.choices.forEach((text,i)=>reinforce.append(button(text,()=>submit(String(i)))));
      else{const answerLabel=make('label','','Resposta ao reforço: '),answer=make('input');answer.type='text';answer.inputMode='decimal';answer.maxLength=40;answerLabel.append(answer);reinforce.append(answerLabel,button('Conferir reforço',()=>submit(answer.value)));}
      const attempts=state.reinforcement[index];if(attempts.length)feedback.textContent='Última atividade: '+(attempts.at(-1).correct?'ideia aplicada. ':'vamos revisar. ')+item.reinforce.why;

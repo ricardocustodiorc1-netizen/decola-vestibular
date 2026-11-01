@@ -1012,11 +1012,11 @@ body.leo-study-open{overflow:hidden}
     status.textContent=api.errorMessage(error)+' Sua resposta foi mantida; a orientação local está disponível abaixo.';fallback.hidden=false;retry.hidden=false;
    }finally{clearTimeout(timer);if(controller===active){controller=null;busy=false;send.disabled=false;retry.disabled=false;}}
   }
-  trigger.addEventListener('click',()=>{origin=scroll?.scrollTop||0;box.hidden=false;trigger.setAttribute('aria-expanded','true');close.focus({preventScroll:true});if(!history.length)ask();});
+  trigger.addEventListener('click',()=>{origin=scroll?.scrollTop||0;box.hidden=false;trigger.setAttribute('aria-expanded','true');box.scrollIntoView({block:'nearest'});close.focus({preventScroll:true});if(!history.length)ask();});
   close.addEventListener('click',hide);box.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();hide();}});
   send.addEventListener('click',()=>{const text=input.value.trim();if(!text){status.textContent='Escreva sua pergunta complementar.';input.focus();return;}ask(text);});retry.addEventListener('click',()=>ask(lastQuestion));
   const panel=host.closest('.leo-panel'),dashboard=host.closest('.study-dashboard');
-  const observer=new MutationObserver(()=>{if(!host.isConnected){abort();observer.disconnect();}else if(panel.hidden||dashboard.hidden){abort();box.hidden=true;trigger.setAttribute('aria-expanded','false');}});
+  const observer=new MutationObserver(()=>{if(!host.isConnected){abort();observer.disconnect();}else if(panel.hidden||dashboard.hidden){abort();if(!box.hidden)box.hidden=true;trigger.setAttribute('aria-expanded','false');}});
   observer.observe(panel,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
  }
  globalThis.DecolaMemoryHelp=Object.freeze({mount});
@@ -1051,9 +1051,10 @@ body.leo-study-open{overflow:hidden}
   const backup=make('textarea');backup.readOnly=true;backup.rows=4;backup.hidden=true;backup.setAttribute('aria-label','Cópia dos dados somente deste desafio');
   tools.append(make('p','','Copiar ou apagar aqui afeta somente o Desafio de Porcentagem e sua preferência de caderno. Suas aulas e simulados permanecem intactos.'),button('Mostrar cópia das minhas respostas',()=>{backup.value=JSON.stringify(store.read(),null,2);backup.hidden=false;backup.focus();backup.select();}),backup,button('Apagar somente os dados deste Desafio',()=>{store.clear();select.value=store.read().notePreference;render();}));
   challengeHost.append(title,intro,privacy,issue,content,tools);
+  challengeHost.addEventListener('keydown',event=>{const expanded=event.target.closest('details');if(event.key==='Escape'&&expanded?.open){event.preventDefault();event.stopPropagation();expanded.open=false;expanded.querySelector('summary')?.focus();}});
   function updateIssue(){issue.textContent=store.issue();issue.hidden=!issue.textContent;}
   function change(action){store.dispatch(action);updateIssue();}
-  function focusContent(){requestAnimationFrame(()=>{if(content.isConnected&&!challengeHost.closest('.study-dashboard')?.hidden){const target=content.querySelector('h4')||content;target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'});}});}
+  function focusContent(){if(content.isConnected&&!challengeHost.closest('.study-dashboard')?.hidden){const target=content.querySelector('h4')||content;target.tabIndex=-1;target.focus({preventScroll:true});target.scrollIntoView({block:'nearest'});}}
   function start(){change({type:'start'});render();focusContent();}
   function defer(){change({type:'defer'});render();focusContent();}
   function supportedText(r){const s=r.support;return s.consulted?'Consulta declarada':s.aiReceived?'Ajuda da IA recebida':s.hint?'Dica local utilizada':s.aiRequested?'Ajuda de IA solicitada, sem confirmação de resposta':'Sem ajuda registrada (autodeclarado)';}
@@ -1083,11 +1084,11 @@ body.leo-study-open{overflow:hidden}
     card.append(make('h4','',item.objective),make('p','',item.question),make('p','memory-student','Sua resposta inicial: '+(response.notRemembered?'Não lembro ainda. '+response.answer:response.answer)),make('small','',supportedText(response)),make('p','memory-reference','Referência da aula (sem IA): '+item.reference),make('p','',item.rubric));
     const label=make('label','','Comparando com a referência, como você avalia sua explicação? '),select=make('select');select.setAttribute('aria-label','Autocorreção do item '+(index+1));
     for(const [value,text]of [['','Escolher depois'],['demonstrated','Demonstrei o objetivo'],['partial','Demonstrei parcialmente'],['support','Preciso de apoio'],['unobserved','Ainda não observei / não respondi']]){const opt=make('option','',text);opt.value=value;select.append(opt);}select.value=state.assessments[index]||'';
-    select.addEventListener('change',()=>{if(select.value)change({type:'assess',index,value:select.value});else change({type:'assess',index,value:'unobserved'});render();});label.append(select);card.append(label);
+    select.addEventListener('change',()=>{if(select.value)change({type:'assess',index,value:select.value});else change({type:'assess',index,value:'unobserved'});render();content.querySelectorAll('select')[index]?.focus({preventScroll:true});});label.append(select);card.append(label);
     if(['partial','support','unobserved'].includes(state.assessments[index])||response.notRemembered){
      const reinforce=make('details','memory-reinforce');reinforce.append(make('summary','','Praticar este ponto · reforço sem punição'),make('p','',item.reinforce.question));
      const feedback=make('p');feedback.setAttribute('role','status');
-     const submit=value=>{if(!value.trim()||(!item.reinforce.choices&&!Number.isFinite(Number(value.replace(',','.'))))){feedback.textContent='Digite um número válido.';return;}change({type:'reinforce',index,value});const result=store.read().reinforcement[index].at(-1);feedback.textContent=(result?.correct?'✓ Você aplicou a ideia. ':'Vamos revisar juntos. ')+item.reinforce.why+' Sua resposta inicial continua preservada.';};
+     const submit=value=>{if(store.read().reinforcement[index].length>=20){feedback.textContent='Você já registrou 20 atividades deste reforço. Pode conferir a referência e continuar estudando.';return;}if(!value.trim()||(!item.reinforce.choices&&!Number.isFinite(Number(value.replace(',','.'))))){feedback.textContent='Digite um número válido.';return;}change({type:'reinforce',index,value});const result=store.read().reinforcement[index].at(-1);feedback.textContent=(result?.correct?'✓ Você aplicou a ideia. ':'Vamos revisar juntos. ')+item.reinforce.why+' Sua resposta inicial continua preservada.';};
      if(item.reinforce.choices)item.reinforce.choices.forEach((text,i)=>reinforce.append(button(text,()=>submit(String(i)))));
      else{const answerLabel=make('label','','Resposta ao reforço: '),answer=make('input');answer.type='text';answer.inputMode='decimal';answer.maxLength=40;answerLabel.append(answer);reinforce.append(answerLabel,button('Conferir reforço',()=>submit(answer.value)));}
      const attempts=state.reinforcement[index];if(attempts.length)feedback.textContent='Última atividade: '+(attempts.at(-1).correct?'ideia aplicada. ':'vamos revisar. ')+item.reinforce.why;
