@@ -26,3 +26,7 @@ Aprovar escopo do piloto, rubrica das três perguntas, regra de revisão adaptat
 ## Validação desta entrega
 
 Documentação confrontada com os módulos existentes. A suíte atual será executada como verificação de integridade, sem afirmar que testes aprovados validam recursos ainda não implementados. Resultado: `npm test` — **27 testes passaram, 0 falharam**. `git diff --check` aprovado. Apenas quatro arquivos Markdown novos, sem alterações de código ou dados. Links internos locais e contas dos exemplos conferidos.
+
+## Implementação autorizada do primeiro piloto
+
+Após aprovação do planejamento, foi autorizada somente a implementação inicial de Porcentagem. O fluxo de anotação opcional, Desafio, reforço e ajuda contextual está descrito em [PILOTO-ENTREGA.md](PILOTO-ENTREGA.md), com 39 testes aprovados e limitações de validação. Editor próprio, agenda/revisões automáticas e demais expansões continuam fora do escopo. Os documentos acima preservam a especificação aprovada; a entrega separa o que já existe do que continua planejado.
