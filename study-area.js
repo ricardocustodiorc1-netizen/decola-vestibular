@@ -599,6 +599,47 @@
   {name:'Estatística',key:'decola-smart-statistics-v1',subject:'Matemática'},
   {name:'Interpretação de Textos',key:'decola-smart-language-interpretation-v1',subject:'Linguagens'}
  ];
+ const navigationSession=globalThis.DecolaStudySession.session;
+ let restoreNavigation=null;
+ function trackLessonNavigation(p){
+  const body=p.querySelector('.leo-body');let active=null;
+  const current=()=>{
+   const d=p.querySelector('.study-dashboard');
+   if(p.hidden||!d||d.hidden)return null;
+   const heading=d.querySelector('h2');
+   if(!heading?.textContent.includes('Aula Inteligente'))return null;
+   const path=studyPaths.find(x=>heading.textContent.includes(x.name));
+   return path?{path,heading,d}:null;
+  };
+  function save(question){
+   const view=current();if(!view||active?.heading!==view.heading)return;
+   const old=navigationSession.read();
+   navigationSession.save({lessonKey:view.path.key,question:question??(old?.lessonKey===view.path.key?old.question:null),scrollTop:body.scrollTop});
+  }
+  body.addEventListener('scroll',()=>save(),{passive:true});
+  body.addEventListener('click',event=>{
+   const view=current();if(!view)return;
+   const cards=[...view.d.querySelectorAll('.study-smart-question')];
+   const card=event.target.closest('.study-smart-question');
+   save(card?cards.indexOf(card):undefined);
+  },true);
+  const sync=()=>{
+   const view=current();if(!view){active=null;return;}
+   if(active?.heading===view.heading)return;
+   active=view;
+   const restore=restoreNavigation?.lessonKey===view.path.key?restoreNavigation:null;restoreNavigation=null;
+   navigationSession.save(restore||{lessonKey:view.path.key,question:null,scrollTop:0});
+   if(restore)requestAnimationFrame(()=>{
+    if(current()?.heading!==view.heading)return;
+    body.scrollTo(0,restore.scrollTop);
+    const card=restore.question===null?null:view.d.querySelectorAll('.study-smart-question')[restore.question];
+    if(card){card.tabIndex=-1;card.focus({preventScroll:true});}
+   });
+  };
+  new MutationObserver(sync).observe(body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+  new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['hidden']});
+  sync();
+ }
  function lessonStats(path){
   try{
    const obj=JSON.parse(localStorage.getItem(path.key)||'{}');
@@ -657,11 +698,13 @@
   hideLegacyViews(p);dashboard.replaceChildren();
   const heading=document.createElement('h2');heading.textContent='🚀 Meu Decola';
   const intro=document.createElement('p');intro.textContent='Seu espaço de estudos: escolha um caminho e continue de onde parou.';
-  const recent=(()=>{try{return studyPaths.map(path=>({...path,stats:lessonStats(path)})).filter(x=>x.stats.done>0).sort((a,b)=>a.stats.done-b.stats.done)[0]||{...studyPaths[0],stats:lessonStats(studyPaths[0])};}catch{return {...studyPaths[0],stats:{done:0,correct:0}};}})();
+  const savedNavigation=navigationSession.read();
+  const recentPath=studyPaths.find(path=>path.key===savedNavigation?.lessonKey)||studyPaths[0];
+  const recent={...recentPath,stats:lessonStats(recentPath)};
   const hero=document.createElement('section');hero.className='study-dashboard-hero';
-  const heroTitle=document.createElement('h3');heroTitle.textContent='📘 Continue estudando';
+  const heroTitle=document.createElement('h3');heroTitle.textContent=savedNavigation?'📘 Retomar atividade':'📘 Comece por aqui';
   const heroText=document.createElement('p');heroText.textContent=recent.subject+' • '+recent.name+' — '+recent.stats.done+' de 3 questões concluídas';
-  const continueBtn=document.createElement('button');continueBtn.type='button';continueBtn.className='study-dashboard-all study-dashboard-primary';continueBtn.textContent='Continuar estudando →';continueBtn.onclick=()=>launchLesson(recent);
+  const continueBtn=document.createElement('button');continueBtn.type='button';continueBtn.className='study-dashboard-all study-dashboard-primary';continueBtn.textContent='Continuar estudando →';continueBtn.onclick=()=>{restoreNavigation=savedNavigation;launchLesson(recent);};
   hero.append(heroTitle,heroText,continueBtn);
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
   const options=[
@@ -715,6 +758,7 @@
   if(launch){launch.textContent='🎓 Abrir área de estudos';launch.setAttribute('aria-label','Abrir painel de estudos');launch.addEventListener('click',()=>{if(!panel()?.hidden)showDashboard();});}
   const p=panel();
   if(p){
+   trackLessonNavigation(p);
    // Voltar no cabeçalho azul: respeita o nível atual da navegação.
    const top=p.querySelector('.leo-top');
    lessonReturnButton=document.createElement('button');lessonReturnButton.type='button';
