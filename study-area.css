@@ -138,3 +138,11 @@ body.leo-study-open{overflow:hidden}
 .study-dashboard-primary{background:#1744c3!important;color:#fff!important;border-color:#1744c3!important;font-weight:800!important}
 .study-dashboard-card:focus-visible,.study-dashboard-all:focus-visible{outline:3px solid #ffb84d;outline-offset:3px}
 @media(max-width:600px){.study-dashboard-grid{grid-template-columns:1fr}.study-dashboard-hero{padding:18px}.study-dashboard-card{min-height:125px;padding:18px}}
+
+.study-dashboard-section{margin:28px 0}
+.study-dashboard-section>h3{margin:0 0 14px}
+.study-lesson-card{min-height:140px}
+.study-lesson-status{align-self:flex-start;padding:5px 10px;border-radius:99px;background:#eef2fa;color:#385278;font-size:13px;font-weight:700}
+.study-lesson-status[data-state="started"]{background:#fff1d3;color:#775115}
+.study-lesson-status[data-state="done"]{background:#def4e7;color:#166340}
+.study-tools{padding-top:12px;border-top:1px solid #d5e1ff}

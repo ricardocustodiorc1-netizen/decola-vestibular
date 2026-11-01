@@ -644,9 +644,10 @@
   try{
    const obj=JSON.parse(localStorage.getItem(path.key)||'{}');
    const entries=[0,1,2].map(i=>obj?.[i]);
-   return {done:entries.filter(v=>v?.done).length,correct:entries.filter(v=>v?.done).length};
-  }catch{return {done:0,correct:0};}
+   return {done:entries.filter(v=>v?.done).length,started:entries.some(v=>v?.attempts>0)};
+  }catch{return {done:0,started:false};}
  }
+ function lessonStatus(stats){return stats.done===3?'Concluída':stats.started?'Em andamento':'Disponível';}
  function launchLesson(path){
   const p=openPanel();if(!p)return;
   let d=p.querySelector('.study-dashboard');if(!d){showDashboard();d=p.querySelector('.study-dashboard');}
@@ -668,7 +669,7 @@
   studyPaths.forEach(path=>{
    const stats=lessonStats(path),b=document.createElement('button');b.type='button';b.className='study-dashboard-card';
    const name=document.createElement('strong');name.textContent=path.name;
-   const desc=document.createElement('small');desc.textContent=path.subject+' • '+stats.done+' de 3 questões concluídas';
+   const desc=document.createElement('small');desc.textContent=path.subject+' • '+lessonStatus(stats)+' • '+stats.done+' de 3 questões concluídas';
    const action=document.createElement('span');action.className='study-subject-action';action.textContent='Abrir aula →';
    b.append(name,desc,action);b.onclick=()=>launchLesson(path);grid.append(b);
   });
@@ -703,9 +704,21 @@
   const recent={...recentPath,stats:lessonStats(recentPath)};
   const hero=document.createElement('section');hero.className='study-dashboard-hero';
   const heroTitle=document.createElement('h3');heroTitle.textContent=savedNavigation?'📘 Retomar atividade':'📘 Comece por aqui';
-  const heroText=document.createElement('p');heroText.textContent=recent.subject+' • '+recent.name+' — '+recent.stats.done+' de 3 questões concluídas';
+  const heroText=document.createElement('p');heroText.textContent=recent.subject+' • '+recent.name+' — '+lessonStatus(recent.stats)+' • '+recent.stats.done+' de 3 questões concluídas'+(savedNavigation?.question!==null&&savedNavigation?.question!==undefined?' • Questão '+(savedNavigation.question+1):'');
   const continueBtn=document.createElement('button');continueBtn.type='button';continueBtn.className='study-dashboard-all study-dashboard-primary';continueBtn.textContent='Continuar estudando →';continueBtn.onclick=()=>{restoreNavigation=savedNavigation;launchLesson(recent);};
   hero.append(heroTitle,heroText,continueBtn);
+  const lessons=document.createElement('section');lessons.className='study-dashboard-section';
+  const lessonsTitle=document.createElement('h3');lessonsTitle.textContent='Aulas disponíveis';
+  const lessonGrid=document.createElement('div');lessonGrid.className='study-dashboard-grid study-lesson-grid';
+  studyPaths.forEach(path=>{
+   const stats=lessonStats(path),card=document.createElement('button');card.type='button';card.className='study-dashboard-card study-lesson-card';
+   const name=document.createElement('strong');name.textContent=path.name;
+   const detail=document.createElement('small');detail.textContent=path.subject+' • '+stats.done+' de 3 concluídas';
+   const status=document.createElement('span');status.className='study-lesson-status';status.dataset.state=stats.done===3?'done':stats.started?'started':'available';status.textContent=lessonStatus(stats);
+   card.append(name,detail,status);card.onclick=()=>launchLesson(path);lessonGrid.append(card);
+  });lessons.append(lessonsTitle,lessonGrid);
+  const tools=document.createElement('section');tools.className='study-dashboard-section study-tools';
+  const toolsTitle=document.createElement('h3');toolsTitle.textContent='Seus atalhos';
   const grid=document.createElement('div');grid.className='study-dashboard-grid';
   const options=[
    ['📚','Minhas aulas','Matérias e trilhas de aprendizagem',()=>showSubjects(dashboard)],
@@ -722,7 +735,7 @@
    b.append(i,name,desc);b.onclick=action;grid.append(b);
   });
   const all=document.createElement('button');all.type='button';all.className='study-dashboard-all';all.textContent='Mais ferramentas de estudo →';all.onclick=()=>{dashboard.hidden=true;p.querySelector('.leo-back')?.click();};
-  dashboard.append(heading,intro,hero,grid,all);dashboard.hidden=false;
+  tools.append(toolsTitle,grid,all);dashboard.append(heading,intro,hero,lessons,tools);dashboard.hidden=false;
   p.querySelector('.leo-body')?.scrollTo(0,0);
  }
  // Delegação no documento: funciona mesmo se o Professor Leo for criado depois deste script.
