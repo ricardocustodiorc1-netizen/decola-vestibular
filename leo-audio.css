@@ -1,0 +1,8 @@
+.leo-audio{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding:12px;border:1px solid #bdcef0;border-radius:10px;background:#f6f9ff;color:#17335f;white-space:normal;font-weight:400}
+.leo-audio button{font:inherit;font-size:15px;min-height:44px;padding:10px 12px;border:1px solid #acbfe6;border-radius:8px;background:white;color:#1744a5;cursor:pointer;margin:0}
+.leo-audio button:disabled{opacity:.6;cursor:default}
+.leo-audio label{flex-basis:100%;font-size:15px!important;font-weight:400;margin:4px 0}
+.leo-audio select{display:block;width:100%;max-width:100%;min-width:0;min-height:44px;font-size:16px;padding:8px;border:1px solid #acbfe6;border-radius:8px;background:white;color:#17335f}
+.leo-audio-status,.leo-audio small{flex-basis:100%;font-size:14px!important;line-height:1.5!important}
+.leo-audio :is(button,select):focus-visible{outline:3px solid #e6a627;outline-offset:3px}
+@media(max-width:650px){.leo-audio{padding:10px}.leo-audio button{flex:1 1 120px;width:auto!important;font-size:14px}}

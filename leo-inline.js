@@ -31,7 +31,7 @@
     const note=document.createElement('small');note.textContent='Sua solicitação e o contexto desta questão serão enviados à API do Professor Leo. Não envie dados pessoais. Confira informações importantes.';
     box.append(top,mode,localNotice,log,label,input,actions,status,fallback,note);host.append(trigger,box);
     let signature='',context=null,history=[],controller=null,busy=false,initialized=false,lastStart=0,failedMessage=null,originScroll=0;
-    function bubble(who,text){const p=document.createElement('p');p.className='leo-inline-bubble '+who;const name=document.createElement('strong');name.textContent=who==='student'?'Você: ':'Professor Leo: ';const body=document.createElement('span');body.textContent=text;p.append(name,body);log.append(p);}
+    function bubble(who,text){const p=document.createElement('p');p.className='leo-inline-bubble '+who;const name=document.createElement('strong');name.textContent=who==='student'?'Você: ':'Professor Leo: ';const body=document.createElement('span');body.textContent=text;p.append(name,body);log.append(p);if(who==='teacher')globalThis.DecolaLeoAudio?.attach(p,text);}
     function abort(){if(busy)status.textContent='Solicitação interrompida. Abra novamente para continuar.';controller?.abort();controller=null;busy=false;send.disabled=false;retry.disabled=false;}
     function sync(){
       const state=getState();trigger.hidden=!Number.isInteger(state?.choice);

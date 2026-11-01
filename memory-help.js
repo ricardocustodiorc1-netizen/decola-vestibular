@@ -16,7 +16,7 @@
   const scroll=host.closest('.leo-panel')?.querySelector('.leo-body');
   function abort(){controller?.abort();controller=null;busy=false;send.disabled=false;retry.disabled=false;}
   function hide(){box.hidden=true;trigger.setAttribute('aria-expanded','false');abort();scroll?.scrollTo(0,origin);trigger.focus({preventScroll:true});}
-  function bubble(who,text){const p=make('p');p.className='leo-inline-bubble';p.append(make('strong',who+': '),document.createTextNode(text));log.append(p);}
+  function bubble(who,text){const p=make('p');p.className='leo-inline-bubble';p.append(make('strong',who+': '),document.createTextNode(text));log.append(p);if(who==='Professor Leo')globalThis.DecolaLeoAudio?.attach(p,text);}
   async function ask(question=''){
    if(busy)return;
    if(question.length>model.helpLimit(getState(),index)){status.textContent='Encurte a pergunta para manter o contexto completo.';return;}

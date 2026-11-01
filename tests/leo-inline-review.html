@@ -1,8 +1,18 @@
 <!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Teste isolado — Leo na questão</title><style>body{margin:0;background:#eaf0fa;font:16px system-ui;color:#152a56}header{padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}p{margin:0}button{padding:10px;min-height:44px;border:1px solid #9fb6de;border-radius:8px;background:white;color:#163e9b}iframe{display:block;width:390px;max-width:100%;height:844px;margin:auto;border:1px solid #b9c9e6}</style><header><strong>TESTE ISOLADO — respostas controladas, sem IA</strong><p>Armazenamento fictício em memória. Nenhuma chamada externa.</p><button data-width="360">360 px</button><button data-width="390">390 px</button><button data-width="768">768 px</button><button data-width="1280">Desktop</button><button data-mode="success">Resposta de teste</button><button data-mode="error">Erro HTTP de teste</button><button data-mode="origin">Origem bloqueada (403)</button><button data-mode="config">Configuração ausente</button><button data-mode="network">Falha de conexão</button><button data-mode="pending">Aguardar para testar fechamento</button><button id="clock">Avançar intervalo de teste</button></header><iframe id="student-preview" title="Piloto do Leo — ambiente de teste"></iframe><script>
 (async()=>{
  const frame=document.querySelector('iframe');
- const setup=()=>{
+ const setup=(audioMode)=>{
   const data=new Map();Object.defineProperty(window,'localStorage',{value:{getItem:k=>data.get(k)??null,setItem:(k,v)=>{data.set(k,String(v));document.documentElement.dataset.leoTestStorage=JSON.stringify(Object.fromEntries(data));},removeItem:k=>data.delete(k)}});
+  if(audioMode==='none')Object.defineProperty(window,'speechSynthesis',{value:undefined});
+  if(audioMode==='mock'){
+   const calls=[];let current=null,voices=[],voiceListeners=[];
+   const record=(action,text)=>{calls.push({action,text});document.documentElement.dataset.audioCalls=JSON.stringify(calls);};
+   const synth={paused:false,getVoices:()=>voices,addEventListener:(name,fn)=>{if(name==='voiceschanged')voiceListeners.push(fn);},speak:u=>{current=u;record('speak',u.text);u.onstart?.();},cancel:()=>{record('cancel');current=null;},pause:()=>{record('pause');synth.paused=true;},resume:()=>{record('resume');synth.paused=false;}};
+   Object.defineProperty(window,'speechSynthesis',{value:synth});Object.defineProperty(window,'SpeechSynthesisUtterance',{value:class{constructor(text){this.text=text;}}});document.documentElement.dataset.audioCalls='[]';
+   window.addEventListener('audio-test-voices',()=>{voices=[{name:'Voz feminina de teste',lang:'pt-BR',voiceURI:'female',localService:true},{name:'Ricardo',lang:'pt-BR',voiceURI:'male',localService:true}];voiceListeners.forEach(fn=>fn());});
+   window.addEventListener('audio-test-end',()=>{const old=current;current=null;old?.onend?.();});
+   window.addEventListener('audio-test-error',()=>current?.onerror?.());
+  }
   const now=Date.now.bind(Date);Date.now=()=>now()+Number(document.documentElement.dataset.leoClock||0);
   document.documentElement.dataset.leoTestMode='success';document.documentElement.dataset.leoRequests='[]';
   window.fetch=async(url,options)=>{
@@ -16,8 +26,10 @@
    return {ok:true,json:async()=>({answer:'RESPOSTA CONTROLADA DE TESTE — não é IA. O contexto desta questão foi recebido. Este texto serve apenas para validar a interface e o envio de perguntas complementares.'})};
   };
  };
+ const audioMode=new URLSearchParams(location.search).get('audio')||'';
+ if(audioMode){const info=document.createElement('p');info.textContent='ÁUDIO DE TESTE: '+audioMode+' — reprodução controlada, não é áudio real.';document.querySelector('header').append(info);if(audioMode==='mock')for(const [name,event]of [['Carregar vozes de teste','audio-test-voices'],['Concluir áudio de teste','audio-test-end'],['Falhar áudio de teste','audio-test-error']]){const b=document.createElement('button');b.textContent=name;b.onclick=()=>frame.contentWindow.dispatchEvent(new frame.contentWindow.Event(event));document.querySelector('header').append(b);}}
  const html=await (await fetch('../demonstracao.html', {cache:'no-store'})).text();
- frame.srcdoc=html.replace('<head>','<head><script>('+setup.toString()+')();</'+'script>');
+ frame.srcdoc=html.replace('<head>','<head><script>('+setup.toString()+')('+JSON.stringify(audioMode)+');</'+'script>');
  document.querySelectorAll('[data-width]').forEach(b=>b.onclick=()=>frame.style.width=b.dataset.width+'px');
  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>frame.contentDocument.documentElement.dataset.leoTestMode=b.dataset.mode);
  document.querySelector('#clock').onclick=()=>{const root=frame.contentDocument.documentElement;root.dataset.leoClock=String(Number(root.dataset.leoClock||0)+15001);};
