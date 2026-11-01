@@ -1,6 +1,6 @@
 # Meu Decola — proposta para aprovação
 
-Status: somente plano. Nenhuma implementação desta fase foi feita.
+Status: cinco etapas aprovadas pelo usuário e implementadas na branch de desenvolvimento. Sem publicação. Resultados em `MEU-DECOLA-NAVEGACAO-ENTREGA.md`.
 
 ## Diagnóstico do código atual
 
@@ -27,6 +27,12 @@ Não renomear nem apagar chaves atuais de progresso e históricos. Acrescentar a
 
 Sem implantação, main, merge, cobrança, cadastro real, backend de contas, novas permissões CORS ou mudanças no Worker. Laboratório de Redação continua no plano específico existente; não é implementado por esta proposta.
 
-## Decisão solicitada
+## Aprovação e execução
 
-Aprovar ou ajustar as cinco etapas acima para implementação na mesma branch de desenvolvimento. A publicação exigirá autorização separada. Até essa decisão, só as correções confirmadas da auditoria do Leo serão enviadas.
+As cinco etapas foram aprovadas e executadas na mesma branch de desenvolvimento. A publicação continua dependendo de autorização separada.
+
+## Espaço futuro: Caderno Decola
+
+A organização em seções independentes (retomada, aulas, atalhos) permite acrescentar futuramente um espaço de ferramentas pessoais, sem misturá-lo à lista de matérias ou à conversa do Leo. Proposta futura: Caderno Decola reuniria orientações para anotações em papel ou digitais e atividades de recuperação de memória, com retorno à aula de origem. Essa separação evita exigir digitação de quem prefere caderno físico.
+
+Nesta entrega não há botão ativo, editor, armazenamento de anotações, avaliação de memória, lembretes ou chamadas de IA para o Caderno. Seu modelo pedagógico, persistência, privacidade e eventual integração com o Leo dependerão de um plano e aprovação próprios.
