@@ -25,7 +25,7 @@ function initialize() {
   [['dashboard','Meu Decola'],['subjects','Aulas'],['exercises','Exercícios'],['chat','Professor Leo'],['progress','Progresso'],['simulado','Simulados']].forEach(([view,label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.textContent = label; button.dataset.studyView = view;
-    button.addEventListener('click', () => { collapse();openStudy(view); });
+    button.addEventListener('click', () => { collapse();openStudy(view);requestAnimationFrame(()=>{const target=panel.querySelector('.study-dashboard:not([hidden]) h2')||panel.querySelector('.leo-chat:not([hidden]) textarea')||panel.querySelector('.leo-back');if(target){if(target.tagName==='H2')target.tabIndex=-1;target.focus({preventScroll:true});}}); });
     destinations.append(button);
   });
   const setActive=view=>{
@@ -84,14 +84,17 @@ function initialize() {
   });
   // Show the true destination even when an older module switches views.
   document.addEventListener('decola:leo-view', event => {
-    const view=event.detail.view;setActive(['practice','portuguese','humanas'].includes(view)?'exercises':view==='lesson'?'subjects':view==='menu'?'dashboard':view);
+    if(event.detail.view==='chat')queueMicrotask(()=>{if(!panel.querySelector('.study-return-context')?.hidden)panel.querySelector('.leo-back').hidden=true;});
+    const view=event.detail.view;setActive(['practice','portuguese','humanas'].includes(view)?'exercises':view==='lesson'?'subjects':view==='menu'?'dashboard':view==='dashboard'?'progress':view);
 
   });
   const syncDashboard = () => {
     const dashboard = panel.querySelector('.study-dashboard');
     if (!dashboard || dashboard.hidden || panel.hidden) return;
     const heading = dashboard.querySelector('h2')?.textContent || 'Meu Decola';
-    panel.querySelector('.leo-current-location').textContent = '📍 Você está em: ' + heading;
+    const topic=heading.match(/(?:📘\s*)?(.+?) — Aula Inteligente/);
+    const subject=topic?(heading.includes('Interpretação')?'Linguagens':'Matemática'):null;
+    panel.querySelector('.leo-current-location').textContent = '📍 '+(topic?'Aulas › '+subject+' › '+topic[1]:heading);
     panel.querySelector('.leo-back').hidden = true;
     panel.querySelector('[aria-label="Retomar os exercícios sem perder o progresso"]').hidden = true;
     panel.querySelector('.leo-top strong').textContent = '🚀 Decola Vestibular — Área de estudos';

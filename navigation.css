@@ -84,3 +84,8 @@
  .study-destinations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px;max-height:30vh;overflow:auto;padding:3px}
  .study-destinations button{min-width:0;min-height:44px;font-size:14px;padding:10px 6px}
 }
+
+/* One primary return in the header; existing handlers remain available internally. */
+.leo-panel .study-dashboard>[data-study-back]{display:none!important}
+.leo-panel:has(.study-return-context:not([hidden])) .study-return-lesson{display:none!important}
+.study-smart-question:focus-visible,.study-dashboard h2:focus-visible{outline:3px solid #e6a627;outline-offset:4px}

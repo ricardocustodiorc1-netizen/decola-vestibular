@@ -781,6 +781,7 @@
     const inner=d&&!d.hidden?d.querySelector('[data-study-back]'):null;
     const active=!!inner;
     topBack.hidden=!active;
+    if(inner){topBack.textContent=inner.textContent;topBack.setAttribute('aria-label',inner.textContent.replace('← ','').trim());}
    };
    topBack.addEventListener('click',()=>{
     const d=p.querySelector('.study-dashboard');
@@ -788,6 +789,7 @@
     if(back)back.click();
     else showDashboard();
     updateTopBack();
+    const heading=p.querySelector('.study-dashboard:not([hidden]) h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
    });
    new MutationObserver(updateTopBack).observe(p.querySelector('.leo-body'),{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
    updateTopBack();

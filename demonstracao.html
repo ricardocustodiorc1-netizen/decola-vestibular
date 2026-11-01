@@ -637,6 +637,11 @@ body.leo-study-open{overflow:hidden}
  .study-destinations button{min-width:0;min-height:44px;font-size:14px;padding:10px 6px}
 }
 
+/* One primary return in the header; existing handlers remain available internally. */
+.leo-panel .study-dashboard>[data-study-back]{display:none!important}
+.leo-panel:has(.study-return-context:not([hidden])) .study-return-lesson{display:none!important}
+.study-smart-question:focus-visible,.study-dashboard h2:focus-visible{outline:3px solid #e6a627;outline-offset:4px}
+
 </style>
 
 </head>
@@ -3991,6 +3996,7 @@ leoAsk.addEventListener('click',async()=>{
     const inner=d&&!d.hidden?d.querySelector('[data-study-back]'):null;
     const active=!!inner;
     topBack.hidden=!active;
+    if(inner){topBack.textContent=inner.textContent;topBack.setAttribute('aria-label',inner.textContent.replace('← ','').trim());}
    };
    topBack.addEventListener('click',()=>{
     const d=p.querySelector('.study-dashboard');
@@ -3998,6 +4004,7 @@ leoAsk.addEventListener('click',async()=>{
     if(back)back.click();
     else showDashboard();
     updateTopBack();
+    const heading=p.querySelector('.study-dashboard:not([hidden]) h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
    });
    new MutationObserver(updateTopBack).observe(p.querySelector('.leo-body'),{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
    updateTopBack();
@@ -4145,7 +4152,7 @@ function initialize() {
   [['dashboard','Meu Decola'],['subjects','Aulas'],['exercises','Exercícios'],['chat','Professor Leo'],['progress','Progresso'],['simulado','Simulados']].forEach(([view,label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.textContent = label; button.dataset.studyView = view;
-    button.addEventListener('click', () => { collapse();openStudy(view); });
+    button.addEventListener('click', () => { collapse();openStudy(view);requestAnimationFrame(()=>{const target=panel.querySelector('.study-dashboard:not([hidden]) h2')||panel.querySelector('.leo-chat:not([hidden]) textarea')||panel.querySelector('.leo-back');if(target){if(target.tagName==='H2')target.tabIndex=-1;target.focus({preventScroll:true});}}); });
     destinations.append(button);
   });
   const setActive=view=>{
@@ -4204,14 +4211,17 @@ function initialize() {
   });
   // Show the true destination even when an older module switches views.
   document.addEventListener('decola:leo-view', event => {
-    const view=event.detail.view;setActive(['practice','portuguese','humanas'].includes(view)?'exercises':view==='lesson'?'subjects':view==='menu'?'dashboard':view);
+    if(event.detail.view==='chat')queueMicrotask(()=>{if(!panel.querySelector('.study-return-context')?.hidden)panel.querySelector('.leo-back').hidden=true;});
+    const view=event.detail.view;setActive(['practice','portuguese','humanas'].includes(view)?'exercises':view==='lesson'?'subjects':view==='menu'?'dashboard':view==='dashboard'?'progress':view);
 
   });
   const syncDashboard = () => {
     const dashboard = panel.querySelector('.study-dashboard');
     if (!dashboard || dashboard.hidden || panel.hidden) return;
     const heading = dashboard.querySelector('h2')?.textContent || 'Meu Decola';
-    panel.querySelector('.leo-current-location').textContent = '📍 Você está em: ' + heading;
+    const topic=heading.match(/(?:📘\s*)?(.+?) — Aula Inteligente/);
+    const subject=topic?(heading.includes('Interpretação')?'Linguagens':'Matemática'):null;
+    panel.querySelector('.leo-current-location').textContent = '📍 '+(topic?'Aulas › '+subject+' › '+topic[1]:heading);
     panel.querySelector('.leo-back').hidden = true;
     panel.querySelector('[aria-label="Retomar os exercícios sem perder o progresso"]').hidden = true;
     panel.querySelector('.leo-top strong').textContent = '🚀 Decola Vestibular — Área de estudos';
