@@ -45,13 +45,13 @@
   const make=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt)el.textContent=txt;return el;};
   const back=make('button','study-dashboard-all','← Voltar aos assuntos');back.type='button';back.dataset.studyBack='';back.addEventListener('click',()=>showMathTopics(dashboard));
   const title=make('h2','','📘 Porcentagem — Aula Inteligente 1.1');
-  const intro=make('p','','Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.');
+  const intro=make('p','','Método Decola: Entender → Registrar → Praticar → Recordar. Anotar e fazer o Desafio são escolhas suas; não bloqueiam a próxima aula.');
   const steps=make('div','study-smart-steps');
   const lesson=make('section','study-smart-card');
-  lesson.append(make('h3','','1. Aprender: o que é porcentagem?'),make('p','','Porcentagem significa uma parte de cada 100. Por exemplo, 15% = 15 ÷ 100 = 0,15. Para encontrar 15% de 80, multiplicamos 80 × 0,15 = 12.'));
+  lesson.append(make('h3','','1. Entender: o que é porcentagem?'),make('p','','Porcentagem significa uma parte de cada 100. Por exemplo, 15% = 15 ÷ 100 = 0,15. Para encontrar 15% de 80, multiplicamos 80 × 0,15 = 12.'));
   const example=make('div','study-topic-example','Exemplo do cotidiano: uma mochila de R$ 200 com 25% de desconto tem abatimento de R$ 50 (200 × 0,25). O preço final é R$ 150.');
   lesson.append(example,make('p','','Dica: 10% é dividir por 10; 20% é o dobro de 10%.'));
-  const practice=make('section','study-smart-card');practice.append(make('h3','','2. Praticar: resolva as questões'));
+  const practice=make('section','study-smart-card');practice.append(make('h3','','3. Praticar: resolva as questões'));
   const questions=[
    {q:'Quanto é 20% de 150?',opts:['20','30','35'],answer:1,why:'20 ÷ 100 = 0,20; 150 × 0,20 = 30.'},
    {q:'Uma camiseta de R$ 80 tem 10% de desconto. Qual o preço final?',opts:['R$ 72','R$ 70','R$ 78'],answer:0,why:'10% de 80 = 8. Preço final: 80 − 8 = R$ 72.'},
@@ -100,8 +100,10 @@
   // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.
   const report=make('section','study-smart-card study-smart-report');
   report.setAttribute('aria-live','polite');
+  let methodPilot;
   function updateReport(){
    const completed=questions.every((q,i)=>progress[i]?.done);
+   methodPilot?.setAvailable(completed);
    report.replaceChildren();report.hidden=!completed;
    if(!completed)return;
    const firstTry=questions.filter((q,i)=>progress[i]?.choice===q.answer&&progress[i]?.attempts===1).length;
@@ -131,7 +133,7 @@
    actions.append(review,next);report.append(actions);
   }
   updateReport();
-  const help=make('section','study-smart-card');help.append(make('h3','','3. Precisa de ajuda?'));
+  const help=make('section','study-smart-card');help.append(make('h3','','Ajuda durante a aula'));
   const helpText=make('p','','O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.');help.append(helpText);
   const helpBtn=make('button','study-dashboard-all','🎓 Pedir ajuda ao Professor Leo');helpBtn.type='button';helpBtn.addEventListener('click',()=>{
    const p=panel();if(!p)return;dashboard.hidden=true;
@@ -140,9 +142,12 @@
    const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Porcentagem. Aprendi que 20% = 0,20 e que 20% de 150 = 30. Pode me ajudar a compreender porcentagens passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
    const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showMathLesson(dashboard,topic);}
   });help.append(helpBtn);
-  const evolution=make('section','study-smart-card');evolution.append(make('h3','','4. Evoluir'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
+  const evolution=make('section','study-smart-card');evolution.append(make('h3','','Continuar evoluindo'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
   const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
-  steps.append(lesson,practice,report,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;panel()?.querySelector('.leo-body')?.scrollTo(0,0);
+  const registerHost=make('section'),challengeHost=make('section');
+  steps.append(lesson,registerHost,practice,report,challengeHost,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;
+  methodPilot=globalThis.DecolaMemoryPilot.mount({registerHost,challengeHost,practice,available:questions.every((q,i)=>progress[i]?.done)});
+  panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
  function showFractionsSmartLesson(dashboard,topic){
   hideLegacyViews(panel());dashboard.replaceChildren();

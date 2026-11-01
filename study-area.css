@@ -146,3 +146,19 @@ body.leo-study-open{overflow:hidden}
 .study-lesson-status[data-state="started"]{background:#fff1d3;color:#775115}
 .study-lesson-status[data-state="done"]{background:#def4e7;color:#166340}
 .study-tools{padding-top:12px;border-top:1px solid #d5e1ff}
+
+/* Método Decola pilot: one column, optional notes, explicit local feedback. */
+.memory-register details,.memory-pilot details{margin:14px 0;padding:12px;background:#f3f6ff;border:1px solid #c5d6f6;border-radius:10px}
+.memory-register summary,.memory-pilot summary{min-height:44px;cursor:pointer;line-height:1.6;font-weight:700}
+.memory-register label,.memory-pilot label{display:block;margin:14px 0;line-height:1.6}
+.memory-pilot textarea,.memory-pilot input,.memory-pilot select,.memory-register select{display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid #adbfdf;border-radius:8px;background:white;color:#17325c}
+.memory-pilot button,.memory-register button{min-height:44px;margin:8px 8px 8px 0;white-space:normal;max-width:100%}
+.memory-pilot p{white-space:pre-wrap;overflow-wrap:anywhere}
+.memory-feedback{margin:20px 0;padding:18px;border:1px solid #c7d9f9;border-radius:12px;background:#fafcff}
+.memory-reference{padding:12px;background:#eaf4ed;border-left:4px solid #288359}
+.memory-student{padding:12px;background:#edf2ff}
+.memory-privacy{font-size:14px!important;color:#526584}
+.memory-leo{padding:16px;border:1px solid #aec8f8;border-radius:12px;margin:14px 0;background:#edf4ff}
+.memory-pilot :is(button,textarea,input,select,summary):focus-visible,.memory-register :is(button,select,summary):focus-visible{outline:3px solid #e6a627;outline-offset:3px}
+.memory-pilot [hidden]{display:none!important}
+@media(max-width:650px){.memory-feedback,.memory-leo{padding:12px}.memory-pilot button{width:100%;margin-right:0}.memory-pilot h4{font-size:17px}}
