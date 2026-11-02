@@ -324,7 +324,7 @@ As 16 gravações novas somam **396–532 segundos** de reprodução, sem contar
 
 Estimativa por roteiro: palavras / 160 × 60 × 1,10 até palavras / 130 × 60 × 1,20, arredondando cada limite para cima em segundos. São hipóteses de ritmo e pausas, não durações garantidas. O tempo final só poderá ser medido após gravação autorizada.
 
-**Identidade/tarifa Elvis ainda não confirmada:** o repositório contém o MP3, mas não comprova fornecedor, voice ID, motor ou preço para reproduzir essa voz em novas gerações. Não atribuir a Elvis automaticamente o voice ID Will/Starfish usado em outro teste. A cotação exata continua pendente.
+**Motor/tarifa Elvis ainda não confirmados:** o usuário informou HeyGen como fornecedor. O repositório contém o MP3, mas não comprova voice ID, motor ou preço para reproduzir essa voz em novas gerações. Não atribuir a Elvis automaticamente o voice ID Will/Starfish usado em outro teste. A cotação exata continua pendente.
 
 Como referência comparável, a tabela oficial HeyGen consultada em 02/11/2026 informa Starfish a US$ 0,12 por minuto. Essa referência implica **US$ 0.79–1.06** para uma geração de cada um dos 16 roteiros. Não é cotação da voz Elvis nem comprovação de saldo incluído. Para outro preço P em dólares por minuto, multiplicar os minutos estimados por P. Alguns serviços cobram por caracteres, por pacote ou por mínimo de geração; recalcular nesse caso.
 

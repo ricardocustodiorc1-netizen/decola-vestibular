@@ -5,9 +5,10 @@
   "baseCommit": "c62927f1d89ae085303873e7a2faee080e4a7a2e",
   "voice": {
     "label": "Elvis",
-    "provider": null,
+    "provider": "HeyGen",
     "generationEngine": null,
-    "note": "A identidade da gravação existente não comprova disponibilidade ou tarifa de um fornecedor para novas gerações."
+    "note": "Fornecedor HeyGen informado pelo usuário. Voice ID, motor, tarifa e transcrição integral da voz Elvis ainda precisam de conferência; nenhuma geração ou integração adicional está autorizada.",
+    "voiceId": null
   },
   "estimate": {
     "wordsPerMinuteRange": [
