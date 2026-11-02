@@ -1,5 +1,5 @@
 name: Decola 2B - isolated validation (no secrets)
-# Deliberately manual only; no push, PR, schedule, or automatic runs.
+# Manual only. Do not dispatch without confirming included/free Actions availability.
 on:
   workflow_dispatch:
 
@@ -11,28 +11,38 @@ jobs:
     if: github.ref == 'refs/heads/dev/navegacao-leo-familias-20261031'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      DECOLA_TEST_PROJECT_ID: yxxrfhobhonigwczzpim
     steps:
       - name: Checkout only authorized branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified tag
         with:
           ref: dev/navegacao-leo-familias-20261031
           persist-credentials: false
-      - name: Setup Node 22
-        uses: actions/setup-node@v4
+      - name: Setup isolated Node 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4, verified tag
         with:
-          node-version: '22'
+          node-version: '22.22.0'
           cache: npm
           cache-dependency-path: scripts/homologacao/package-lock.json
-      - name: Install pinned dependencies from lockfile
+      - name: Runtime versions
+        run: |
+          node --version
+          npm --version
+      - name: Install from committed lockfile (no lifecycle scripts)
         working-directory: scripts/homologacao
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Verify original executor syntax
-        run: node --check scripts/homologacao/etapa2b-runner.mjs
-      - name: Verify dependencies import
+      - name: Original source syntax
         working-directory: scripts/homologacao
-        run: node --input-type=module -e "import('@supabase/supabase-js').then(()=>import('pg')).then(()=>console.log('dependencies OK'))"
+        run: npm run check
+      - name: Real dependencies import (no clients)
+        working-directory: scripts/homologacao
+        run: npm run verify:dependencies
       - name: No-credential preflight
         working-directory: scripts/homologacao
         run: npm run preflight
+      - name: Original runner with offline injected failures
+        working-directory: scripts/homologacao
+        run: npm test
+      - name: Existing Node regression
+        run: npm test
+      - name: Existing SQLite regression
+        run: npm run test:infra
