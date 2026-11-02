@@ -1,0 +1,45 @@
+[homologacao]
+  type: 'test'
+  ...
+1..82
+# tests 82
+# suites 0
+# pass 82
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1411.707916
+
+[regressao_node]
+  type: 'test'
+  ...
+1..109
+# tests 109
+# suites 0
+# pass 109
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 410.552726
+
+[python]
+....................
+----------------------------------------------------------------------
+Ran 20 tests in 0.075s
+
+OK
+
+[preflight]
+> node --input-type=module -e "await import('@supabase/supabase-js'); await import('pg'); console.log('PASS: real dependency imports; no clients constructed')"
+
+(node:65) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS: real dependency imports; no clients constructed
+(node:72) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS: target checked; no network or writes
+(node:72) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+PASS: wrong-project and both provisioning modes blocked
+PASS: preflight finished; NO Supabase connection or writes

@@ -1,0 +1,81 @@
+{
+  "stage": "2D-A",
+  "date": "2026-11-02",
+  "branch": "dev/navegacao-leo-familias-20261031",
+  "baseCommit": "40ae3931da8856eaba742d2ba01497fc1e795643",
+  "localCodeCommit": "468b0dabec261587208646b40742196f00ac8fe3",
+  "target": {
+    "projectId": "yxxrfhobhonigwczzpim",
+    "organizationId": "gfuffaasrxaroosnwujl",
+    "queried": false
+  },
+  "runtime": {
+    "node": "22.22.0",
+    "npm": "11.9.0",
+    "sqlite": "3.50.4"
+  },
+  "tests": {
+    "homologacao": {
+      "passed": 82,
+      "failed": 0,
+      "skipped": 0
+    },
+    "node_regression": {
+      "passed": 109,
+      "failed": 0,
+      "skipped": 0
+    },
+    "python_sqlite": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0
+    },
+    "total": 211,
+    "added": 31
+  },
+  "checks": {
+    "preflight": "passed",
+    "cliRunCreate": "blocked with exit 2 even with YES flags",
+    "diffCheck": "passed",
+    "bashSyntax": "passed",
+    "imports": "passed without constructing clients"
+  },
+  "scope": {
+    "networkInAdapterTests": "fetch and Socket.connect blocked",
+    "httpIntegration": "127.0.0.1 only; Auth/Postgres doubles",
+    "realSQLiteBackupRestore": true,
+    "realSupabaseOperations": false,
+    "credentialsUsed": false,
+    "newDependencies": false,
+    "accountsCreated": false,
+    "migrationsChanged": false,
+    "workflowDispatched": false,
+    "productionChanged": false,
+    "remoteHomologationApproved": false
+  },
+  "confirmedFix": "busy_timeout configured before ledger initialization writes; existing application_id not rewritten",
+  "fileSha256": {
+    "scripts/homologacao/adapters/auth.mjs": "ddef6d694b83e4ce50782dd3b88d09493883a0fd2de7bec4245590c5aaa0d42f",
+    "scripts/homologacao/adapters/bearer-bridge.mjs": "e2087fb4e4c33ced3f42410b14bafa570c02a0dc08301843712b33e2dd523e26",
+    "scripts/homologacao/adapters/boundary.mjs": "c4730d005747ac940db7b7c0c6fad151cf048ea2276ccdb35bb9c459396d6faa",
+    "scripts/homologacao/adapters/http.mjs": "09f369f62c1893b4773de5f6e23911c4ca13f7f4351d01e8bf457423bb0a30f9",
+    "scripts/homologacao/adapters/postgres.mjs": "7479062878a0cd5eb460e2f79f93b09dd8cd3024fc754fdcf66a0fe07be48746",
+    "scripts/homologacao/adapters/preinspection.mjs": "445aae1095a785f78b49e133fffa1b1cf2c2def388633a3a299665e1439fa322",
+    "scripts/homologacao/controls/ledger.mjs": "380ded7a33d947518fd6864e0d1e67d75de273370ca6438f600dc86587fca56e",
+    "scripts/homologacao/controls/storage.mjs": "969a0ba2e5c6b871ffa461465f5ae21aedd1a831a36dc8153be747ac760516c0",
+    "scripts/homologacao/ledger-storage.example.json": "a5eae06674338f7c17420ffa04d691fd83186153584359c7ae61c28820e08090",
+    "scripts/homologacao/tests/adapters.test.mjs": "7eccc3840a30a42093bfe0dc9815ac9c3e225680db9b87aa0626da344550f822",
+    "scripts/homologacao/tests/bearer-integration.test.mjs": "b2dc4867d181254ca41a9c79d379bb4f0cb52b2aeedd9b8d2264d78ef3e1423a",
+    "scripts/homologacao/tests/storage.test.mjs": "70ded2d18db3e332badbd451aa32bb25e442d7e47f794b124e574086ea1c9713",
+    "server/homologation/app.mjs": "95176d56678998aaea7674f6b81101b3f0892d596abf04ec31da4759a9a75c3c"
+  },
+  "summarySha256": "46ded25dcbefa70a3e53b5e305b7363d5d7425c7d41591008f42709920725c4d",
+  "limitations": [
+    "No provider-side Auth/RLS/session evidence",
+    "No real email delivery",
+    "No remote execution or cleanup capability",
+    "Persistent host/backup owner and credentials require separate approval",
+    "Transport calls inside one controlled operation are not counted individually by the current durable operation counter"
+  ],
+  "publishedCodeCommit": "ac6116e23e4493374379ec9a68b94f18cda3222a"
+}
