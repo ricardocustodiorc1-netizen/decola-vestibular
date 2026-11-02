@@ -1,0 +1,31 @@
+{
+  "documentType": "planning-template-not-executable",
+  "status": "planned",
+  "runId": null,
+  "projectId": "yxxrfhobhonigwczzpim",
+  "organizationId": "gfuffaasrxaroosnwujl",
+  "region": "us-east-1",
+  "gitCommit": null,
+  "executorSha256": null,
+  "permissions": {
+    "remoteRead": false,
+    "useCredentials": false,
+    "createAuthUsers": false,
+    "writeFixtures": false,
+    "mutateAuthState": false,
+    "revokeSessions": false,
+    "deleteFixtures": false,
+    "dispatchActions": false
+  },
+  "maximumSyntheticUsersProposed": 2,
+  "personas": [
+    {"label": "horizonte", "approvedIdentityReference": null, "authUserId": null, "studentId": null, "state": "planned"},
+    {"label": "estrela", "approvedIdentityReference": null, "authUserId": null, "studentId": null, "state": "planned"}
+  ],
+  "authorizationReference": null,
+  "retentionDecisionReference": null,
+  "cleanupApprovalReference": null,
+  "operationLedger": [],
+  "residues": [],
+  "note": "No passwords, tokens, private keys or connection URLs. This template grants no access."
+}

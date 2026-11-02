@@ -1,0 +1,33 @@
+{
+  "stage": "2C",
+  "date": "2026-11-02",
+  "baseLocalCommit": "fb29fa4fb6cb98b4cfc6a9caa532bf461bd9bee7",
+  "branch": "dev/navegacao-leo-familias-20261031",
+  "scope": "planning-review-documentation-offline-tests",
+  "runtimeNode": "22.22.0",
+  "testsRerun": {
+    "nodeRunnerAndDependencies": 16,
+    "pythonSqlite": 20,
+    "total": 36,
+    "failed": 0
+  },
+  "historicalTestsNotRerun": {
+    "generalNodeRegression": 109
+  },
+  "externalConnections": false,
+  "supabaseAccessed": false,
+  "privilegedCredentialsUsed": false,
+  "authUsersCreated": 0,
+  "sqlMigrationsExecuted": false,
+  "actionsDispatched": false,
+  "packagesInstalled": false,
+  "remoteFetchOrPush": false,
+  "implementationChanged": false,
+  "filesSha256": {
+    "scripts/homologacao/etapa2b-runner.mjs": "a316518cd8905226b4c1c2e364b9bfd936c7d0221ed9bd8f4360b949de97ebe3",
+    "scripts/homologacao/etapa2b-auth.mjs": "582728ff088b50ec442a7b27c20a303ae80c3bea309b9a10ecb8368973e69b9a",
+    "scripts/homologacao/package-lock.json": "3d038ad47098a2c58d9324367f2deddcb26ec5f64931aa3df5eac00e33735742",
+    ".github/workflows/decola-2b-validation.yml": "18809b9a66fd3434ab50d6fc7acc172f5e2affd31c2553ec1de0673dbeb3120e",
+    "database/migrations/202611020001_subscribers.sql": "ed77611058415326fc07f258e5b1c724aef7d06f308f59f71d3d8d5b4ecf6045"
+  }
+}
