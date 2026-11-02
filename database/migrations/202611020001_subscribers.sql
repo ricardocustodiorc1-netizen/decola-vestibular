@@ -1,4 +1,5 @@
--- DRAFT FOR ISOLATED SUPABASE HOMOLOGATION. NOT APPLIED OR VALIDATED ON POSTGRES.
+-- REVIEW CANDIDATE: awaiting explicit execution approval; NOT APPLIED OR VALIDATED ON POSTGRES.
+-- Authorized target for future execution only: yxxrfhobhonigwczzpim (us-east-1, synthetic data).
 -- Requires Supabase auth.users/auth.uid(), anon and authenticated roles.
 -- Do not run on an existing/production project. No seed users or credentials.
 BEGIN;
@@ -70,10 +71,23 @@ REVOKE ALL ON ALL TABLES IN SCHEMA decola FROM PUBLIC, anon, authenticated;
 GRANT SELECT ON decola.accounts TO authenticated;
 GRANT SELECT(id,account_id) ON decola.students TO authenticated;
 GRANT SELECT ON decola.lesson_progress TO authenticated;
-CREATE POLICY own_account ON decola.accounts FOR SELECT TO authenticated USING(id=(SELECT auth.uid()));
-CREATE POLICY own_student ON decola.students FOR SELECT TO authenticated USING(account_id=(SELECT auth.uid()));
+-- This helper returns only the caller's active/verified state. It cannot inspect another ID.
+-- SECURITY DEFINER is needed to inspect auth.users without granting client access there.
+CREATE FUNCTION decola.active_account() RETURNS boolean
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $$
+ SELECT EXISTS (
+  SELECT 1 FROM decola.accounts a JOIN auth.users u ON u.id=a.id
+  WHERE a.id=auth.uid() AND NOT a.disabled AND u.email_confirmed_at IS NOT NULL
+   AND u.deleted_at IS NULL AND (u.banned_until IS NULL OR u.banned_until<=statement_timestamp())
+ );
+$$;
+REVOKE ALL ON FUNCTION decola.active_account() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION decola.active_account() TO authenticated;
+
+CREATE POLICY own_account ON decola.accounts FOR SELECT TO authenticated USING(id=(SELECT auth.uid()) AND (SELECT decola.active_account()));
+CREATE POLICY own_student ON decola.students FOR SELECT TO authenticated USING(account_id=(SELECT auth.uid()) AND (SELECT decola.active_account()));
 CREATE POLICY own_progress ON decola.lesson_progress FOR SELECT TO authenticated
- USING(EXISTS(SELECT 1 FROM decola.students s WHERE s.id=student_id AND s.account_id=(SELECT auth.uid())));
+ USING((SELECT decola.active_account()) AND EXISTS(SELECT 1 FROM decola.students s WHERE s.id=lesson_progress.student_id AND s.account_id=(SELECT auth.uid())));
 -- No client INSERT/UPDATE/DELETE grants. Billing/inbox/claims/imports have no direct client access.
 -- Provisioning accounts and eligibility keys is a future trusted backend operation.
 
@@ -83,9 +97,7 @@ BEGIN
  IF NOT EXISTS (
   SELECT 1 FROM decola.students s
   JOIN decola.accounts a ON a.id=s.account_id
-  JOIN auth.users u ON u.id=a.id
-  WHERE s.id=p_student AND a.id=auth.uid() AND NOT a.disabled
-    AND u.email_confirmed_at IS NOT NULL
+  WHERE s.id=p_student AND a.id=auth.uid() AND decola.active_account()
  ) THEN RAISE EXCEPTION 'Resource unavailable' USING ERRCODE='42501'; END IF;
 END;
 $$;
@@ -93,10 +105,11 @@ REVOKE ALL ON FUNCTION decola.assert_student(uuid) FROM PUBLIC, anon, authentica
 
 CREATE FUNCTION decola.request_trial(p_student uuid) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
-DECLARE v_key text; v_now timestamptz:=clock_timestamp(); v_record decola.trial_claims;
+DECLARE v_key text; v_now timestamptz; v_record decola.trial_claims;
 BEGIN
  PERFORM decola.assert_student(p_student);
  SELECT eligibility_key INTO v_key FROM decola.students WHERE id=p_student FOR UPDATE;
+ v_now:=clock_timestamp();
  INSERT INTO decola.trial_claims(eligibility_key,student_id,starts_at,ends_at)
  VALUES(v_key,p_student,v_now,v_now+interval '168 hours')
  ON CONFLICT(eligibility_key,product) DO NOTHING;
@@ -108,6 +121,7 @@ CREATE FUNCTION decola.cancel_trial(p_student uuid) RETURNS void
 LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
 BEGIN
  PERFORM decola.assert_student(p_student);
+ PERFORM 1 FROM decola.students WHERE id=p_student FOR UPDATE;
  UPDATE decola.trial_claims SET canceled_at=coalesce(canceled_at,clock_timestamp()) WHERE student_id=p_student;
 END;
 $$;
@@ -120,8 +134,8 @@ BEGIN
  OR EXISTS(SELECT 1 FROM decola.paid_periods p WHERE p.student_id=p_student AND p.revoked_at IS NULL AND p.starts_at<=v_now AND p.ends_at>v_now);
 END;
 $$;
-REVOKE ALL ON ALL FUNCTIONS IN SCHEMA decola FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION decola.request_trial(uuid),decola.cancel_trial(uuid),decola.can_study(uuid) TO authenticated;
+REVOKE ALL ON ALL FUNCTIONS IN SCHEMA decola FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION decola.active_account(),decola.request_trial(uuid),decola.cancel_trial(uuid),decola.can_study(uuid) TO authenticated;
 -- assert_student remains private to SECURITY DEFINER functions.
 -- No paid-period writer until canonical sandbox reconciliation is implemented/tested.
 COMMIT;
