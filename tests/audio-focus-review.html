@@ -1,0 +1,11 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Foco de áudio — teste isolado</title><link rel="stylesheet" href="../lesson-audio-demo.css"><link rel="stylesheet" href="../leo-audio.css"><script>
+// Only this fixture replaces browser speech. MP3 playback remains real.
+const calls=[];const record=action=>{calls.push(action);document.documentElement.dataset.voiceCalls=JSON.stringify(calls);};
+Object.defineProperty(window,'SpeechSynthesisUtterance',{value:class{constructor(text){this.text=text;}}});
+Object.defineProperty(window,'speechSynthesis',{value:{paused:false,getVoices:()=>[],addEventListener(){},speak:u=>{record('speak');u.onstart?.();},cancel:()=>record('cancel'),pause:()=>record('pause'),resume:()=>record('resume')}});
+</script><script src="../leo-audio.js"></script><main><h1>Teste isolado: voz nativa controlada, MP3 real</h1><p>Não é uma explicação da IA. Este teste não grava progresso nem usa APIs.</p><section><details id="native" open><summary>Leitura de navegador controlada</summary><p id="native-text">Texto de teste para conferir exclusividade de áudio.</p></details></section><section id="mp3"><h2>MP3 Elvis existente</h2><p id="transcript"></p></section></main><script type="module">
+import {mountLessonAudio} from '../lesson-audio.js';import {lessonAudioCatalog,elvisExplanation} from '../lesson-audio-catalog.js';
+const host=document.getElementById('native-text');DecolaLeoAudio.attach(host,host.textContent);
+document.getElementById('transcript').textContent=elvisExplanation;
+mountLessonAudio({host:document.getElementById('mp3'),catalog:lessonAudioCatalog,id:'leo34.porcentagem.explicacao',getContext:()=>({lessonId:'leo34.porcentagem',phase:'lesson',text:elvisExplanation})});
+</script></html>

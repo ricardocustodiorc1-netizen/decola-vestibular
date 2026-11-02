@@ -54,10 +54,11 @@
  function setup(){
   if(runtime)return runtime;
   const engine=createController(globalThis),entries=new Set();
+  globalThis.addEventListener('decola:audio-start',event=>{if(event.detail?.source!=='browser')engine.stop('Outro áudio foi selecionado.');});
   const refresh=()=>entries.forEach(e=>e.refresh());
   globalThis.speechSynthesis?.addEventListener?.('voiceschanged',refresh);
   const observe=()=>{engine.checkVisible();for(const e of entries)if(!e.host.isConnected)entries.delete(e);};
-  new MutationObserver(observe).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+  new MutationObserver(observe).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class','open']});
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')engine.stop('Áudio interrompido ao sair desta página.');});
   globalThis.addEventListener('pagehide',()=>engine.stop());
   runtime={engine,entries};return runtime;
@@ -71,7 +72,7 @@
   const status=document.createElement('span');status.className='leo-audio-status';status.setAttribute('role','status');group.append(status);
   const note=document.createElement('small');note.textContent='Voz do navegador; timbre e disponibilidade variam. Algumas vozes dependem de internet.';group.append(note);host.append(group);
   let currentState='idle';
-  const owner={isVisible:()=>host.isConnected&&!host.closest('[hidden]')&&document.visibilityState!=='hidden',update(next,message){currentState=next;const active=['starting','speaking','paused'].includes(next);play.disabled=!engine.supported||active;pause.disabled=!engine.supported||!['starting','speaking'].includes(next);resume.disabled=!engine.supported||next!=='paused';stop.disabled=!engine.supported||!active;select.disabled=!engine.supported||active;status.textContent=message;}};
+  const owner={isVisible:()=>host.isConnected&&!host.closest('[hidden],.hidden,details:not([open])')&&document.visibilityState!=='hidden',update(next,message){currentState=next;const active=['starting','speaking','paused'].includes(next);play.disabled=!engine.supported||active;pause.disabled=!engine.supported||!['starting','speaking'].includes(next);resume.disabled=!engine.supported||next!=='paused';stop.disabled=!engine.supported||!active;select.disabled=!engine.supported||active;status.textContent=message;}};
   function refresh(){
    const key=select.value;select.replaceChildren();const automatic=document.createElement('option');automatic.value='';automatic.textContent='Automática · priorizar português brasileiro';select.append(automatic);
    for(const v of engine.voices()){const option=document.createElement('option');option.value=voiceKey(v);option.textContent=v.name+' ('+v.lang+')';select.append(option);}
@@ -79,7 +80,7 @@
    if(currentState==='idle')status.textContent=engine.supported?(engine.voices().length?'Áudio opcional. Escolha Ouvir para iniciar.':'Voz padrão do navegador; a lista de vozes ainda não está disponível.'):'Este navegador não oferece síntese de voz. Continue pela explicação escrita.';
   }
   entries.add({host,refresh});refresh();owner.update(engine.supported?'idle':'unavailable',status.textContent);
-  play.addEventListener('click',()=>engine.play(owner,text,select.value));pause.addEventListener('click',()=>engine.pause(owner));resume.addEventListener('click',()=>engine.resume(owner));stop.addEventListener('click',()=>{if(engine.isOwner(owner))engine.stop();});
+  play.addEventListener('click',()=>{if(typeof globalThis.dispatchEvent==='function'&&typeof globalThis.CustomEvent==='function')globalThis.dispatchEvent(new CustomEvent('decola:audio-start',{detail:{source:'browser'}}));engine.play(owner,text,select.value);});pause.addEventListener('click',()=>engine.pause(owner));resume.addEventListener('click',()=>engine.resume(owner));stop.addEventListener('click',()=>{if(engine.isOwner(owner))engine.stop();});
   return group;
  }
  globalThis.DecolaLeoAudio=Object.freeze({attach,createController,chooseVoice,chunks});

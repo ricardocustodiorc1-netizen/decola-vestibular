@@ -29,7 +29,7 @@
   // Fallback: mantém o menu de módulos disponível, sem perder o acesso.
  }
  const mathTopics=[
-  {title:'Porcentagem',summary:'Descontos, aumentos e proporções.',explanation:'Porcentagem é uma razão com base 100. Para calcular 25% de um valor, multiplique por 25 e divida por 100.',example:'25% de 200 = 200 × 25 ÷ 100 = 50.',question:'Quanto é 20% de 150?',choices:['20','30','35'],correct:1,feedback:'20% de 150 = 150 × 0,20 = 30.'},
+  {title:'Porcentagem',summary:'Descontos, aumentos e proporções.',explanation:'Porcentagem é uma razão com base 100. Para calcular 25% de um valor, multiplique por 25 e divida por 100.',example:'25% de 200 = 200 × 25 ÷ 100 = 50.',question:'Quanto é 20% de 180?',choices:['30','36','40'],correct:1,feedback:'20% de 180 = 180 × 0,20 = 36.'},
   {title:'Frações',summary:'Partes de um todo e operações.',explanation:'Uma fração representa partes iguais de um todo. O numerador indica quantas partes consideramos; o denominador, em quantas partes o todo foi dividido.',example:'3/4 de 20 = 20 ÷ 4 × 3 = 15.',question:'Quanto é 1/2 de 36?',choices:['12','18','24'],correct:1,feedback:'Metade de 36 é 36 ÷ 2 = 18.'},
   {title:'Equações',summary:'Descubra o valor da incógnita.',explanation:'Resolver uma equação significa encontrar o valor que torna a igualdade verdadeira. Faça a mesma operação nos dois lados para isolar a incógnita.',example:'2x + 6 = 16 → 2x = 10 → x = 5.',question:'Se 3x + 2 = 17, quanto vale x?',choices:['3','5','7'],correct:1,feedback:'3x = 15, portanto x = 5.'},
   {title:'Geometria',summary:'Áreas, perímetros e formas.',explanation:'O perímetro é a soma dos lados de uma figura. A área mede sua superfície. Para um retângulo, área = base × altura.',example:'Retângulo de 8 m por 3 m: área = 24 m².',question:'Qual a área de um retângulo de 6 m por 4 m?',choices:['10 m²','20 m²','24 m²'],correct:2,feedback:'Área = 6 × 4 = 24 m².'},
@@ -52,26 +52,18 @@
   const example=make('div','study-topic-example','Exemplo do cotidiano: uma mochila de R$ 200 com 25% de desconto tem abatimento de R$ 50 (200 × 0,25). O preço final é R$ 150.');
   lesson.append(example,make('p','','Dica: 10% é dividir por 10; 20% é o dobro de 10%.'));
   const practice=make('section','study-smart-card');practice.append(make('h3','','3. Praticar: resolva as questões'));
-  const questions=[
-   {q:'Quanto é 20% de 180?',opts:['30','36','40'],answer:1,why:'20 ÷ 100 = 0,20; 180 × 0,20 = 36.'},
-   {q:'Uma camiseta de R$ 80 tem 10% de desconto. Qual o preço final?',opts:['R$ 72','R$ 70','R$ 78'],answer:0,why:'10% de 80 = 8. Preço final: 80 − 8 = R$ 72.'},
-   {q:'Um produto de R$ 120 aumentou 25%. Qual é o novo preço?',opts:['R$ 125','R$ 145','R$ 150'],answer:2,why:'25% de 120 = 30. Novo preço: 120 + 30 = R$ 150.'}
-  ];
-  const key='decola-smart-percent-v3';let progress={};
-  try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){progress={};}
-  // Q1 mudou de 20% de 150 para 20% de 180: não importar tentativas antigas.
-  // Mantém os registros v1/v2 intactos e recupera somente Q2/Q3, cujos enunciados não mudaram.
-  try{const previous=JSON.parse(localStorage.getItem('decola-smart-percent-v2')||'{}')||{};[1,2].forEach(i=>{if(progress[i]===undefined&&previous[i]&&typeof previous[i]==='object')progress[i]=previous[i];});}catch(e){}
-  try{const old=JSON.parse(localStorage.getItem('decola-smart-percent-v1')||'{}')||{};[1,2].forEach(i=>{if(progress[i]===undefined&&old[i]===questions[i].answer)progress[i]={choice:questions[i].answer,attempts:1,done:true};});}catch(e){}
-  const save=()=>{try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}};
+  const definition=globalThis.DecolaPercentageLesson,questions=definition.questions;
+  const key=definition.key;let storage;try{storage=globalThis.localStorage;}catch{}
+  // Q1 is revised; only unchanged Q2/Q3 can migrate. Earlier records stay intact.
+  const progressStore=globalThis.DecolaLessonProgress.create({storage,key,questions,migrations:definition.migrations});
+  let progress=progressStore.read();
+  const saveNotice=make('p','notice');saveNotice.setAttribute('role','status');
+  const save=()=>{progressStore.save(progress);saveNotice.textContent=progressStore.issue();saveNotice.hidden=!saveNotice.textContent;};
+  practice.append(saveNotice);
   const score=make('p','study-smart-score');score.setAttribute('aria-live','polite');
-  const updateScore=()=>{const done=questions.filter((q,i)=>progress[i]?.done).length;const correct=questions.filter((q,i)=>progress[i]?.done&&progress[i]?.choice===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões concluídas • '+correct+' acerto(s). Salvo neste navegador.';};
+  const updateScore=()=>{const done=questions.filter((q,i)=>progress[i]?.done).length;const correct=questions.filter((q,i)=>progress[i]?.done&&progress[i]?.choice===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões concluídas • '+correct+' acerto(s). '+(progressStore.issue()?'Nesta sessão; confira o aviso de salvamento.':'Salvo neste navegador.');};
   practice.append(score);
-  const hints=[
-   ['20% significa 20 de cada 100. Transforme 20% em decimal antes de multiplicar.','Calcule 10% de 180 e depois dobre esse valor.'],
-   ['Desconto diminui o preço, não aumenta. Descubra primeiro 10% de 80.','10% de 80 é 8. Subtraia esse desconto do preço original.'],
-   ['Aumento significa somar ao valor inicial. Primeiro descubra 25% de 120.','25% é um quarto: divida 120 por 4 e some o resultado a 120.']
-  ];
+  const hints=questions.map(question=>question.hints);
   questions.forEach((q,i)=>{
    let inline;
    const card=make('div','study-smart-question');card.append(make('strong','',('Questão '+(i+1)+' de '+questions.length+': ')+q.q));
@@ -102,7 +94,7 @@
   // Relatório de conclusão: não altera a correção nem as chaves de progresso anteriores.
   const report=make('section','study-smart-card study-smart-report');
   report.setAttribute('aria-live','polite');
-  let methodPilot;
+  let methodPilot,lessonNavigation;
   function updateReport(){
    const completed=questions.every((q,i)=>progress[i]?.done);
    methodPilot?.setAvailable(completed);
@@ -132,7 +124,9 @@
    review.addEventListener('click',()=>{lesson.scrollIntoView({behavior:'smooth',block:'start'});});
    const next=make('button','study-dashboard-all','➡️ Próxima aula: Frações');next.type='button';
    next.addEventListener('click',()=>showMathLesson(dashboard,mathTopics[1]));
-   actions.append(review,next);report.append(actions);
+   const memoryJump=make('button','study-dashboard-all','🧠 Ir para o Desafio da Memória');memoryJump.type='button';
+   memoryJump.addEventListener('click',()=>lessonNavigation?.go('recordar'));
+   actions.append(review,memoryJump,next);report.append(actions);
   }
   updateReport();
   const help=make('section','study-smart-card');help.append(make('h3','','Ajuda durante a aula'));
@@ -141,14 +135,22 @@
    const p=panel();if(!p)return;dashboard.hidden=true;
    const chatOption=[...p.querySelectorAll('.leo-menu-option')].find(b=>b.textContent.includes('Conversar com o Professor Leo'));
    if(chatOption)chatOption.click();else p.querySelector('.leo-talk')?.click();
-   const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou na Aula Inteligente de Porcentagem. Aprendi que 20% = 0,20 e que 20% de 150 = 30. Pode me ajudar a compreender porcentagens passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
+   const input=p.querySelector('#leo-question-input');if(input){input.value='Professor Leo, estou estudando porcentagens, descontos e aumentos. Pode me orientar com perguntas e dicas, sem resolver as questões que ainda estou tentando? Quero entender o raciocínio.';input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
    const chat=p.querySelector('.leo-chat');if(chat){let ret=chat.querySelector('.study-return-lesson');if(!ret){ret=make('button','study-dashboard-all study-return-lesson','← Voltar à aula');ret.type='button';chat.prepend(ret);}ret.hidden=false;ret.onclick=()=>showMathLesson(dashboard,topic);}
   });help.append(helpBtn);
-  const evolution=make('section','study-smart-card');evolution.append(make('h3','','Continuar evoluindo'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.'));
-  const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{try{localStorage.removeItem(key);}catch(e){}showMathLesson(dashboard,topic);});evolution.append(reset);
+  const evolution=make('section','study-smart-card');evolution.append(make('h3','','Continuar evoluindo'),make('p','','Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seu progresso é local; confira o aviso de salvamento ao responder.'));
+  const reset=make('button','study-dashboard-all','Recomeçar exercícios');reset.type='button';reset.addEventListener('click',()=>{
+   if(progressStore.reset())showMathLesson(dashboard,topic);
+   else{saveNotice.textContent=progressStore.issue();saveNotice.hidden=false;}
+  });evolution.append(reset);
   const registerHost=make('section'),challengeHost=make('section');
-  steps.append(lesson,registerHost,practice,report,challengeHost,help,evolution);dashboard.append(back,title,intro,steps);dashboard.hidden=false;
+  const navigationHost=make('div');
+  steps.append(lesson,registerHost,practice,report,challengeHost,help,evolution);dashboard.append(back,title,intro,navigationHost,steps);dashboard.hidden=false;
   methodPilot=globalThis.DecolaMemoryPilot.mount({registerHost,challengeHost,practice,available:questions.every((q,i)=>progress[i]?.done)});
+  lessonNavigation=globalThis.DecolaLessonNavigation.mount({host:navigationHost,steps:[
+   {id:'entender',label:'1. Entender',target:lesson},{id:'registrar',label:'2. Registrar',target:registerHost},
+   {id:'praticar',label:'3. Praticar',target:practice},{id:'recordar',label:'4. Recordar',target:challengeHost}
+  ]});
   panel()?.querySelector('.leo-body')?.scrollTo(0,0);
  }
  function showFractionsSmartLesson(dashboard,topic){
@@ -599,7 +601,7 @@
  }
 
  const studyPaths=[
-  {name:'Porcentagem',key:'decola-smart-percent-v2',subject:'Matemática'},
+  {name:'Porcentagem',key:globalThis.DecolaPercentageLesson.key,subject:'Matemática'},
   {name:'Frações',key:'decola-smart-fractions-v1',subject:'Matemática'},
   {name:'Equações',key:'decola-smart-equations-v1',subject:'Matemática'},
   {name:'Geometria',key:'decola-smart-geometry-v1',subject:'Matemática'},
@@ -649,7 +651,8 @@
  }
  function lessonStats(path){
   try{
-   const obj=JSON.parse(localStorage.getItem(path.key)||'{}');
+   const definition=globalThis.DecolaPercentageLesson;
+   const obj=path.key===definition.key?globalThis.DecolaLessonProgress.create({storage:localStorage,...definition}).read():JSON.parse(localStorage.getItem(path.key)||'{}');
    const entries=[0,1,2].map(i=>obj?.[i]);
    return {done:entries.filter(v=>v?.done).length,started:entries.some(v=>v?.attempts>0)};
   }catch{return {done:0,started:false};}

@@ -166,3 +166,11 @@ body.leo-study-open{overflow:hidden}
 .memory-pilot h4{font-size:18px;line-height:1.5}
 .memory-pilot button{font:inherit;font-weight:700;padding:12px 16px;border:1px solid #b8c9f1;border-radius:10px;background:#e9f0ff;color:#1744c3;cursor:pointer}
 .memory-pilot small{font-size:14px;line-height:1.6}
+
+/* Reusable lesson steps: one scrolling surface, touch-sized controls. */
+.lesson-step-navigation{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 22px}
+.lesson-step-navigation button{min-height:44px;padding:10px 14px;font:inherit;font-size:16px;border:1px solid #b8c9f1;border-radius:10px;background:#e9f0ff;color:#1744c3;cursor:pointer}
+.lesson-step-navigation button:focus-visible{outline:3px solid #e6a627;outline-offset:3px}
+.study-smart-card{scroll-margin-top:12px;min-width:0}
+.study-smart-question,.leo-inline,.memory-feedback{min-width:0;overflow-wrap:anywhere}
+@media(max-width:600px){.lesson-step-navigation button{flex:1 1 120px}.study-smart-report-actions button{width:100%;white-space:normal}}
