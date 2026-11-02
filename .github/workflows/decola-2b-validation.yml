@@ -1,0 +1,38 @@
+name: Decola 2B - isolated validation (no secrets)
+# Deliberately manual only; no push, PR, schedule, or automatic runs.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/dev/navegacao-leo-familias-20261031'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DECOLA_TEST_PROJECT_ID: yxxrfhobhonigwczzpim
+    steps:
+      - name: Checkout only authorized branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev/navegacao-leo-familias-20261031
+          persist-credentials: false
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: scripts/homologacao/package-lock.json
+      - name: Install pinned dependencies from lockfile
+        working-directory: scripts/homologacao
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify original executor syntax
+        run: node --check scripts/homologacao/etapa2b-runner.mjs
+      - name: Verify dependencies import
+        working-directory: scripts/homologacao
+        run: node --input-type=module -e "import('@supabase/supabase-js').then(()=>import('pg')).then(()=>console.log('dependencies OK'))"
+      - name: No-credential preflight
+        working-directory: scripts/homologacao
+        run: npm run preflight
