@@ -7,7 +7,8 @@
     "test": "node --test tests/*.test.mjs",
     "dev": "python3 scripts/dev-server.py",
     "build:preview": "python3 scripts/build-preview.py",
-    "test:infra": "python3 -m unittest discover -s infrastructure/subscribers -p test_*.py -v"
+    "test:infra": "python3 -m unittest discover -s infrastructure/subscribers -p test_*.py -v",
+    "dev:homologation": "node server/homologation/start.mjs"
   },
   "type": "module"
 }

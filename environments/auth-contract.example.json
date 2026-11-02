@@ -1,0 +1,14 @@
+{
+  "provider": "supabase-auth",
+  "status": "not-connected",
+  "emailConfirmationRequired": true,
+  "anonymousSignInEnabled": false,
+  "passwordAuthEnabled": true,
+  "smtp": "not-configured",
+  "siteUrl": "https://homologacao.decola.invalid",
+  "redirectAllowlist": ["https://homologacao.decola.invalid/auth/confirm", "https://homologacao.decola.invalid/auth/reset"],
+  "adminMfaRequired": true,
+  "sessionStrategy": "server-side-opaque-cookie",
+  "passwordRecoveryResponse": "generic-no-account-enumeration",
+  "note": "Design contract only; not a Supabase CLI configuration and not applied to any project."
+}

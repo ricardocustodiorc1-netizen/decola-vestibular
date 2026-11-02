@@ -1,0 +1,9 @@
+{
+  "environment": "local",
+  "host": "127.0.0.1",
+  "port": 8001,
+  "origin": "http://127.0.0.1:8001",
+  "externalConnectionsEnabled": false,
+  "authProvider": "not-connected",
+  "paymentProvider": "asaas-sandbox-not-connected"
+}
