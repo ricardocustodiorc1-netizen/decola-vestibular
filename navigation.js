@@ -28,8 +28,9 @@ function initialize() {
     button.addEventListener('click', () => { collapse();openStudy(view);requestAnimationFrame(()=>{const target=panel.querySelector('.study-dashboard:not([hidden]) h2')||panel.querySelector('.leo-chat:not([hidden]) textarea')||panel.querySelector('.leo-back');if(target){if(target.tagName==='H2')target.tabIndex=-1;target.focus({preventScroll:true});}}); });
     destinations.append(button);
   });
+  const support=document.createElement('button');support.type='button';support.textContent='Ajuda e suporte';support.dataset.decolaSupport='';support.addEventListener('click',()=>collapse());destinations.append(support);
   const setActive=view=>{
-   destinations.querySelectorAll('button').forEach(b=>{if(b.dataset.studyView===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+   destinations.querySelectorAll('[data-study-view]').forEach(b=>{if(b.dataset.studyView===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
    const name=destinations.querySelector('[aria-current]')?.textContent||'Estudos';toggle.textContent='Menu de estudos · '+name;
   };
   shortcuts.append(toggle,destinations);

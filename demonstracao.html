@@ -578,6 +578,20 @@ body.leo-study-open{overflow:hidden}
 @media(max-width:600px){.lesson-step-navigation button{flex:1 1 120px}.study-smart-report-actions button{width:100%;white-space:normal}}
 
 </style>
+  <style>
+.commercial-dialog{box-sizing:border-box;width:min(720px,calc(100% - 24px));max-height:calc(100dvh - 32px);padding:0;border:1px solid #adc2e6;border-radius:16px;background:#fff;color:#173052;font:17px/1.6 system-ui,sans-serif;overflow:auto;overscroll-behavior:contain}
+.commercial-dialog::backdrop{background:#10213bc4}
+.commercial-dialog-top{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid #d9e3f3;background:#f2f6ff}
+.commercial-dialog h2{font-size:24px;line-height:1.3;margin:0}.commercial-dialog h3{font-size:20px;margin-top:24px}.commercial-dialog-body{padding:18px 22px}.commercial-dialog p,.commercial-dialog li{font-size:17px;line-height:1.65}.commercial-dialog li{margin:12px 0}
+.commercial-dialog button,.commercial-entry,.study-support-entry{font:inherit;min-height:44px;border:1px solid #adc2e6;border-radius:9px;padding:10px 14px;background:#edf3ff;color:#153a97;cursor:pointer;white-space:normal}
+.commercial-dialog button:disabled{background:#edf0f6;color:#62718c;cursor:not-allowed}.commercial-dialog button:focus-visible,.commercial-dialog summary:focus-visible,.commercial-dialog :is(select,textarea):focus-visible,.commercial-entry:focus-visible{outline:3px solid #d98b05;outline-offset:3px}
+.commercial-dialog label{display:block;margin:16px 0;font-weight:600}.commercial-dialog select,.commercial-dialog textarea{box-sizing:border-box;display:block;width:100%;max-width:100%;min-width:0;margin-top:7px;padding:11px;border:1px solid #a1b7d9;border-radius:8px;color:#173052;background:white;font:16px/1.5 system-ui,sans-serif}.commercial-dialog textarea{resize:vertical}
+.commercial-dialog details{padding:12px;margin:10px 0;border:1px solid #cfdbef;border-radius:8px}.commercial-dialog summary{min-height:44px;cursor:pointer;font-weight:600}.commercial-dialog [hidden]{display:none!important}.commercial-notice{padding:12px;border-left:4px solid #c28713;background:#fff6df}.commercial-state{padding:12px;background:#edf4ff;border-radius:8px}.commercial-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.commercial-dialog [role=status]{overflow-wrap:anywhere}
+.hero-copy .commercial-entry{margin:12px 0}.launch-price .commercial-entry{margin-top:12px}.header nav button.nav-cta{font:inherit;font-size:14px;padding:10px 14px;min-height:44px;white-space:normal;cursor:pointer;border:1px solid #1744c3;border-radius:9px;background:#1744c3;color:white}.study-support-entry{display:block;margin-top:8px;width:100%}
+@media(max-width:650px){.commercial-dialog{width:calc(100% - 16px);max-height:calc(100dvh - 16px)}.commercial-dialog-top,.commercial-dialog-body{padding:14px}.commercial-dialog h2{font-size:21px}.commercial-actions button{flex:1 1 150px}.commercial-dialog ol{padding-left:23px}.commercial-dialog-top button{flex:none}}
+
+</style>
+
 
   <style>
 .leo-audio{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding:12px;border:1px solid #bdcef0;border-radius:10px;background:#f6f9ff;color:#17335f;white-space:normal;font-weight:400}
@@ -701,9 +715,97 @@ body.leo-study-open{overflow:hidden}
 </head>
 <body>
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
-  <header class="header"><a class="brand" href="#inicio" aria-label="Decola Vestibular, início"><span class="logo">&#8594;</span><span>decola<span class="brand-sub">VESTIBULAR</span></span></a><nav aria-label="Navegação principal"><a href="#inicio">Início</a><a href="#familias">Responsáveis e estudantes</a><a href="#areas">Áreas do ENEM</a><a href="#como-funciona">Como funciona</a><a class="nav-cta" href="#perfil">7 dias grátis <span aria-hidden="true">&#8594;</span></a></nav></header>
+  <header class="header"><a class="brand" href="#inicio" aria-label="Decola Vestibular, início"><span class="logo">&#8594;</span><span>decola<span class="brand-sub">VESTIBULAR</span></span></a><nav aria-label="Navegação principal"><a href="#inicio">Início</a><a href="#familias">Responsáveis e estudantes</a><a href="#areas">Áreas do ENEM</a><a href="#como-funciona">Como funciona</a><button type="button" class="nav-cta" data-decola-offer>7 dias grátis · prévia</button></nav></header>
   <main id="conteudo" tabindex="-1"></main>
   <footer><a class="brand footer-brand" href="#inicio">&#8594; decola vestibular</a><p>Um passo de cada vez. Um futuro cheio de possibilidades.</p><small>Demonstração gratuita • Assinatura de R$ 39,90/mês planejada, ainda indisponível • Use somente perfis fictícios • Progresso local • Perguntas ao Leo são enviadas à API externa</small></footer>
+<script>
+(()=>{
+// Local commercial rehearsal. No accounts, entitlement, payment, APIs or storage.
+(() => {
+ const DAY=86400000;
+ const plan=Object.freeze({trialDays:7,priceCents:3990,currency:'BRL',billingPeriod:'month'});
+ function trialAt(startAt,now){
+  if(!Number.isSafeInteger(now)||now<0)throw new Error('Relógio de teste inválido.');
+  if(startAt===null)return Object.freeze({status:'not_started',daysRemaining:null,endsAt:null});
+  if(!Number.isSafeInteger(startAt)||startAt<0||!Number.isSafeInteger(startAt+plan.trialDays*DAY))throw new Error('Início de teste inválido.');
+  const endsAt=startAt+plan.trialDays*DAY;
+  return Object.freeze({status:now<startAt?'scheduled':now<endsAt?'trial_active':'trial_expired',daysRemaining:now<startAt?7:Math.max(0,Math.ceil((endsAt-now)/DAY)),endsAt});
+ }
+ const kinds=Object.freeze({question:'Dúvida',problem:'Problema técnico',complaint:'Reclamação',suggestion:'Sugestão'});
+ const topics=Object.freeze({access:'Acesso e conta',lesson:'Aulas e exercícios',leo:'Professor Leo e áudio',plan:'Teste gratuito e assinatura',other:'Outro assunto'});
+ function supportDraft({kind,topic,message,context}){
+  if(!Object.hasOwn(kinds,kind)||!Object.hasOwn(topics,topic))throw new Error('Escolha um tipo e um assunto válidos.');
+  if(typeof message!=='string'||!message.trim()||message.length>1200)throw new Error('Escreva uma mensagem de até 1.200 caracteres.');
+  if(!['Página inicial','Área de estudos'].includes(context))throw new Error('Contexto de teste inválido.');
+  return 'DECOLA — RASCUNHO LOCAL, NÃO ENVIADO\nTipo: '+kinds[kind]+'\nAssunto: '+topics[topic]+'\nOrigem: '+context+'\nMensagem: '+message.trim();
+ }
+ globalThis.DecolaCommercialPreview=Object.freeze({plan,trialAt,supportDraft,kinds,topics});
+ if(typeof document==='undefined')return;
+ function initialize(){
+  const dialog=document.createElement('dialog');dialog.className='commercial-dialog';dialog.setAttribute('aria-labelledby','commercial-title');
+  const top=document.createElement('div');top.className='commercial-dialog-top';
+  const title=document.createElement('h2');title.id='commercial-title';
+  const closeButton=document.createElement('button');closeButton.type='button';closeButton.textContent='Fechar';closeButton.setAttribute('aria-label','Fechar painel comercial');
+  top.append(title,closeButton);const body=document.createElement('div');body.className='commercial-dialog-body';dialog.append(top,body);document.body.append(dialog);
+  let opener=null;
+  const close=()=>dialog.close();closeButton.addEventListener('click',close);
+  dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
+  // Let the native modal own Tab/Escape; do not close the surrounding study area.
+  dialog.addEventListener('keydown',event=>{if(['Tab','Escape'].includes(event.key))event.stopPropagation();});
+  dialog.addEventListener('close',()=>{document.body.append(dialog);const targets=[opener,opener?.closest('.leo-panel')?.querySelector('.study-menu-toggle'),document.querySelector('.leo-panel:not([hidden]) .leo-close'),document.querySelector('main')];targets.find(node=>node?.isConnected&&!node.inert&&!node.closest('[inert]')&&node.getClientRects().length)?.focus({preventScroll:true});});
+  const make=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
+  const button=(text,fn)=>{const node=make('button',text);node.type='button';node.addEventListener('click',fn);return node;};
+  const notice=text=>{const node=make('p',text);node.className='commercial-notice';return node;};
+  function offer(){
+   title.textContent='7 dias grátis · prévia do lançamento';body.replaceChildren();
+   body.append(notice('SIMULAÇÃO LOCAL — não cria conta, não inicia um teste real e não cobra.'),make('p','Plano planejado: sete dias gratuitos e, se você decidir contratar, R$ 39,90 por mês. A proposta de teste sem cartão e contratação posterior ainda precisa ser confirmada antes do lançamento.'));
+   const steps=make('ol');for(const text of ['Criar uma conta e verificar seu contato na versão final. Para menor de idade, seguir o fluxo do responsável.','Pedir o início dos sete dias após a conta estar pronta. O horário e o acesso serão confirmados pelo serviço.','Experimentar aulas, exercícios e Professor Leo conforme os recursos liberados no lançamento.','Ao terminar, decidir se quer contratar por R$ 39,90/mês. Esta prévia não faz conversão nem cobrança automática.'])steps.append(make('li',text));body.append(steps);
+   const status=make('p');status.setAttribute('role','status');status.className='commercial-state';
+   const base=Date.UTC(2026,10,2,12);let start=null,clock=base;
+   const update=()=>{const state=trialAt(start,clock);status.dataset.trialState=state.status;status.textContent=state.status==='not_started'?'Cenário de teste: ainda não iniciado.':state.status==='trial_expired'?'Cenário de teste: sete dias encerrados. Nenhum pagamento foi processado e seu acesso à demonstração não mudou.':'Cenário de teste: '+state.daysRemaining+' dia(s) restante(s), de sete. Nenhum teste real está ativo.';};
+   const actions=make('div');actions.className='commercial-actions';
+   actions.append(button('Simular início dos 7 dias',()=>{start=base;clock=base;update();}),button('Simular último dia',()=>{start=base;clock=base+6*DAY;update();}),button('Simular fim dos 7 dias',()=>{start=base;clock=base+7*DAY;update();}),button('Reiniciar cenário',()=>{start=null;clock=base;update();}));
+   const unavailable=button('Assinatura real indisponível nesta prévia',()=>{});unavailable.disabled=true;
+   body.append(make('h3','Explore o fluxo sem cadastrar dados'),status,actions,unavailable,make('p','Login, recuperação de acesso e gerenciamento da assinatura ainda não estão implementados. Não informe e-mail, senha, telefone ou dados de pagamento nesta prévia.'),button('Explorar área de estudos · demonstração',()=>{close();document.dispatchEvent(new CustomEvent('decola:open-study',{detail:{view:'dashboard'}}));}));update();
+  }
+  function support(context){
+   title.textContent='Ajuda e suporte';body.replaceChildren();
+   body.append(notice('PRÉVIA DE SUPORTE — não há envio de mensagem, protocolo ou atendimento conectado.'),make('p','Você pode consultar as orientações e preparar um rascunho de teste. Use exemplos fictícios; não inclua senha, CPF, dados de pagamento ou conversas privadas.'));
+   const faq=make('section');faq.setAttribute('aria-label','Orientações rápidas');
+   for(const [question,answer]of [
+    ['Como continuar minha aula?','No Meu Decola, use “Continuar estudando”. O progresso é local ao endereço e navegador; confira os avisos de salvamento e guarde uma cópia quando disponível.'],
+    ['O Professor Leo não respondeu.','Confira a conexão e use a dica ou resolução local quando oferecida. Uma falha da IA não deve apagar sua tentativa. Não compartilhe credenciais para pedir ajuda.'],
+    ['Por que a voz não é sempre Elvis?','O MP3 Elvis está no piloto específico. As respostas dinâmicas usam a voz disponível no navegador. Gravações novas ainda dependem de validação e autorização.'],
+    ['Já existe cobrança ou conta de assinante?','Não. Há uma demonstração com perfis fictícios. Os sete dias e a assinatura de R$ 39,90/mês são planejados; usar a demonstração não ativa uma assinatura.']
+   ]){const details=make('details');details.append(make('summary',question),make('p',answer));faq.append(details);}body.append(faq);
+   const form=make('form');form.className='commercial-support-form';
+   const select=(text,values)=>{const label=make('label',text),node=make('select');node.setAttribute('aria-label',text);for(const [value,name]of Object.entries(values)){const option=make('option',name);option.value=value;node.append(option);}label.append(node);form.append(label);return node;};
+   const kind=select('Tipo de contato',kinds),topic=select('Assunto',topics);
+   const label=make('label','Mensagem de teste (até 1.200 caracteres)'),message=make('textarea');message.rows=4;message.maxLength=1200;label.append(message);form.append(label);
+   const generate=make('button','Preparar rascunho local');generate.type='submit';form.append(generate);
+   const status=make('p');status.setAttribute('role','status');
+   const outputLabel=make('label','Rascunho preparado — não enviado'),output=make('textarea');output.rows=6;output.readOnly=true;outputLabel.hidden=true;outputLabel.append(output);
+   const copy=button('Copiar rascunho',async()=>{if(!output.value)return;const text=output.value;try{await navigator.clipboard.writeText(text);if(output.value===text)status.textContent='Rascunho copiado. Ele não foi enviado nem registrado por uma equipe.';}catch{if(output.value!==text)return;output.focus();output.select();status.textContent='Cópia automática indisponível. Copie o texto selecionado manualmente. Nada foi enviado.';}});copy.hidden=true;
+   const clear=button('Limpar rascunho desta prévia',()=>{message.value='';output.value='';outputLabel.hidden=true;copy.hidden=true;status.textContent='Rascunho local limpo. Nenhum chamado externo foi alterado.';});
+   const invalidate=()=>{output.value='';outputLabel.hidden=true;copy.hidden=true;status.textContent='Mensagem alterada. Prepare novamente o rascunho antes de copiar.';};
+   message.addEventListener('input',invalidate);kind.addEventListener('change',invalidate);topic.addEventListener('change',invalidate);
+   form.addEventListener('submit',event=>{event.preventDefault();try{output.value=supportDraft({kind:kind.value,topic:topic.value,message:message.value,context});outputLabel.hidden=false;copy.hidden=false;status.textContent='Rascunho preparado somente nesta página. Não há chamado enviado, protocolo ou confirmação de atendimento.';}catch(error){status.textContent=error.message;message.focus();}});
+   body.append(make('h3','Dúvidas, problemas, reclamações e sugestões'),form,status,outputLabel,copy,clear,make('p','WhatsApp e atendimento humano ainda não estão conectados nesta prévia. O rascunho não é salvo após sair ou atualizar; copie antes de fechar o painel.'));
+  }
+  document.addEventListener('click',event=>{
+   const trigger=event.target.closest('[data-decola-support],[data-decola-offer]');if(!trigger)return;event.preventDefault();
+   const panel=trigger.closest('.leo-panel');opener=trigger;
+   if(trigger.hasAttribute('data-decola-support'))support(panel?'Área de estudos':'Página inicial');else offer();
+   (panel||document.body).append(dialog);dialog.inert=false;
+   if(typeof dialog.showModal==='function'){dialog.showModal();closeButton.focus({preventScroll:true});}
+   else{dialog.remove();const message=make('p','Este navegador não oferece o painel de prévia. Use uma versão atualizada do navegador; nenhuma conta ou cobrança foi criada.');message.setAttribute('role','status');trigger.after(message);}
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize);else initialize();
+})();
+
+})();
+</script>
 <script>
 (()=>{
 // Shared transport for the existing Leo Worker. No secrets or SDK credentials.
@@ -1541,7 +1643,7 @@ document.querySelector('.header').addEventListener('click', event => {
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const steps = active => `<div class="steps" aria-label="Etapas do plano">${['Seu perfil', 'Diagnóstico', 'Resultado', 'Seu plano'].map((s, i) => `<span ${i === active ? 'aria-current="step" class="active"' : ''}><b>${i + 1}</b>${s}</span>`).join('')}</div>`;
 function home() {
-  return `<section class="hero"><div class="hero-copy"><span class="eyebrow"><span class="dot"></span> PREPARAÇÃO PARA O ENEM E VESTIBULARES</span><h1>Seu sonho de universidade começa <span>aqui.</span></h1><p>Prepare-se para o ENEM e vestibulares com exercícios, simulados e um plano de estudos no seu ritmo. Aprenda com o Professor Leo e avance rumo à universidade.</p><a class="button" data-resume href="#perfil">Experimentar demonstração <span aria-hidden="true">→</span></a><div class="hero-note"><span>✓ 7 dias gratuitos no lançamento</span><span>✓ Plano completo por R$ 39,90/mês</span></div></div><div class="hero-art" aria-label="Ilustração de um plano de estudos"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><div class="floating-tag">✦ Sua jornada até a universidade</div><div class="study-card"><div class="card-top"><span class="mini-logo">→</span><span>SEU PLANO DE VOO</span><span>•••</span></div><h2>ENEM em foco.<br>Seu futuro em movimento.</h2><p>Uma semana de cada vez.</p><div class="week"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span><b>✓</b><b>✓</b><b>✓</b><b class="today">4</b><b class="future">5</b><b class="future">6</b><b class="future">7</b></div><div class="task"><span class="task-icon">∑</span><div><strong>Matemática</strong><small>Um desafio a menos, um passo a mais.</small></div><span>→</span></div><div class="progress-label"><span>Seu progresso na semana</span><strong>60%</strong></div><div class="progress"><span></span></div><small class="illustration-note">Exemplo ilustrativo</small></div><div class="floating-bottom"><span>★</span><div><strong>Você tem potencial.</strong><small>A gente te ajuda a encontrar o caminho.</small></div></div></div></section><section class="launch-offer" aria-label="Assinatura planejada"><div><span class="eyebrow">CONHEÇA O DECOLA VESTIBULAR</span><h2>7 dias para descobrir um novo jeito de estudar.</h2><p>Experimente a jornada de preparação para o ENEM. O plano de lançamento prevê acesso completo por <strong>R$ 39,90/mês</strong> após o teste gratuito. Cadastro e pagamentos estarão disponíveis em breve.</p></div><div class="launch-price"><span>PLANO MENSAL PLANEJADO</span><strong>R$ 39,90<small>/mês</small></strong><a href="#perfil" class="button">Experimentar demonstração →</a><small>Atualmente em demonstração. Não há cobrança nem assinatura ativa.</small></div></section><section class="benefits" aria-label="Nossa proposta"><span>◎ <strong>Um plano para você</strong> Respeite seu momento</span><span>◷ <strong>No seu ritmo</strong> Estude com consistência</span><span>→ <strong>Com direção</strong> Saiba por onde começar</span></section><section id="areas" class="section"><div class="section-heading"><div><span class="eyebrow">PREPARAÇÃO COMPLETA PARA O ENEM</span><h2>Todas as áreas do ENEM. Um grande objetivo.</h2></div><p>Conheça as quatro áreas de conhecimento do ENEM e a redação. Seu plano reserva espaço para todas elas.</p></div><div class="area-grid">${areas.map(a => `<article class="area-card"><span class="area-icon ${a.color}">${a.icon}</span><h3>${a.title}</h3><p>${a.description}</p><span class="card-line ${a.color}"></span></article>`).join('')}</div></section><section id="como-funciona" class="how section"><span class="eyebrow">SEU CAMINHO ATÉ A UNIVERSIDADE</span><h2>Começar pode ser simples.</h2><div class="how-grid"><article><b>01</b><h3>Conte seu momento</h3><p>Escolha um perfil fictício e indique seu tempo disponível para estudar.</p></article><article><b>02</b><h3>Descubra seu ponto de partida</h3><p>Responda cinco questões rápidas, uma para cada frente de estudo.</p></article><article><b>03</b><h3>Encontre seu ritmo</h3><p>Veja uma semana de estudos que prioriza o que merece mais atenção.</p></article></div><a class="button" href="#perfil">Vamos dar o primeiro passo? →</a></section>`;
+  return `<section class="hero"><div class="hero-copy"><span class="eyebrow"><span class="dot"></span> PREPARAÇÃO PARA O ENEM E VESTIBULARES</span><h1>Seu sonho de universidade começa <span>aqui.</span></h1><p>Prepare-se para o ENEM e vestibulares com exercícios, simulados e um plano de estudos no seu ritmo. Aprenda com o Professor Leo e avance rumo à universidade.</p><a class="button" data-resume href="#perfil">Experimentar demonstração <span aria-hidden="true">→</span></a><button type="button" class="commercial-entry" data-decola-support>Ajuda e suporte</button><div class="hero-note"><span>✓ 7 dias gratuitos no lançamento</span><span>✓ Plano completo por R$ 39,90/mês</span></div></div><div class="hero-art" aria-label="Ilustração de um plano de estudos"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="spark spark-one">✦</span><span class="spark spark-two">✦</span><div class="floating-tag">✦ Sua jornada até a universidade</div><div class="study-card"><div class="card-top"><span class="mini-logo">→</span><span>SEU PLANO DE VOO</span><span>•••</span></div><h2>ENEM em foco.<br>Seu futuro em movimento.</h2><p>Uma semana de cada vez.</p><div class="week"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span><b>✓</b><b>✓</b><b>✓</b><b class="today">4</b><b class="future">5</b><b class="future">6</b><b class="future">7</b></div><div class="task"><span class="task-icon">∑</span><div><strong>Matemática</strong><small>Um desafio a menos, um passo a mais.</small></div><span>→</span></div><div class="progress-label"><span>Seu progresso na semana</span><strong>60%</strong></div><div class="progress"><span></span></div><small class="illustration-note">Exemplo ilustrativo</small></div><div class="floating-bottom"><span>★</span><div><strong>Você tem potencial.</strong><small>A gente te ajuda a encontrar o caminho.</small></div></div></div></section><section class="launch-offer" aria-label="Assinatura planejada"><div><span class="eyebrow">CONHEÇA O DECOLA VESTIBULAR</span><h2>7 dias para descobrir um novo jeito de estudar.</h2><p>Experimente a jornada de preparação para o ENEM. O plano de lançamento prevê acesso completo por <strong>R$ 39,90/mês</strong> após o teste gratuito. Cadastro e pagamentos estarão disponíveis em breve.</p></div><div class="launch-price"><span>PLANO MENSAL PLANEJADO</span><strong>R$ 39,90<small>/mês</small></strong><a href="#perfil" class="button">Experimentar demonstração →</a><button type="button" class="commercial-entry" data-decola-offer>Ver fluxo dos 7 dias · prévia</button><small>Atualmente em demonstração. Não há cobrança nem assinatura ativa.</small></div></section><section class="benefits" aria-label="Nossa proposta"><span>◎ <strong>Um plano para você</strong> Respeite seu momento</span><span>◷ <strong>No seu ritmo</strong> Estude com consistência</span><span>→ <strong>Com direção</strong> Saiba por onde começar</span></section><section id="areas" class="section"><div class="section-heading"><div><span class="eyebrow">PREPARAÇÃO COMPLETA PARA O ENEM</span><h2>Todas as áreas do ENEM. Um grande objetivo.</h2></div><p>Conheça as quatro áreas de conhecimento do ENEM e a redação. Seu plano reserva espaço para todas elas.</p></div><div class="area-grid">${areas.map(a => `<article class="area-card"><span class="area-icon ${a.color}">${a.icon}</span><h3>${a.title}</h3><p>${a.description}</p><span class="card-line ${a.color}"></span></article>`).join('')}</div></section><section id="como-funciona" class="how section"><span class="eyebrow">SEU CAMINHO ATÉ A UNIVERSIDADE</span><h2>Começar pode ser simples.</h2><div class="how-grid"><article><b>01</b><h3>Conte seu momento</h3><p>Escolha um perfil fictício e indique seu tempo disponível para estudar.</p></article><article><b>02</b><h3>Descubra seu ponto de partida</h3><p>Responda cinco questões rápidas, uma para cada frente de estudo.</p></article><article><b>03</b><h3>Encontre seu ritmo</h3><p>Veja uma semana de estudos que prioriza o que merece mais atenção.</p></article></div><a class="button" href="#perfil">Vamos dar o primeiro passo? →</a></section>`;
 }
 function profilePage() {
   return `<section class="flow section">${steps(0)}<span class="eyebrow">CADA JORNADA TEM UM COMEÇO</span><h1>Um plano com o seu ritmo.</h1><p class="lead">Use um perfil fictício para explorar a experiência. Não informe dados pessoais.</p><form id="profile-form" class="form-card"><label>Perfil de demonstração<select name="name"><option>Estudante Aurora</option><option>Estudante Horizonte</option><option>Estudante Estrela</option></select></label><label>Curso dos sonhos<select name="course"><option>Medicina</option><option>Engenharia</option><option>Direito</option><option>Pedagogia</option><option>Ainda estou descobrindo</option></select></label><div class="form-row"><label>Dias de estudo por semana<select name="days"><option value="3">3 dias</option><option value="4">4 dias</option><option value="5" selected>5 dias</option><option value="6">6 dias</option><option value="7">7 dias</option></select></label><label>Tempo por dia<select name="hours"><option value="1">1 hora</option><option value="1.5" selected>1 hora e meia</option><option value="2">2 horas</option><option value="3">3 horas</option></select></label></div><label>Como você se sente hoje?<select name="moment"><option>Estou começando do zero</option><option>Já estudo, mas preciso de organização</option><option>Estou revisando para a prova</option></select></label><p class="notice">✦ Esta demonstração não cria conta e não envia seus dados. Seu progresso é salvo automaticamente neste navegador. Use “Recomeçar demonstração” para apagá-lo.</p><button class="button" type="button" id="start-diagnostic">Ir para o diagnóstico <span>→</span></button></form></section>`;
@@ -4623,8 +4725,9 @@ function initialize() {
     button.addEventListener('click', () => { collapse();openStudy(view);requestAnimationFrame(()=>{const target=panel.querySelector('.study-dashboard:not([hidden]) h2')||panel.querySelector('.leo-chat:not([hidden]) textarea')||panel.querySelector('.leo-back');if(target){if(target.tagName==='H2')target.tabIndex=-1;target.focus({preventScroll:true});}}); });
     destinations.append(button);
   });
+  const support=document.createElement('button');support.type='button';support.textContent='Ajuda e suporte';support.dataset.decolaSupport='';support.addEventListener('click',()=>collapse());destinations.append(support);
   const setActive=view=>{
-   destinations.querySelectorAll('button').forEach(b=>{if(b.dataset.studyView===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+   destinations.querySelectorAll('[data-study-view]').forEach(b=>{if(b.dataset.studyView===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
    const name=destinations.querySelector('[aria-current]')?.textContent||'Estudos';toggle.textContent='Menu de estudos · '+name;
   };
   shortcuts.append(toggle,destinations);

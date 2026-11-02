@@ -12,7 +12,7 @@ logic = (root / 'plan.js').read_text().replace('export const ', 'const ').replac
 family = (root / 'family-demo.js').read_text().replace('export function ', 'function ')
 app = (root / 'app.js').read_text()
 app = re.sub(r'^import .*?;\n', '', app, flags=re.M)
-scripts = [(root / name).read_text() for name in ['leo-client.js','leo-audio.js','leo-inline.js','study-session.js','lesson-progress.js','percentage-content.js','lesson-navigation.js','memory-pilot.js','memory-help.js','memory-pilot-ui.js']]
+scripts = [(root / name).read_text() for name in ['commercial-preview.js','leo-client.js','leo-audio.js','leo-inline.js','study-session.js','lesson-progress.js','percentage-content.js','lesson-navigation.js','memory-pilot.js','memory-help.js','memory-pilot-ui.js']]
 scripts += [logic + '\n' + family + '\n' + app]
 scripts += [(root / name).read_text() for name in ['professor-leo.js', 'study-area.js', 'language-smart.js', 'navigation.js']]
 # Isolate lexical declarations, retaining the explicit document events/window API.
