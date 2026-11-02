@@ -25,7 +25,8 @@ assert.equal(env('DECOLA_TEST_RUN'),'YES','Explicit test gate required');
 const databaseUrl=env('DECOLA_TEST_DATABASE_URL');
 const parsed=new URL(databaseUrl);
 assert(['postgres:','postgresql:'].includes(parsed.protocol),'Postgres URL required');
-assert(!['localhost','127.0.0.1'].includes(parsed.hostname),'Remote homologation database required');
+assert.equal(parsed.hostname,`db.${PROJECT}.supabase.co`,'Database host does not match approved project');
+assert(parsed.username && parsed.password,'Database credentials required');
 const admin=createClient(URL,env('SUPABASE_SERVICE_ROLE_KEY'),{auth:{autoRefreshToken:false,persistSession:false}});
 const pub=env('SUPABASE_PUBLISHABLE_KEY');
 const pool=new pg.Pool({connectionString:databaseUrl,ssl:{rejectUnauthorized:true},max:2});
@@ -39,8 +40,8 @@ const created=[];
 let db;
 try{
  db=await pool.connect();
- const identity=await db.query('select current_database() as db, current_setting(\'is_superuser\') as superuser');
- console.log('Connected to homologation database:',identity.rows[0].db);
+ const identity=await db.query("select current_database() as db, current_setting('is_superuser') as superuser, current_user as role");
+ console.log('Connected to approved database host; role:',identity.rows[0].role);
  const existing=await db.query("select count(*)::int as n from decola.accounts");
  console.log('Existing account count:',existing.rows[0].n);
  // Auth identities are created via the supported Admin API, not by inserting into auth.users.
@@ -51,7 +52,7 @@ try{
    });
    if(error)throw Error(`Auth create failed for ${p.label}: ${error.message}`);
    p.userId=data.user.id;created.push(p.userId);
-   console.log('Created Auth user for',p.label,'id:',p.userId);
+   console.log('Created synthetic Auth user for',p.label);
  }
  // One transaction for fixture provisioning. No privileged credentials enter client sessions.
  await db.query('BEGIN');
@@ -133,7 +134,7 @@ try{
  console.log('COMPLETE: synthetic records retained for audit; no automatic deletion');
 }catch(e){
  console.error('FAILED:',e.message);
- if(created.length)console.error('Partial Auth user IDs retained for manual reconciliation:',created.join(','));
+ if(created.length)console.error('WARNING: partial Auth identities may remain; reconcile in Auth dashboard before retry.');
  process.exitCode=1;
 }finally{
  if(db)db.release();
