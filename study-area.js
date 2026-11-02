@@ -53,20 +53,22 @@
   lesson.append(example,make('p','','Dica: 10% é dividir por 10; 20% é o dobro de 10%.'));
   const practice=make('section','study-smart-card');practice.append(make('h3','','3. Praticar: resolva as questões'));
   const questions=[
-   {q:'Quanto é 20% de 150?',opts:['20','30','35'],answer:1,why:'20 ÷ 100 = 0,20; 150 × 0,20 = 30.'},
+   {q:'Quanto é 20% de 180?',opts:['30','36','40'],answer:1,why:'20 ÷ 100 = 0,20; 180 × 0,20 = 36.'},
    {q:'Uma camiseta de R$ 80 tem 10% de desconto. Qual o preço final?',opts:['R$ 72','R$ 70','R$ 78'],answer:0,why:'10% de 80 = 8. Preço final: 80 − 8 = R$ 72.'},
    {q:'Um produto de R$ 120 aumentou 25%. Qual é o novo preço?',opts:['R$ 125','R$ 145','R$ 150'],answer:2,why:'25% de 120 = 30. Novo preço: 120 + 30 = R$ 150.'}
   ];
-  const key='decola-smart-percent-v2';let progress={};
+  const key='decola-smart-percent-v3';let progress={};
   try{progress=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){progress={};}
-  // Recupera acertos anteriores sem apagar o histórico da versão 1.0.
-  try{const old=JSON.parse(localStorage.getItem('decola-smart-percent-v1')||'{}')||{};questions.forEach((q,i)=>{if(progress[i]===undefined&&old[i]===q.answer)progress[i]={choice:q.answer,attempts:1,done:true};});}catch(e){}
+  // Q1 mudou de 20% de 150 para 20% de 180: não importar tentativas antigas.
+  // Mantém os registros v1/v2 intactos e recupera somente Q2/Q3, cujos enunciados não mudaram.
+  try{const previous=JSON.parse(localStorage.getItem('decola-smart-percent-v2')||'{}')||{};[1,2].forEach(i=>{if(progress[i]===undefined&&previous[i]&&typeof previous[i]==='object')progress[i]=previous[i];});}catch(e){}
+  try{const old=JSON.parse(localStorage.getItem('decola-smart-percent-v1')||'{}')||{};[1,2].forEach(i=>{if(progress[i]===undefined&&old[i]===questions[i].answer)progress[i]={choice:questions[i].answer,attempts:1,done:true};});}catch(e){}
   const save=()=>{try{localStorage.setItem(key,JSON.stringify(progress));}catch(e){}};
   const score=make('p','study-smart-score');score.setAttribute('aria-live','polite');
   const updateScore=()=>{const done=questions.filter((q,i)=>progress[i]?.done).length;const correct=questions.filter((q,i)=>progress[i]?.done&&progress[i]?.choice===q.answer).length;score.textContent='Seu progresso: '+done+' de '+questions.length+' questões concluídas • '+correct+' acerto(s). Salvo neste navegador.';};
   practice.append(score);
   const hints=[
-   ['20% significa 20 de cada 100. Transforme 20% em decimal antes de multiplicar.','Calcule 10% de 150 e depois dobre esse valor.'],
+   ['20% significa 20 de cada 100. Transforme 20% em decimal antes de multiplicar.','Calcule 10% de 180 e depois dobre esse valor.'],
    ['Desconto diminui o preço, não aumenta. Descubra primeiro 10% de 80.','10% de 80 é 8. Subtraia esse desconto do preço original.'],
    ['Aumento significa somar ao valor inicial. Primeiro descubra 25% de 120.','25% é um quarto: divida 120 por 4 e some o resultado a 120.']
   ];
