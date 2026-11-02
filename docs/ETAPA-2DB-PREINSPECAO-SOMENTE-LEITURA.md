@@ -1,5 +1,7 @@
 # Etapa 2D-B — pré-inspeção Supabase somente de leitura
 
+> Atualização posterior: [complemento de leitura no painel](ETAPA-2DB-COMPLEMENTO-PAINEL.md) confirma configurações Auth, decola não exposto e Usage/Billing. As lacunas abaixo descrevem o acesso pelo conector no momento da coleta, não o estado atual de toda a análise.
+
 02/11/2026. Branch exclusiva `dev/navegacao-leo-familias-20261031`, base `d57a291`. Projeto `yxxrfhobhonigwczzpim`, organização `gfuffaasrxaroosnwujl` — Decola Vestibular. [Evidências sanitizadas](evidencias/etapa2db-preinspecao.json).
 
 ## Escopo e conclusão
