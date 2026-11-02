@@ -7,3 +7,6 @@ __pycache__/
 .env.*
 !.env.example
 node_modules/
+.decola-homologacao/
+*.sqlite-wal
+*.sqlite-shm
