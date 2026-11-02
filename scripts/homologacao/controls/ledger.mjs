@@ -11,7 +11,7 @@ const clone=x=>structuredClone(x),uuid=x=>typeof x==='string'&&/^[a-f0-9]{8}-[a-
 function requireId(x){if(!uuid(x))throw Error('INVALID_REFERENCE');return x;}
 const kinds=['auth','account','student','progress'];
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
-const unresolved=d=>d.operations.some(o=>['pending','unknown'].includes(o.status));
+const unresolved=d=>d.operations.some(o=>['pending','unknown'].includes(o.status))||(d.providerCalls||[]).some(c=>['pending','unknown'].includes(c.status));
 const inventory=d=>d.resources.filter(r=>r.origin==='created').map(r=>({kind:r.kind,id:r.id,operationId:r.operationId})).sort((a,b)=>(a.kind+a.id).localeCompare(b.kind+b.id));
 export class LocalLedger{
  constructor(directory,{clock=()=>Date.now()}={}){
@@ -39,11 +39,11 @@ export class LocalLedger{
  move(d,state){assertTransition(d.state,state);d.state=state;this.event(d,'state');}
  create({projectId=PROJECT,organizationId=ORGANIZATION,limits={}}={}){
   if(projectId!==PROJECT||organizationId!==ORGANIZATION)throw Error('WRONG_TARGET');
-  const defaults={durationMs:600000,timeoutMs:10000,maxCalls:40,maxConcurrency:2,maxAttempts:2};
+  const defaults={durationMs:600000,timeoutMs:10000,maxCalls:40,maxConcurrency:2,maxAttempts:2,maxProviderCalls:100};
   if(Object.keys(limits).some(k=>!(k in defaults)))throw Error('INVALID_LIMIT');
   const l={...defaults,...limits};for(const v of Object.values(l))if(!Number.isSafeInteger(v)||v<1)throw Error('INVALID_LIMIT');
-  if(l.maxConcurrency>2||l.maxCalls>1000||l.maxAttempts>5||l.durationMs>3600000||l.timeoutMs>60000||l.timeoutMs>l.durationMs)throw Error('INVALID_LIMIT');
-  const now=this.clock(),d={id:randomUUID(),projectId,organizationId,state:'planned',revision:0,lastClockAt:now,startedAt:now,deadline:now+l.durationMs,limits:l,calls:0,operations:[],resources:[],events:[],plans:[],sessionEvidence:null};
+  if(l.maxProviderCalls>100||l.maxConcurrency>2||l.maxCalls>1000||l.maxAttempts>5||l.durationMs>3600000||l.timeoutMs>60000||l.timeoutMs>l.durationMs)throw Error('INVALID_LIMIT');
+  const now=this.clock(),d={id:randomUUID(),projectId,organizationId,state:'planned',revision:0,lastClockAt:now,startedAt:now,deadline:now+l.durationMs,limits:l,calls:0,operations:[],providerCalls:[],resources:[],events:[],plans:[],sessionEvidence:null};
   this.atomic(()=>{this.db.prepare('INSERT INTO runs VALUES (?,?,?,?)').run(d.id,PROJECT,0,JSON.stringify(d));});return d.id;
  }
  claim(id,{owner=randomUUID(),leaseMs=30000}={}){
@@ -55,6 +55,7 @@ export class LocalLedger{
    if(old&&old.run_id!==id){const previous=this.inspect(old.run_id);if(!['retained','cleaned'].includes(previous.state)||unresolved(previous))throw Error('PREVIOUS_RUN_UNRECONCILED');}
    if(old&&old.run_id===id){
     for(const o of d.operations)if(o.status==='pending')o.status='unknown';
+    for(const c of d.providerCalls||[])if(c.status==='pending')c.status='unknown';
     if(!['planned','cleaned'].includes(d.state)){
      const unknown=d.operations.find(o=>o.status==='unknown');
      if(d.state==='create_pending'&&unknown?.kind==='create')this.move(d,'auth_unknown');
@@ -85,7 +86,7 @@ export class LocalLedger{
    if(old&&!(kind==='read'&&old.status==='failed'&&old.attempts<d.limits.maxAttempts))throw Error('OPERATION_NOT_RETRYABLE');
    if(d.calls>=d.limits.maxCalls||this.clock()>=d.deadline)throw Error('BUDGET_EXHAUSTED');
    if(d.operations.filter(o=>o.status==='pending').length>=d.limits.maxConcurrency)throw Error('CONCURRENCY_LIMIT');
-   if(kind!=='read'&&unresolved(d))throw Error('RECONCILIATION_REQUIRED');
+   if(kind!=='read'&&(unresolved(d)||(d.providerCalls||[]).some(c=>['pending','unknown'].includes(c.status))))throw Error('RECONCILIATION_REQUIRED');
    if(['planned','retained','cleanup_approved','cleaned'].includes(d.state))throw Error('EXECUTION_NOT_AUTHORIZED');
    if(kind==='create'){if(!['create:horizonte','create:estrela'].includes(key)||d.operations.filter(o=>o.kind==='create').length>=2)throw Error('AUTH_LIMIT');this.move(d,'create_pending');}
    if(kind==='link'){if(!d.resources.some(r=>r.kind==='auth'&&r.origin==='created'))throw Error('AUTH_REFERENCE_REQUIRED');this.move(d,'link_pending');}
@@ -110,9 +111,45 @@ export class LocalLedger{
   const auth=d.resources.filter(r=>r.origin==='created'&&r.kind==='auth').map(r=>r.id);
   if(auth.length!==2||resources.length!==4||resources.filter(r=>r.kind==='student').length!==2||resources.filter(r=>r.kind==='account').length!==2||!auth.every(id=>resources.some(r=>r.kind==='account'&&r.id===id))||new Set(resources.map(r=>r.kind+r.id)).size!==4)throw Error('INVALID_LINK_RESULT');
  }
+ reserveProvider(lease,{operationId,channel,write=false}){
+  if(!['auth','postgres','http'].includes(channel)||typeof write!=='boolean')throw Error('INVALID_PROVIDER_CALL');
+  return this.mutate(lease,d=>{
+   const op=d.operations.find(o=>o.id===operationId);
+   if(!op||op.status!=='pending'||op.epoch!==lease.epoch)throw Error('PROVIDER_OPERATION_REQUIRED');
+   d.providerCalls??=[];
+   if(d.providerCalls.some(c=>c.status==='unknown'))throw Error('PROVIDER_RECONCILIATION_REQUIRED');
+   if(d.providerCalls.length>=(d.limits.maxProviderCalls??100)||this.clock()>=d.deadline)throw Error('PROVIDER_BUDGET_EXHAUSTED');
+   if(d.providerCalls.filter(c=>c.status==='pending').length>=d.limits.maxConcurrency)throw Error('PROVIDER_CONCURRENCY_LIMIT');
+   const deadline=Math.min(d.deadline,(op.providerDeadline??=this.clock()+d.limits.timeoutMs));
+   if(this.clock()>=deadline)throw Error('PROVIDER_DEADLINE');
+   const call={id:randomUUID(),operationId,channel,write,status:'pending',epoch:lease.epoch,deadline};
+   d.providerCalls.push(call);this.event(d,'provider_reserved',{callId:call.id});return call;
+  });
+ }
+ reconcileProvider(lease,{callId,outcome,evidenceRef,definitive=false,quiesced=false}){
+  requireId(evidenceRef);
+  if(!['confirmed','absent'].includes(outcome)||definitive!==true||quiesced!==true)throw Error('PROVIDER_DEFINITIVE_QUIESCENCE_REQUIRED');
+  return this.mutate(lease,d=>{
+   const c=(d.providerCalls||[]).find(c=>c.id===callId);
+   if(!c||c.status!=='unknown')throw Error('PROVIDER_NOT_UNKNOWN');
+   c.status='reconciled';c.outcome=outcome;c.evidenceRef=evidenceRef;
+   this.event(d,'provider_reconciled',{callId,outcome,evidenceRef});
+  });
+ }
+ settleProvider(lease,callId,status){
+  if(!['confirmed','failed','unknown'].includes(status))throw Error('INVALID_PROVIDER_STATUS');
+  return this.mutate(lease,d=>{
+   const c=(d.providerCalls||[]).find(c=>c.id===callId);
+   if(!c||c.status!=='pending'||c.epoch!==lease.epoch)throw Error('PROVIDER_COMPLETION_FENCED');
+   const op=d.operations.find(o=>o.id===c.operationId);
+   if(!op||op.status!=='pending'||this.clock()>=c.deadline)status='unknown';
+   c.status=status;this.event(d,'provider_settled',{callId,status});return c;
+  });
+ }
  complete(lease,opId,{resources=[],sessionEvidence}={}){
   return this.mutate(lease,d=>{
    const o=d.operations.find(o=>o.id===opId);if(!o||o.status!=='pending'||o.epoch!==lease.epoch)throw Error('INVALID_COMPLETION');
+   if((d.providerCalls||[]).some(c=>c.operationId===opId&&['pending','unknown'].includes(c.status)))throw Error('PROVIDER_UNCONFIRMED');
    if(o.kind==='create'&&(resources.length!==1||resources[0].kind!=='auth'))throw Error('INVALID_AUTH_RESULT');
    if(o.kind==='link')this.validateLink(d,resources);
    if(['read','session'].includes(o.kind)&&resources.length)throw Error('READ_CANNOT_OWN_RESOURCE');

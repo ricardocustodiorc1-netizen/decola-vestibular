@@ -1,3 +1,4 @@
+import {withProviderOperation} from './provider-budget.mjs';
 // LOCAL control plane; no default transport, SDK, credentials, SQL or deletion.
 export class ControlledExecutor{
  constructor(ledger,lease){this.ledger=ledger;this.lease=lease;}
@@ -7,7 +8,7 @@ export class ControlledExecutor{
   const opId=start.operation.id,d=this.ledger.inspect(this.lease.runId),abort=new AbortController();
   const timeout=Math.min(d.limits.timeoutMs,Math.max(1,d.deadline-this.ledger.clock()));let timer;
   try{
-   const result=await Promise.race([Promise.resolve().then(()=>call({signal:abort.signal,runId:d.id,projectId:d.projectId,operationId:opId})),new Promise((_,reject)=>{timer=setTimeout(()=>{abort.abort();reject(Error('DEADLINE'));},timeout);})]);
+   const result=await Promise.race([Promise.resolve().then(()=>withProviderOperation({ledger:this.ledger,lease:this.lease,operationId:opId,signal:abort.signal},()=>call({signal:abort.signal,runId:d.id,projectId:d.projectId,operationId:opId}))),new Promise((_,reject)=>{timer=setTimeout(()=>{abort.abort();reject(Error('DEADLINE'));},timeout);})]);
    // Only the controller confirms; a late adapter result cannot mutate the ledger.
    this.ledger.complete(this.lease,opId,result||{});return {status:'confirmed',operationId:opId};
   }catch{

@@ -16,7 +16,7 @@ function inspect(file){
  try{
   if(db.prepare('PRAGMA application_id').get().application_id!==APP||db.prepare('PRAGMA integrity_check').get().integrity_check!=='ok')throw Error('INVALID_BACKUP');
   const runs=db.prepare('SELECT id,revision,doc FROM runs ORDER BY id').all();
-  return runs.map(r=>{const d=JSON.parse(r.doc);if(d.id!==r.id||d.revision!==r.revision)throw Error('INVALID_BACKUP');return {id:r.id,revision:r.revision,state:d.state,unresolved:d.operations.some(o=>['pending','unknown'].includes(o.status))};});
+  return runs.map(r=>{const d=JSON.parse(r.doc);if(d.id!==r.id||d.revision!==r.revision)throw Error('INVALID_BACKUP');return {id:r.id,revision:r.revision,state:d.state,unresolved:d.operations.some(o=>['pending','unknown'].includes(o.status))||(d.providerCalls||[]).some(c=>['pending','unknown'].includes(c.status))};});
  }finally{db.close();}
 }
 export async function backupLedger(ledger,backupDirectory){

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "remoteEnabled": false,
+  "storage": {
+    "root": "/var/lib/decola-homologacao",
+    "operatorAttestedPersistent": false,
+    "operatorApprovalRef": "REQUIRES_APPROVAL_UUID",
+    "networkFilesystem": false
+  },
+  "limits": {"durationMs": 600000, "timeoutMs": 10000, "maxCalls": 40, "maxConcurrency": 1, "maxAttempts": 2, "maxProviderCalls": 100}
+}
