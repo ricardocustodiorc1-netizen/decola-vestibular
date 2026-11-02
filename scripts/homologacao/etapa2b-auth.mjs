@@ -3,7 +3,6 @@
 // Requires Node.js >=20 and @supabase/supabase-js installed separately.
 // Credentials must be supplied through environment variables, never committed.
 import { createClient } from '@supabase/supabase-js';
-import { randomBytes } from 'node:crypto';
 
 const EXPECTED = 'yxxrfhobhonigwczzpim';
 const URL = `https://${EXPECTED}.supabase.co`;
@@ -23,22 +22,18 @@ if (mode === 'check') {
 if (process.env.DECOLA_TEST_CREATE !== 'YES') throw new Error('Creation requires DECOLA_TEST_CREATE=YES');
 const key = required('SUPABASE_SERVICE_ROLE_KEY');
 const admin = createClient(URL, key, {auth:{autoRefreshToken:false,persistSession:false}});
-const suffix = randomBytes(8).toString('hex');
-const domain = required('DECOLA_TEST_EMAIL_DOMAIN');
-if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(domain)) throw new Error('Invalid controlled email domain');
-const records = [];
 for (const label of ['horizonte','estrela']) {
-  const email = `decola-2b-${label}-${suffix}@${domain}`;
-  const password = randomBytes(36).toString('base64url');
+  const email = required(`DECOLA_${label.toUpperCase()}_EMAIL`);
+  const password = required(`DECOLA_${label.toUpperCase()}_PASSWORD`);
+  if (password.length < 20) throw new Error('Use strong test passwords');
   const {data,error} = await admin.auth.admin.createUser({
     email, password, email_confirm:true,
     app_metadata:{decola_stage:'2b_synthetic',persona:label}
   });
   if (error) throw new Error(`Auth creation failed for ${label}: ${error.message}`);
-  records.push({persona:label,user_id:data.user.id,email,password});
   console.log(`Created synthetic Auth identity: ${label} (ID: ${data.user.id})`);
 }
-// Save returned credentials only to an approved secret store, never stdout or Git.
-// The runner must capture the in-memory records securely before adding DB fixtures.
+// Supply passwords and controlled test emails via a trusted secret store.
+// Keep the supplied credentials in that store for subsequent sign-in tests.
 // Intentionally stop here: this script does not insert into decola tables.
 console.log('Auth identities created. Account/student provisioning and RLS tests require a separate controlled runner.');
