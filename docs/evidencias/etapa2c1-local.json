@@ -1,0 +1,53 @@
+{
+  "stage": "2C.1",
+  "date": "2026-11-02",
+  "baseLocalCommit": "46f096bf2717ee95ea89064f74fd2d3d9971d51a",
+  "baseCommitVerified": true,
+  "branch": "dev/navegacao-leo-familias-20261031",
+  "runtime": {
+    "node": "22.22.0",
+    "sqlite": "3.50.4"
+  },
+  "tests": {
+    "controlsRunnerDependencies": 51,
+    "nodeRegression": 109,
+    "pythonSqlite": 20,
+    "total": 180,
+    "failed": 0,
+    "skipped": 0
+  },
+  "proofCases": [
+    "SQLite close/reopen",
+    "SIGKILL subprocess after persisted intent",
+    "two concurrent processes, one lease winner",
+    "stale owner fenced",
+    "timeout and late side effect stay unknown",
+    "partial creation inventoried without delete",
+    "unknown commit/rollback require quarantine",
+    "non-definitive absence rejected",
+    "preexisting and foreign-run resources protected",
+    "budget/concurrency/attempt limits",
+    "cleanup digest/approval/session prerequisites",
+    "remote cleanup always blocked",
+    "CLI run/create exit 2 with YES flags"
+  ],
+  "supabaseAccessed": false,
+  "realCredentialsUsed": false,
+  "remoteUsersCreated": 0,
+  "remoteCleanupExecuted": false,
+  "sessionsActuallyRevoked": false,
+  "actionsDispatched": false,
+  "packagesInstalled": false,
+  "migrationExecuted": false,
+  "homologationApproved": false,
+  "sha256": {
+    "scripts/homologacao/controls/ledger.mjs": "bde63caeb272c13b0b0dc30ed8813c02e811faac61c018c744db1f37173bcf75",
+    "scripts/homologacao/controls/executor.mjs": "340af498c0aa96ed0ee1ef2f5a5a04c1b0d0e555f3b6c9ecf466c1f7bbde9aac",
+    "scripts/homologacao/controls/offline-adapter.mjs": "7dad1dbc783f0e7b4d803408c573ae88509ca90aacc7d229b00a4789015ed5d5",
+    "scripts/homologacao/etapa2b-runner.mjs": "7a8a0f061abc76f7e31ea9a6ed40c37417f4966e1f85645321941c8a2a71ee03",
+    "scripts/homologacao/etapa2b-auth.mjs": "582728ff088b50ec442a7b27c20a303ae80c3bea309b9a10ecb8368973e69b9a",
+    "scripts/homologacao/tests/runner.test.mjs": "ba264e0465962b1ba11cda012e739f9a2b9a2e1836365c12ff6b7d5805e9a3db",
+    "scripts/homologacao/package-lock.json": "3d038ad47098a2c58d9324367f2deddcb26ec5f64931aa3df5eac00e33735742",
+    ".github/workflows/decola-2b-validation.yml": "18809b9a66fd3434ab50d6fc7acc172f5e2affd31c2553ec1de0673dbeb3120e"
+  }
+}
