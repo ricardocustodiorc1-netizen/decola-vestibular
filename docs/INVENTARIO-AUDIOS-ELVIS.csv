@@ -1,0 +1,428 @@
+﻿id,fase_provisoria,status,texto,audio,referencias
+leo34.porcentagem.explicacao,lesson,available-existing,"Calma, criatura! Vinte por cento não são vinte camisetas. É uma parte do preço. Primeiro, descubra dez por cento: basta dividir cento e cinquenta por dez. Dá quinze reais. Vinte por cento é o dobro: trinta reais de desconto. Cento e cinquenta menos trinta: cento e vinte reais. A porcentagem indica o desconto. Para saber o preço final, subtraímos esse desconto do valor original.",audios/leo-explicacao-elvis.mp3,piloto-professor-leo-3-4.html
+leo34.porcentagem.historia,lesson,missing-recording,,,piloto-professor-leo-3-4.html
+texto.0044d1fc0a2bf53c83cb,review,pending-editorial-review,Qual instrumento permite decidir diretamente uma questão em votação popular?,,professor-leo.js:1582
+texto.008c9753508bd1a1f7f4,review,pending-editorial-review,Seu espaço de estudos: escolha um caminho e continue de onde parou.,,study-area.js:706
+texto.018e4d6db192eff97ffd,solution,pending-editorial-review,O plebiscito consulta os cidadãos sobre uma questão política antes de uma decisão.,,professor-leo.js:903
+texto.01e8c4c61f80187855ff,solution,pending-editorial-review,"20% significa 20 a cada 100, ou uma razão equivalente. O 100 é a base de comparação; não significa que qualquer total tenha exatamente 100 unidades.",,memory-pilot.js:5
+texto.021bbd92c744303a861e,hint,pending-editorial-review,"Aumento é soma, não desconto. Calcule 20% do valor e acrescente ao original.",,professor-leo.js:68
+texto.036d9f69cbf6d92a1a9c,review,pending-editorial-review,Some os três valores e divida pela quantidade de números.,,study-area.js:469
+texto.03cb3ef9db75d075f8a4,solution,pending-editorial-review,"A abolição legal não assegurou condições iguais de trabalho, renda e acesso à terra.",,professor-leo.js:914
+texto.05b525e7eb96a545aee0,review,pending-editorial-review, (da mais antiga à mais recente). Verde: 70% ou mais; azul: abaixo da referência.,,professor-leo.js:1185
+texto.05e0741bd93d49913a7c,review,pending-editorial-review,"Boa tentativa! Pense com calma e tente outra alternativa. Se precisar, use o botão de dica.",,professor-leo.js:323
+texto.06009aa971f344a72c24,review,pending-editorial-review,"Em “Ele treinou, portanto melhorou”, “portanto” indica:",,professor-leo.js:1572
+texto.0653d830c57b45fc446b,solution,pending-editorial-review,"Ordenando: 3, 5, 7, 9, 11. O valor central é 7.",,study-area.js:460
+texto.067f895380cc95fb589e,review,pending-editorial-review,20% de 150 = 30. Valor final: 150 + 30 = R$ 180.,,professor-leo.js:61
+texto.068d9dc01cabc0e6c3cb,review,pending-editorial-review,"Observe a expressão ""apesar da chuva"": a chuva dificultaria a ida à biblioteca, mas a turma foi mesmo assim. Que relação existe entre as duas ideias?",,professor-leo.js:781
+texto.0797d6778eac548729a9,review,pending-editorial-review,Qual característica da Constituição de 1988 fortaleceu a cidadania?,,professor-leo.js:910
+texto.07da2cc6c8fec6b9b160,review,pending-editorial-review,Sua dúvida está pronta. Clique em Enviar mensagem para conversar com o Professor Leo.,,professor-leo.js:1968
+texto.099e949fb3382bcf3a35,review,pending-editorial-review,Exercício escolhido a partir dos seus erros de Matemática. Este treino extra não altera a pontuação original.,,professor-leo.js:242
+texto.0ac9c5b0ee55948c7ba6,review,pending-editorial-review,Uma ideia principal abrange o texto inteiro. Qual opção resume os três efeitos positivos apresentados?,,professor-leo.js:782
+texto.0ace2081c86b59b3d67a,review,pending-editorial-review," missões para a meta desta semana. Pausas fazem parte do aprendizado, sem punições.",,professor-leo.js:1383
+texto.0b28396f59757bd11947,review,pending-editorial-review,A leitura melhora o vocabulário e estimula a imaginação.,,professor-leo.js:642
+texto.0b638e6088448834f48d,review,pending-editorial-review,A abolição não eliminou imediatamente as desigualdades sociais,,professor-leo.js:906
+texto.0da56845de8c686e69f5,review,pending-editorial-review,"Pense em grupos organizados que defendem causas coletivas, como moradia, educação ou igualdade. Qual é o papel deles no debate democrático?",,professor-leo.js:790
+texto.0e75c5e63c481860ac66,review,pending-editorial-review,"Segundo o texto, compreender uma opinião diferente significa...",,language-smart.js:7
+texto.0e9b3d948a27cd2a6b1f,review,pending-editorial-review,10% de 80 é 8. Subtraia esse desconto do preço original.,,study-area.js:70
+texto.0ffa46a67a948915b3b7,review,pending-editorial-review,"Aprenda no seu ritmo: entenda, pratique, peça ajuda e acompanhe sua evolução.",,study-area.js:157; study-area.js:255; study-area.js:353; study-area.js:451
+texto.12611b8c7af27a5c6e66,review,pending-editorial-review,Resolver uma equação significa encontrar o valor que torna a igualdade verdadeira. Faça a mesma operação nos dois lados para isolar a incógnita.,,study-area.js:34
+texto.1271795668ab996d683a,review,pending-editorial-review,Um tênis de R$ 240 recebeu desconto de 15%. Quanto custa agora?,,professor-leo.js:93
+texto.12a94c6539a26680b324,review,pending-editorial-review,Você acertou tudo na primeira tentativa. Continue praticando para consolidar estatística.,,study-area.js:512
+texto.12ad07ebdce900f2a3d5,review,pending-editorial-review,"Se alguém entra em casa com os sapatos molhados, podemos levantar uma hipótese sobre o tempo, mesmo sem ler que choveu.",,professor-leo.js:819
+texto.12bc5da33a0bd464d113,review,pending-editorial-review,"“Estudou com dedicação; logo, melhorou.” A palavra “logo” indica:",,professor-leo.js:1582
+texto.1326a8690bb621255ce3,hint,pending-editorial-review,"Procure a mensagem que resume o texto inteiro, não apenas um detalhe.",,language-smart.js:5
+texto.1370680eaa2ec7cc8c76,review,pending-editorial-review,"Exemplo do cotidiano: uma mochila de R$ 200 com 25% de desconto tem abatimento de R$ 50 (200 × 0,25). O preço final é R$ 150.",,study-area.js:52
+texto.1378d25db4d92864c2a4,review,pending-editorial-review,Cada barra mostra a nota original de uma rodada concluída (até 8 por matéria). A linha pontilhada indica a referência de estudo de 70%; recuperar erros depois não modifica essas notas.,,professor-leo.js:1136
+texto.13805a517e5f0b819c89,review,pending-editorial-review,Segregação socioespacial e problemas de mobilidade,,professor-leo.js:905
+texto.144ff36aea4567eb8a35,review,pending-editorial-review,"Se custava 100, sobe para 120 e cai 20% de 120 (=24): termina em 96, 4% abaixo do inicial.",,professor-leo.js:94
+texto.151b64a3ca8b2fd70d41,review,pending-editorial-review,"Simulado demonstrativo com 10 questões autorais, sem tempo limite. Suas respostas ficam apenas neste navegador e não alteram o diagnóstico nem as notas dos treinos.",,professor-leo.js:1731
+texto.163f34f2cdc1273e5c71,review,pending-editorial-review,"Na redação dissertativo-argumentativa, a tese é seu posicionamento sobre o tema. Os parágrafos seguintes precisam sustentá-la com argumentos.",,professor-leo.js:7
+texto.1652ff99873f7114733c,review,pending-editorial-review,"Em “Pedro encontrou Lucas e o cumprimentou”, o pronome “o” retoma Lucas.",,professor-leo.js:821
+texto.16622d7beb25a0f1d2d2,review,pending-editorial-review,"Em uma turma de 50 alunos, 30% faltaram. Quantos faltaram?",,professor-leo.js:67
+texto.166c0b4584287d20b832,review,pending-editorial-review,"Quando há 3x, divida os dois lados por 3 para encontrar x.",,study-area.js:321
+texto.17565afbcb1eb94d1a3e,review,pending-editorial-review,Ideia central: identifique a mensagem que reúne todas as frases.,,language-smart.js:5
+texto.17ae3c4d4cc894867451,review,pending-editorial-review,As notas das rodadas e os reforços são indicadores separados. O painel não altera resultados anteriores nem envia dados.,,professor-leo.js:1475
+texto.18c9238f19ab3aaa8522,review,pending-editorial-review,Pergunte: isso pode ser conferido objetivamente ou duas pessoas poderiam discordar sem que uma esteja mentindo?,,professor-leo.js:784
+texto.19b4f0b103fd197b9cdc,solution,pending-editorial-review,"No plebiscito, a população é consultada antes da decisão política.",,professor-leo.js:911
+texto.19e3285fa2d306e6eb5d,review,pending-editorial-review,Qual atitude é exemplo de participação cidadã?,,professor-leo.js:5
+texto.19ed65e44300dbda9186,review,pending-editorial-review,Agora tente escolher a alternativa correta. Você consegue!,,professor-leo.js:259
+texto.1a22b2b342a02d4b844d,solution,pending-editorial-review,“Portanto” apresenta a conclusão da ideia anterior.,,professor-leo.js:1572
+texto.1ae85700b871e6c18004,solution,pending-editorial-review,15 ÷ 100 × 200 = 30 de desconto. O preço final é 200 − 30 = R$ 170. Também vale decompor a taxa em 10% e 5%.,,memory-pilot.js:6
+texto.1b3ecaabff5c1e09c5c8,review,pending-editorial-review,"10 questões de diferentes matérias, correção e plano de revisão.",,professor-leo.js:1775
+texto.1bb0e2c7fa231c2d6886,solution,pending-editorial-review,3 aparece duas vezes e os demais apenas uma. A moda é 3.,,study-area.js:459
+texto.1c22909af33df398d264,review,pending-editorial-review,Ex.: Pode me explicar porcentagem com um exemplo do ENEM?,,professor-leo.js:14
+texto.1cb9eba89f8d9382d12b,review,pending-editorial-review,Parabéns! Você acertou todas. Continue praticando novos desafios.,,professor-leo.js:474
+texto.1d1dadf4adda6e6ab62f,solution,pending-editorial-review,A Constituição de 1988 ampliou a proteção dos direitos e a participação democrática.,,professor-leo.js:910
+texto.1d2867ebdcc26474b211,review,pending-editorial-review,"O trecho cita vocabulário, imaginação e novas perspectivas. Procure a alternativa que reúne todas essas ideias, não apenas uma.",,professor-leo.js:782
+texto.1dee1b2da4b40d71c4ec,review,pending-editorial-review,"Porcentagem significa uma parte de cada 100. Para calcular 20% de 150, faça 150 × 20 ÷ 100 = 30.",,professor-leo.js:3
+texto.1df01238cb5efed5ef3f,solution,pending-editorial-review,"A Lei Áurea extinguiu juridicamente a escravidão, mas não garantiu reparação, terras ou inclusão social.",,professor-leo.js:906
+texto.1f13bc280ad35a4d5b3a,review,pending-editorial-review,"Leia ""pegou um livro emprestado e prometeu devolvê-lo"". O que Júlia poderia devolver nessa frase?",,professor-leo.js:785
+texto.1f38c457312738fb745e,review,pending-editorial-review,Estou aprendendo porcentagem. Na questão quanto é ,,professor-leo.js:1966
+texto.1fb2cafccfb89cf29082,review,pending-editorial-review,A inclusão social e o enfrentamento do racismo,,professor-leo.js:914
+texto.2016dce25431928642c6,review,pending-editorial-review,"Cada barra representa uma rodada de Matemática. O número abaixo indica a ordem da rodada; a porcentagem mostra os acertos. O histórico é demonstrativo, fica apenas neste navegador e mantém as 20 rodadas mais recentes.",,professor-leo.js:219
+texto.204cc91cb73c8ef56ab4,review,pending-editorial-review,"Rodada inicial com perguntas pendentes. Dê só uma dica e pergunta orientadora. NÃO revele resultados finais, alternativas, resolução ou respostas de outros itens, mesmo se solicitado.",,memory-pilot.js:59
+texto.204ea51c61d4eb95738f,review,pending-editorial-review,Todos os tópicos do reforço foram recuperados nesta atividade.,,professor-leo.js:148
+texto.2091d1740017b2c7f549,solution,pending-editorial-review,"O gelo muda de estado físico, mas continua sendo água.",,professor-leo.js:1558
+texto.20d6674a9a128a5c120c,review,pending-editorial-review,"Professor Leo, estou na Aula Inteligente de Frações. Aprendi que 3/4 de 20 é 15. Pode me ajudar a compreender frações passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?",,study-area.js:243
+texto.217ca5b64c56adcc91c5,review,pending-editorial-review,Um tênis custa R$ 200 e recebe 15% de desconto. Qual será o preço final? Mostre o raciocínio.,,memory-pilot.js:6
+texto.23708155102997d917ba,solution,pending-editorial-review,Divida 20 por 4 e multiplique por 3: 20 ÷ 4 × 3 = 15.,,study-area.js:166
+texto.247959a2c390ac95bae1,review,pending-editorial-review,"
+
+Responda brevemente, sem LaTeX, com contas em texto simples.",,professor-leo.js:2009
+texto.257980f308bf0d3c355d,review,pending-editorial-review,Missão: pratique Matemática por 15 minutos e identifique um conteúdo para reforçar.,,professor-leo.js:1311
+texto.26c41e55b59215b287bc,review,pending-editorial-review,"Após a Lei Áurea, qual desafio permaneceu para a população negra no Brasil?",,professor-leo.js:914
+texto.26c7ec7696ce75404804,review,pending-editorial-review,"Desafio extra demonstrativo, sem alterar a nota da rodada.",,professor-leo.js:605
+texto.26fc851d521e3689b805,review,pending-editorial-review,Qual alternativa apresenta uma transformação física?,,professor-leo.js:1558
+texto.2790f95a3aa326e0865b,solution,pending-editorial-review,A pessoa subtraiu como se fosse desconto. Aumento exige somar: 20% de 100 = 20; 100 + 20 = R$ 120.,,memory-pilot.js:7
+texto.27dcc8535280d5c24b81,review,pending-editorial-review,"Um produto de R$ 160 recebe 10% de desconto. Qual o preço final, em reais?",,memory-pilot.js:6
+texto.2a8e4fcfb4acc68449f4,review,pending-editorial-review,"Exemplo do cotidiano: você comprou 3 cadernos iguais e pagou R$ 24. Se cada caderno custa x, então 3x = 24 e x = R$ 8.",,study-area.js:259
+texto.2af9bc6ddce4be59d8fe,review,pending-editorial-review,A ausência de transporte público em periferias é exemplo de:,,professor-leo.js:1582
+texto.2bf37b49420f02ea1432,solution,pending-editorial-review,"O pronome lo substitui livro, evitando repetição.",,professor-leo.js:628
+texto.2ce5540e2e4efcd0d2dd,review,pending-editorial-review,Uma mensalidade de R$ 100 aumentou 20%. Qual o novo valor?,,professor-leo.js:68
+texto.2e25ee4c81ed582f982a,review,pending-editorial-review,Depois divida 14 por 2 e confira em 2x + 6 = 20.,,study-area.js:276
+texto.3061c2db4f0ea0bf12a6,review,pending-editorial-review,Uma escola instala coleta seletiva. O principal benefício é:,,professor-leo.js:1582
+texto.30747a8f1ad7bcc99cd3,review,pending-editorial-review,Qual ação é exemplo de participação democrática?,,professor-leo.js:1557
+texto.32269112a1d04a1224e8,review,pending-editorial-review,"Cidadania, história, geografia e movimentos sociais.",,professor-leo.js:1774
+texto.329eb410cd98a420b380,review,pending-editorial-review,"Uma fração representa partes iguais de um todo. O numerador indica quantas partes consideramos; o denominador, em quantas partes o todo foi dividido.",,study-area.js:33
+texto.34783d9b51d8d3763856,hint,pending-editorial-review,Releia a última frase: compreender e concordar são a mesma coisa?,,language-smart.js:7
+texto.3548d93481c86a3504fc,review,pending-editorial-review,Um grupo de moradores se organiza para reivindicar transporte público melhor. Isso é exemplo de:,,professor-leo.js:912
+texto.363bb77e34d0eff038cc,review,pending-editorial-review,É necessário ampliar o acesso à internet para reduzir desigualdades.,,professor-leo.js:7
+texto.3678779771ff93665bbd,review,pending-editorial-review,"Porcentagem significa uma parte de cada 100. Por exemplo, 15% = 15 ÷ 100 = 0,15. Para encontrar 15% de 80, multiplicamos 80 × 0,15 = 12.",,study-area.js:51
+texto.36dcc9c5c400d6a3978a,review,pending-editorial-review,"Leia o texto completo, identifique o assunto e procure a ideia central. Observe as palavras no contexto e diferencie informações explícitas de conclusões possíveis.",,language-smart.js:20
+texto.377f59b6ebadc2e48885,review,pending-editorial-review,"Dica: primeiro desfaça somas e subtrações; depois, multiplicações e divisões. Confira substituindo o valor de x na equação original.",,study-area.js:260
+texto.38f265aaf339320d7118,review,pending-editorial-review,"As sugestões são recalculadas ao abrir este painel, usando somente os dados guardados neste navegador. Não são uma previsão de nota no ENEM.",,professor-leo.js:1079
+texto.3a1cae4d643d96965043,review,pending-editorial-review,"Você tentou novamente, e isso faz parte do aprendizado! Vamos entender o caminho.",,professor-leo.js:327
+texto.3a1db1c5cc9816097439,review,pending-editorial-review,"Professor Leo, estou na Aula Inteligente de Estatística. Ajude-me a entender média, moda e mediana com perguntas e dicas, sem entregar a resposta imediatamente?",,study-area.js:532
+texto.3b685d910a055f6cc2f9,review,pending-editorial-review,Concessão indica contraste: uma dificuldade não impediu a ação.,,professor-leo.js:641
+texto.3c129ea66413bb6d6113,review,pending-editorial-review,Calcule 10% de 150 e depois dobre esse valor.,,study-area.js:69
+texto.3c6ff86650b6bde273ee,solution,pending-editorial-review,Subtraia 6: 2x = 14. Divida por 2: x = 7. Conferindo: 2 × 7 + 6 = 20.,,study-area.js:265
+texto.3c8c88cd82c493b89c1a,review,pending-editorial-review,"Perímetro do retângulo: some os quatro lados, sem confundir com a área.",,study-area.js:418
+texto.3d6eedc3191007d6393a,review,pending-editorial-review,Qual prática contribui para reduzir o descarte de resíduos?,,professor-leo.js:1561
+texto.3d98fa654565d79cfcdc,review,pending-editorial-review,Leia as explicações com calma e clique em Recomeçar treino para praticar novamente.,,professor-leo.js:488
+texto.3f0c3665460a492a0126,review,pending-editorial-review,Você acertou tudo na primeira tentativa. Continue praticando para consolidar equações.,,study-area.js:317
+texto.3f57e915022131554ef2,review,pending-editorial-review,A leitura pode ampliar a compreensão do mundo.,,language-smart.js:5
+texto.3f70cc37e8cf88da5bfa,review,pending-editorial-review,"Participação direta significa que os cidadãos se manifestam sobre uma decisão política, e não apenas escolhem representantes.",,professor-leo.js:789
+texto.3faa638f74149f5fa0f5,review,pending-editorial-review,Qual é a área de um retângulo de 5 m por 3 m?,,study-area.js:362
+texto.3fbabe10df9849c36342,solution,pending-editorial-review,5% de 200 = 10; aumento significa somar: 200 + 10 = R$ 210.,,memory-pilot.js:7
+texto.400ab41193bd0d33649d,review,pending-editorial-review,Qual ação ajuda a reduzir a quantidade de lixo?,,professor-leo.js:1573
+texto.402d962eedcad8032db4,review,pending-editorial-review,A falta de saneamento e transporte em bairros periféricos indica:,,professor-leo.js:1562
+texto.40443df854c3ec23820d,review,pending-editorial-review,Um pronome pode retomar um termo já mencionado.,,professor-leo.js:645
+texto.40f456d67cafb859ac54,solution,pending-editorial-review,Divida os dois lados por 3: x = 24 ÷ 3 = 8. Conferindo: 3 × 8 = 24.,,study-area.js:264
+texto.416ca9dc261cefec6818,review,pending-editorial-review,Você tem duas tentativas por questão. Os resultados são guardados apenas neste navegador.,,language-smart.js:78
+texto.41edca5ee71678f239a5,review,pending-editorial-review,O acesso desigual a serviços caracteriza desigualdade socioespacial.,,professor-leo.js:1582
+texto.4356b7e8e2c34f8bc65e,hint,pending-editorial-review,30% são três partes de dez. Divida por 10 e multiplique por 3.,,professor-leo.js:82
+texto.43eb550fa0fdd453eaa7,review,pending-editorial-review,"Professor Leo, estou estudando interpretação de textos. Ajude-me a encontrar a ideia central, compreender metáforas e fazer inferências, sem entregar respostas de imediato.",,language-smart.js:74
+texto.45406f192949bc5a488f,review,pending-editorial-review,Outras matérias aparecerão aqui quando tiverem exercícios avaliados; não há resultados dessas áreas para mostrar ainda.,,professor-leo.js:222
+texto.4792ba44f762c1ee33b6,review,pending-editorial-review,A Constituição Federal de 1988 é conhecida como Constituição Cidadã porque:,,professor-leo.js:902
+texto.49fa73c445059f196f37,review,pending-editorial-review,Um serviço de R$ 50 aumentou 20%. Quanto custa agora?,,professor-leo.js:86
+texto.4a43557b0fd2b65afa4b,review,pending-editorial-review,Excelente! Você acertou todas na primeira tentativa. Continue lendo textos variados.,,language-smart.js:37
+texto.4bc1dcb6e4dce4a91489,review,pending-editorial-review,Escolha uma área do ENEM para explorar os conteúdos.,,study-area.js:573
+texto.4bdb8c4e3ba052c44767,review,pending-editorial-review, ao concluir os três desafios. O Professor Leo está orgulhoso do seu progresso! Sua nota original do simulado permanece inalterada.,,professor-leo.js:1603
+texto.4bec57974e0f17382b48,solution,pending-editorial-review,Movimentos sociais organizam demandas coletivas e pressionam por reconhecimento e políticas públicas.,,professor-leo.js:904
+texto.4bf297dd6ce7829ec5a0,review,pending-editorial-review,Marina viu o trem se afastando e consultou o próximo horário. Que situação essas duas pistas sugerem?,,professor-leo.js:783
+texto.4e275e841f312d3c0fc3,review,pending-editorial-review,João olhou o céu escuro e levou um guarda-chuva.,,professor-leo.js:643
+texto.4e59a3ef9ebfa0c60977,review,pending-editorial-review,🎯 Próximo passo: praticar para consolidar o desempenho,,professor-leo.js:1205
+texto.4e6189526f3890717406,hint,pending-editorial-review,Pense no significado de “por cento” e na base usada para comparar partes de um total.,,memory-pilot.js:5
+texto.4eae74d5798733541d92,review,pending-editorial-review,"Ao começar, a missão é concluída automaticamente após acertar a recuperação da questão indicada. Você também pode marcar manualmente. Tudo fica neste navegador, sem alterar notas ou dias do plano semanal.",,professor-leo.js:1341
+texto.4f80fbc52a6ffd7b95a4,review,pending-editorial-review,Um produto de R$ 80 teve desconto de 10%. Qual é o novo preço?,,professor-leo.js:59
+texto.4fa6f6242d325caeeb82,review,pending-editorial-review,"Em um texto sobre alimentação saudável, a ideia central reúne o assunto geral; um alimento citado é apenas detalhe.",,professor-leo.js:818
+texto.4fb0f743d480e6952b7a,review,pending-editorial-review,🎉 Nenhum erro neste simulado! Continue praticando para ampliar seu domínio.,,professor-leo.js:1725
+texto.50125a7c1ace23b0b597,solution,pending-editorial-review,Somamos 4 + 6 + 8 = 18 e dividimos por 3: média 6.,,professor-leo.js:1575
+texto.501f10e534e1d8667089,review,pending-editorial-review,Procure as pistas no trecho e compare as alternativas sem acrescentar informações ao texto.,,professor-leo.js:797
+texto.51894480099773e00127,solution,pending-editorial-review,“Portanto” conecta uma ideia à conclusão decorrente dela.,,professor-leo.js:1560
+texto.5296a1cc4b077aa728e5,review,pending-editorial-review,"Geometria estuda formas e medidas. Perímetro é a soma dos comprimentos dos lados de uma figura. Área é a medida da superfície interna. Em um retângulo de 6 m por 4 m, o perímetro é 6 + 4 + 6 + 4 = 20 m e a área é 6 × 4 = 24 m².",,study-area.js:356
+texto.52ec381b6e0c8f5c984e,review,pending-editorial-review,"Ao derreter chocolate e resfriá-lo, ocorre principalmente:",,professor-leo.js:1582
+texto.5536788f48c0356edaf0,review,pending-editorial-review,"Uma sequência sugerida com base nos erros, nas revisões e no desempenho. Estude no seu ritmo: as atividades não alteram suas notas anteriores.",,professor-leo.js:1016
+texto.56b868edefc158d363f6,review,pending-editorial-review,Uma mochila de R$ 120 teve 10% de desconto. Quanto custa?,,professor-leo.js:78
+texto.56f529d8f7ccfd409ec3,solution,pending-editorial-review,"Demonstrou: preço final R$ 170 e raciocínio correto. Parcialmente: encontrou R$ 30, mas o confundiu com o preço final. Precisa de apoio: usou outra base ou somou o desconto.",,memory-pilot.js:6
+texto.57422b708355bd331ed6,review,pending-editorial-review,"Em uma assembleia de bairro, os moradores discutem propostas e expressam suas preferências. Compare participar pessoalmente com delegar a decisão a representantes.",,professor-leo.js:825
+texto.58352a7fbceaf2853ac9,review,pending-editorial-review,Explique com suas palavras o que significa 20%. O que o número 100 representa nessa ideia?,,memory-pilot.js:5
+texto.58b57581850a1cd4a0cc,review,pending-editorial-review,"Opa! Precisa prestar mais atenção! No vestibular, cada detalhe faz diferença. Vamos entender e aprender com esse erro. ",,professor-leo.js:379
+texto.59341139f9a292c68817,review,pending-editorial-review,"Desconto diminui o preço, não aumenta. Descubra primeiro 10% de 80.",,study-area.js:70
+texto.59b2d76eeb9d9ebb54ed,solution,pending-editorial-review,A distribuição desigual de infraestrutura e serviços caracteriza desigualdade socioespacial.,,professor-leo.js:913
+texto.59d97878a1826fcdc9e9,review,pending-editorial-review," conteúdo(s) dominado(s), concluindo os três desafios de cada um. Seu esforço está fazendo diferença!",,professor-leo.js:1055
+texto.5a3659575f6814c5e7ae,hint,pending-editorial-review,"Pense em uma conta que aumentou: some o acréscimo, não subtraia.",,professor-leo.js:85
+texto.5bd3fd0dfe1e45e5c49a,review,pending-editorial-review,O Professor Leo pode orientar seu raciocínio sem entregar a resposta de imediato.,,study-area.js:137; study-area.js:238; study-area.js:336; study-area.js:434; study-area.js:527
+texto.5eacf698e99c3aec59b1,review,pending-editorial-review,🎉 Missão do dia concluída! Você superou uma dificuldade e deu mais um passo rumo à sua aprovação!,,professor-leo.js:768
+texto.5ead7ed6feba08e62f5a,review,pending-editorial-review,Sugestão baseada no seu diagnóstico demonstrativo: comece por ,,professor-leo.js:33
+texto.5f92c0944788bc3e45d3,review,pending-editorial-review,"Ler amplia o vocabulário, estimula a imaginação e permite conhecer outras perspectivas.",,professor-leo.js:625
+texto.5fac65d41bd21d41d113,review,pending-editorial-review,Um produto de R$ 100 teve aumento de 20%. Uma pessoa respondeu R$ 80. Explique o erro e indique o preço correto.,,memory-pilot.js:7
+texto.60532712482a80218c34,review,pending-editorial-review,Questões concluídas: 3 de 3 • Acertos finais: ,,study-area.js:114; study-area.js:215; study-area.js:313; study-area.js:411; study-area.js:508; language-smart.js:35
+texto.609311e37eadce83b147,review,pending-editorial-review,"Com cinco números, escolha o terceiro da lista ordenada.",,study-area.js:471
+texto.60fd1836c792645b0272,review,pending-editorial-review,"A urbanização acelerada, sem infraestrutura suficiente, pode provocar:",,professor-leo.js:905
+texto.6118edc21910756a88dc,review,pending-editorial-review,"Em um clube com 60 pessoas, 30% são crianças. Quantas crianças?",,professor-leo.js:81
+texto.61661f34441910045f39,review,pending-editorial-review,Fato é verificável; opinião expressa avaliação pessoal.,,professor-leo.js:644
+texto.626b0e15cbb529099c96,review,pending-editorial-review,Agora conte 2 desses grupos: multiplique por 2.,,study-area.js:178
+texto.628e5d93485eab40d18c,review,pending-editorial-review,25% é um quarto: divida 120 por 4 e some o resultado a 120.,,study-area.js:71
+texto.63075993cd7bd00d72e8,review,pending-editorial-review,"No Brasil, a abolição da escravidão ocorreu em 1888. Qual afirmação é historicamente adequada?",,professor-leo.js:906
+texto.6431330c206439e8a99a,review,pending-editorial-review,"Um produto de R$ 200 aumenta 5%. Qual o novo preço, em reais?",,memory-pilot.js:7
+texto.64a4c8657c4969fd48ca,review,pending-editorial-review,Qual é uma forma de participação direta da população nas decisões políticas?,,professor-leo.js:903
+texto.6532c959db8852ee470f,solution,pending-editorial-review,A chuva não impediu a saída: isso é concessão.,,professor-leo.js:1568
+texto.666b658d5ca6879d32b0,solution,pending-editorial-review,O acesso desigual à infraestrutura revela desigualdade socioespacial.,,professor-leo.js:1562
+texto.66c341f7802506c4bcd6,review,pending-editorial-review,🎉 Missão do dia concluída automaticamente! Parabéns!,,professor-leo.js:1315
+texto.66fde8bd6643039553ac,review,pending-editorial-review,Explique com uma analogia do cotidiano e palavras fáceis.,,professor-leo.js:1959
+texto.67267962e6e8ec443a46,review,pending-editorial-review,Gráficos demonstrativos com histórico local de até 8 rodadas por matéria. Não representam previsão de nota no ENEM.,,professor-leo.js:1228
+texto.677a7f13700495f27ad8,review,pending-editorial-review,Perímetro é a soma de todos os lados do retângulo.,,study-area.js:372
+texto.6785f1dc6b64f7c05430,review,pending-editorial-review,"A Lei Áurea encerrou juridicamente a escravidão em 1888. Reflita se uma mudança na lei resolve, sozinha, desigualdades acumuladas por séculos.",,professor-leo.js:792
+texto.679db2e044d6b4487562,review,pending-editorial-review,📘 Interpretação de Textos — Aula Inteligente 2.1,,language-smart.js:17
+texto.699156a5b1aaa937ccb1,review,pending-editorial-review,Qual atitude favorece a participação democrática?,,professor-leo.js:1569
+texto.6a40ebc7ba9772e526f5,review,pending-editorial-review,"Ler é abrir janelas para mundos que ainda não conhecemos. Em cada história, encontramos pessoas, lugares e ideias diferentes dos nossos. A leitura não exige que concordemos com tudo: ela nos convida a compreender outras perspectivas antes de formar uma opinião.",,language-smart.js:9
+texto.6a767a1c05cd573dde89,review,pending-editorial-review,Compare as alternativas: uma constituição democrática costuma ampliar ou reduzir direitos e participação?,,professor-leo.js:788
+texto.6a91fd3402e021a09470,review,pending-editorial-review,Observe o conceito em uma situação diferente e procure a ideia em comum.,,professor-leo.js:831
+texto.6aa83649c878d8571378,solution,pending-editorial-review,"“Apesar de” introduz uma concessão, isto é, uma ideia de contraste.",,professor-leo.js:4
+texto.6b1b01b62ff5a72d38bc,review,pending-editorial-review,Parabéns por concluir a prática! Acertar depois de uma dica também é aprender. Vamos revisar os pontos que exigiram mais atenção.,,study-area.js:115; study-area.js:216; study-area.js:314; study-area.js:412; study-area.js:509
+texto.6cda93a9ca9a938eb737,review,pending-editorial-review,Média: some os valores e divida pela quantidade.,,study-area.js:514
+texto.6dd2345dc97770e989b8,review,pending-editorial-review,Aumento: calcule a porcentagem e some ao preço original.,,study-area.js:123
+texto.6df35e9fa3ed74ecdfe6,review,pending-editorial-review,O museu abre às nove. É o lugar mais bonito da cidade.,,professor-leo.js:644
+texto.6e8338e2bf890aabb1f8,review,pending-editorial-review,Descubra quais conteúdos precisam de atenção.,,professor-leo.js:1043
+texto.708c9bbcfa0ca61824cf,review,pending-editorial-review,"Em “Estudou bastante, portanto foi bem na prova”, “portanto” expressa:",,professor-leo.js:1560
+texto.7107a33c56bc1e0d4912,review,pending-editorial-review,"considerá-la com atenção, mesmo sem concordar.",,language-smart.js:7
+texto.710ed737283f114b1dd4,review,pending-editorial-review,"Quando bairros periféricos têm pouco transporte e saneamento, isso evidencia:",,professor-leo.js:913
+texto.7131e1d847858842b018,review,pending-editorial-review,Você concluiu as recuperações pendentes! O plano inteligente indicará o próximo treino ou revisão.,,professor-leo.js:1618
+texto.72834e102b0606d67b0a,review,pending-editorial-review,"Professor Leo, estou na Aula Inteligente de Equações. Aprendi que x + 7 = 12 tem solução x = 5. Pode me ajudar a resolver equações passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?",,study-area.js:341
+texto.72b1ec84ca5c5c2bbb79,review,pending-editorial-review,🎉 Parabéns! Você recuperou todos os conteúdos desta rodada. Sua nota original permanece ,,professor-leo.js:474
+texto.72eefaaeb923d4e08dfc,review,pending-editorial-review,"Escolha um assunto. Cada aula tem explicação, exemplo e exercício de fixação.",,study-area.js:563
+texto.737bc191f27002e9e86f,review,pending-editorial-review,"[aria-label=""Retomar os exercícios sem perder o progresso""]",,study-area.js:769
+texto.7381de37d0f304060fcc,review,pending-editorial-review,"Imagine uma cidade que cresce rapidamente, mas não amplia transporte, saneamento e moradia na mesma velocidade. O que pode acontecer?",,professor-leo.js:791
+texto.73fdc9d8a5077087e32c,review,pending-editorial-review,Duas regiões recebem investimentos muito diferentes em saneamento. Isso revela:,,professor-leo.js:1582
+texto.74320476c8717eacfd12,review,pending-editorial-review,"Substitua ""lo"" pelo nome de cada alternativa e veja qual mantém o sentido original.",,professor-leo.js:785
+texto.7433af483df44b686a5a,review,pending-editorial-review,A pontuação original do simulado não mudou. As revisões espaçadas continuam disponíveis para fortalecer o aprendizado.,,professor-leo.js:1057
+texto.74788c7b23b265fdb509,review,pending-editorial-review, pontos percentuais em relação à rodada anterior (,,professor-leo.js:1196
+texto.756622ba3bad4146d04e,review,pending-editorial-review,📊 Acertos das rodadas são notas originais; recuperação dos erros e domínio progressivo são acompanhamentos separados. Revisar não altera a nota já registrada.,,professor-leo.js:1516
+texto.762f81878bd5e1a918db,review,pending-editorial-review,"Exemplo: notas 6, 7, 7, 8 e 12. Média = 40 ÷ 5 = 8; moda = 7; mediana = 7.",,study-area.js:455
+texto.7689e5d063b64d4c12b7,review,pending-editorial-review,Você acertou tudo na primeira tentativa. Continue praticando para consolidar geometria.,,study-area.js:415
+texto.770bd3a8346be65e869c,hint,pending-editorial-review,Pense em quatro partes iguais: 25% é uma delas.,,professor-leo.js:73
+texto.773a1e04e629f075987c,review,pending-editorial-review,Linguagem figurada: interprete o sentido da expressão no contexto.,,language-smart.js:6
+texto.777e451f79c1fad27991,hint,pending-editorial-review,Qual mudança pode ocorrer sem criar uma substância diferente?,,professor-leo.js:6
+texto.7803364276366b0dea5f,review,pending-editorial-review,"Problema com frações: identifique o total, divida pelo denominador e multiplique pelo numerador.",,study-area.js:224
+texto.78704ceb5770cd5f7c75,solution,pending-editorial-review,"80 ÷ 10 = 8. Você também pode fazer 80 × 0,10.",,professor-leo.js:3
+texto.791a8f722b7439fb0ed0,review,pending-editorial-review,Um quadrado tem lados de 7 cm. Qual é sua área?,,study-area.js:363
+texto.7973c870b0dd67fcce47,review,pending-editorial-review,Leia novamente e identifique a relação entre as ideias antes de escolher.,,professor-leo.js:797
+texto.7bbe8d8dadc414efcc33,review,pending-editorial-review,Revise primeiro os conteúdos abaixo. As explicações são comentadas pelo Professor Leo e não alteram sua pontuação.,,professor-leo.js:1747
+texto.7c110d5009e3535d213e,review,pending-editorial-review,15% de 240 = 36. Preço final: 240 − 36 = R$ 204.,,professor-leo.js:93
+texto.7c2acc2ce1c5c793fdc4,review,pending-editorial-review,A distribuição desigual de saneamento revela desigualdade urbana.,,professor-leo.js:1582
+texto.7d77a5e7df160f7bfea9,review,pending-editorial-review,Derreter e solidificar não formam outra substância.,,professor-leo.js:1582
+texto.7e911d41aad03fd7a74f,review,pending-editorial-review,"Em uma escola com 70 alunos, 30% usam ônibus. Quantos?",,professor-leo.js:82
+texto.7ec68e32ffd58c3e6642,solution,pending-editorial-review,Área do quadrado = lado × lado = 7 × 7 = 49 cm².,,study-area.js:363
+texto.7ef02ef449a0798f857b,solution,pending-editorial-review,O trem já estava partindo e ela procurou o próximo horário.,,professor-leo.js:626
+texto.7f38fc17fd64f60946af,review,pending-editorial-review,Parabéns! Você concluiu todas as sessões previstas no plano desta semana.,,professor-leo.js:1463
+texto.7ff41ae225efbb3fa760,solution,pending-editorial-review,A mobilização coletiva reivindica melhorias e participa do debate público.,,professor-leo.js:912
+texto.812e3e5d6f13cc0d62d8,review,pending-editorial-review,Um produto de R$ 80 teve desconto de 25%. Qual é o novo preço?,,professor-leo.js:1567
+texto.819c7e19463ce67c634d,hint,pending-editorial-review,Pense se o autor fala de janelas reais ou usa uma imagem simbólica.,,language-smart.js:6
+texto.822aaee21a469df9804f,review,pending-editorial-review,"Interpretação de texto, correção e histórico de acertos.",,professor-leo.js:1773
+texto.8239e4203513ddcda1d0,review,pending-editorial-review,Você acertou tudo na primeira tentativa. Continue praticando para consolidar porcentagens.,,study-area.js:118
+texto.824968651aa27d52371f,review,pending-editorial-review,Um produto de R$ 120 aumentou 25%. Qual é o novo preço?,,study-area.js:58
+texto.835a79e66026130f8319,review,pending-editorial-review,Falta apenas 1 missão para sua meta. Um passo de cada vez!,,professor-leo.js:1383
+texto.84457a0141de9c5f6ce2,review,pending-editorial-review,"Média é a soma dos valores dividida pela quantidade. Moda é o valor mais frequente. Mediana é o valor central dos dados ordenados; se houver dois valores centrais, calcule a média deles.",,study-area.js:454
+texto.84613014b23209d6cb4b,review,pending-editorial-review,É necessário ampliar o acesso à leitura nas escolas.,,professor-leo.js:1564
+texto.851de6c9c1164ccfc1d6,review,pending-editorial-review,Multiplique 5 por 3. A unidade é metro quadrado (m²).,,study-area.js:373
+texto.85e400cfb3f894da2cdd,review,pending-editorial-review,"🎯 Você está acima de 70%, mas caiu na última rodada. Revise os erros antes de avançar.",,professor-leo.js:1203
+texto.866e08d58d0021a74262,review,pending-editorial-review,Metade de um número: divida o total em 2 partes iguais.,,study-area.js:222
+texto.86a0a25529cb56e359d9,review,pending-editorial-review,✗ AINDA NÃO. Não desista: reveja o cálculo e pratique novamente. ,,professor-leo.js:453
+texto.8a7937635b5b5142489e,review,pending-editorial-review,🎓 Aula concluída! Seu relatório com o Professor Leo,,study-area.js:112; study-area.js:213; study-area.js:311; study-area.js:409; study-area.js:506; language-smart.js:35
+texto.8b49e65d3053afc7e80e,review,pending-editorial-review,Ordene os cinco números antes de procurar o centro.,,study-area.js:471
+texto.8b4a1ec0f7ec30cfc960,review,pending-editorial-review,"Mostre o cálculo passo a passo, sem pular etapas.",,professor-leo.js:1960
+texto.8c9c0f73ff55631b1415,review,pending-editorial-review,Mediana: ordene os valores e encontre o centro.,,study-area.js:514
+texto.8db28445b01edcfa4d9d,solution,pending-editorial-review,"A Constituição de 1988 consolidou direitos civis, políticos e sociais e fortaleceu a democracia.",,professor-leo.js:902
+texto.8e4128af12cdce5e226b,review,pending-editorial-review,Procure o mecanismo em que a população é consultada diretamente sobre uma questão pública.,,professor-leo.js:789
+texto.8ed380b5c66c57a06b81,review,pending-editorial-review,Salvamento deste desafio indisponível. Suas alterações estão nesta sessão; copie as respostas antes de sair.,,memory-pilot.js:53
+texto.8ed731764bd49993c1d5,review,pending-editorial-review,Uma camiseta de R$ 80 tem 10% de desconto. Qual o preço final?,,study-area.js:57
+texto.8f0d9e7dfee99a41c88f,solution,pending-editorial-review,Melhor lugar é uma avaliação pessoal; o horário é um fato verificável.,,professor-leo.js:627
+texto.8f7986706d424fcad1e0,review,pending-editorial-review,Você acertou todas as questões! Continue praticando com outros exercícios.,,professor-leo.js:1747
+texto.8fc4a4208e5489ff1642,review,pending-editorial-review,"Professor Leo, explique de forma simples esta questão de Ciências Humanas: ",,professor-leo.js:993
+texto.8fe8b9e07797cbf8a952,review,pending-editorial-review,Acompanhamento da rodada atual: dominado = acerto direto; recuperado = acerto após reforço; revisar = erro ainda não recuperado. Os resultados ficam neste navegador.,,professor-leo.js:1236
+texto.8ffc19011f1f22faccb8,review,pending-editorial-review,🎉 Reforço de Matemática concluído nesta rodada. Siga a próxima atividade planejada.,,professor-leo.js:1434
+texto.90ea910a03ff1e36ae08,review,pending-editorial-review,Dica: ordene os dados para achar a mediana e conte as repetições para encontrar a moda.,,study-area.js:455
+texto.910f6688348bbbcf4069,review,pending-editorial-review,Ainda não foi dessa vez. Releia o conceito e procure a pista no texto antes de tentar novamente.,,professor-leo.js:861
+texto.913dac77dadf6ad07bfa,review,pending-editorial-review, Pode ajudar passo a passo sem entregar a resposta?,,study-area.js:553
+texto.9182b3f06b277ab42f5b,review,pending-editorial-review,Inferência: distinga o que o texto afirma daquilo que ele não diz.,,language-smart.js:7
+texto.91991dcfb78299c21442,review,pending-editorial-review,Uma conta de R$ 150 aumentou 20%. Qual é o valor final?,,professor-leo.js:61
+texto.91d9a85c869d2766c84e,review,pending-editorial-review,Área do retângulo é base multiplicada pela altura.,,study-area.js:373
+texto.92068fa4431c54875579,solution,pending-editorial-review,A primeira frase apresenta um posicionamento que pode ser defendido com argumentos.,,professor-leo.js:1576
+texto.936095966a8fd6c3ff5c,review,pending-editorial-review,"Professor Leo, estou na Aula Inteligente de Geometria. Aprendi a calcular perímetro e área de retângulos e quadrados. Pode me ajudar passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?",,study-area.js:439
+texto.9429b77c4f9f74fa2565,solution,pending-editorial-review,O crescimento urbano desigual pode concentrar serviços em certas áreas e dificultar acesso a transporte e moradia.,,professor-leo.js:905
+texto.9473b5bda07adeb3fe38,review,pending-editorial-review,Use apenas as pistas da narrativa. Por que alguém procuraria o horário de outro trem?,,professor-leo.js:783
+texto.9589e404df8c96419726,review,pending-editorial-review,"Na frase “Embora estivesse cansada, Ana terminou a redação”, “embora” indica:",,professor-leo.js:1556
+texto.95c5c2024e0362fe6672,review,pending-editorial-review,O treino inicial e a recuperação são avaliações diferentes. Sua nota original não muda.,,professor-leo.js:148
+texto.964976657097aaf53f21,review,pending-editorial-review,Aguarde alguns segundos antes de enviar outra pergunta.,,professor-leo.js:2000
+texto.96ff217c58e0b0c9ada5,review,pending-editorial-review,🏆 Parabéns! Todas as recuperações concluídas!,,professor-leo.js:1053
+texto.970ab6f6ee180ad20018,review,pending-editorial-review,3x significa 3 vezes x. Divida os dois lados por 3.,,study-area.js:275
+texto.971860098c54232a3940,hint,pending-editorial-review,Uma pizza dividida em quatro partes tem 25% em cada fatia.,,professor-leo.js:74
+texto.97382c45ca10271d31af,review,pending-editorial-review,Inferir é concluir a partir de pistas do texto.,,professor-leo.js:643
+texto.979b4f1b9591bc9329ec,solution,pending-editorial-review,“Embora” introduz uma dificuldade que não impediu a ação: concessão.,,professor-leo.js:1556
+texto.979f4459e2957dbc9f0a,review,pending-editorial-review,Sua dúvida está pronta. Clique em Enviar pergunta para conversar com a IA.,,professor-leo.js:423
+texto.9879c7225adaf455e5b8,review,pending-editorial-review,🎉 Você recuperou todos os conteúdos de Matemática desta rodada! Avance para um novo desafio ou siga seu plano semanal.,,professor-leo.js:1286
+texto.994927cf3575fd082320,solution,pending-editorial-review,"Demonstrou: explicou 20 a cada 100 e o sentido da base. Parcialmente: escreveu apenas 0,2 ou 20/100. Precisa de apoio: confundiu porcentagem com uma quantidade fixa.",,memory-pilot.js:5
+texto.995b0a7dda0f92e9cd5a,review,pending-editorial-review,"
+
+Explique em português simples, em até 3 etapas curtas. Escreva contas em texto comum (ex.: 20 ÷ 100 = 0,2; 0,2 × 50 = 10). Não use LaTeX nem comandos com barras invertidas. Ao final, pergunte se o aluno entendeu.",,professor-leo.js:2008
+texto.996a019f03b7a4136ce8,review,pending-editorial-review,Exemplo do cotidiano: uma pizza dividida em 8 fatias iguais. Comer 3 fatias significa comer 3/8 da pizza.,,study-area.js:161
+texto.99919c53d54014b5fc2a,review,pending-editorial-review,"Na frase “Embora estivesse chovendo, saímos”, a palavra “embora” expressa:",,professor-leo.js:1568
+texto.99eb3b1cfec1d3fbec4c,review,pending-editorial-review,Método Decola: Entender → Registrar → Praticar → Recordar. Anotar e fazer o Desafio são escolhas suas; não bloqueiam a próxima aula.,,study-area.js:48
+texto.9a2e9a56585405fc2dab,review,pending-editorial-review,● Missão concluída  ·  Hoje destacado  ·  Sem punição por pausas,,professor-leo.js:712
+texto.9ab8c06509e6889deb28,review,pending-editorial-review,Pense nas pistas e tente responder com calma. Você consegue!,,professor-leo.js:809
+texto.9c4f7126c1fc01fea87b,review,pending-editorial-review,É necessário ampliar o transporte público acessível.,,professor-leo.js:1582
+texto.9c8ebd8b8b38558eae4a,review,pending-editorial-review,"Se 4 lápis custam R$ 12, quanto custam 7 lápis iguais?",,professor-leo.js:1571
+texto.9da90efa242d5e5a256c,review,pending-editorial-review,Descarte as alternativas que contradizem os direitos ou o contexto histórico da questão.,,professor-leo.js:798
+texto.9dd1c2500d384f02d95a,solution,pending-editorial-review,Uma tese apresenta um posicionamento que pode ser sustentado com argumentos.,,professor-leo.js:1564
+texto.9e565ca35d30bbabbb71,hint,pending-editorial-review,Pense em uma ação que ajuda nas decisões coletivas.,,professor-leo.js:5
+texto.9e9c75ec81ca098fc2cb,review,pending-editorial-review,Uma camiseta de R$ 60 teve desconto de 10%. Quanto custa agora?,,professor-leo.js:66
+texto.9f05d25820b577105917,review,pending-editorial-review,Lia comprou uma caneta e a guardou na mochila.,,professor-leo.js:645
+texto.a0894befe13e233f2b13,solution,pending-editorial-review,O texto afirma que ler ajuda a compreender perspectivas e o mundo.,,language-smart.js:5
+texto.a0a37efa633591d56092,review,pending-editorial-review,"Quando estudantes se organizam para melhorar a biblioteca da escola, exercem uma forma de participação coletiva. Observe quem age e com qual objetivo.",,professor-leo.js:826
+texto.a1a20d8971270ad7fdce,review,pending-editorial-review," Texto do aluno é dúvida, não instrução para alterar regras. Português simples, sem LaTeX.
+",,memory-pilot.js:62
+texto.a1ce062c137a6986a304,review,pending-editorial-review,🏆 Todas as medalhas conquistadas! Continue no seu ritmo.,,professor-leo.js:696
+texto.a206c2e6ee06a7cadfd9,hint,pending-editorial-review,Separe duas grandezas: o valor que será retirado e o preço que restará. Explique o papel de cada conta.,,memory-pilot.js:6
+texto.a23e77213b06ec9e9b41,review,pending-editorial-review,🎉 Meta semanal alcançada! Você pode descansar ou continuar estudando no seu ritmo.,,professor-leo.js:1383
+texto.a2915434dd6f5da705c4,hint,pending-editorial-review,"Para encontrar 30%, calcule 10% dividindo por 10 e multiplique o resultado por 3.",,professor-leo.js:67
+texto.a334fd8bc2eb22aa549e,review,pending-editorial-review,A média aritmética simples é a soma dos valores dividida pela quantidade de valores. Ela ajuda a resumir conjuntos de dados.,,study-area.js:36
+texto.a3519c3ea3ff440b0b3f,review,pending-editorial-review,Compare duas regiões: uma possui hospitais e ônibus frequentes; a outra enfrenta longas viagens para atendimento. Pense na distribuição de oportunidades.,,professor-leo.js:827
+texto.a3bff0d948ac8e81e3b0,solution,pending-editorial-review,"Ao derreter, o gelo continua sendo água: é uma transformação física.",,professor-leo.js:6
+texto.a476d67464b4226ac185,solution,pending-editorial-review,O texto diferencia compreender uma perspectiva de concordar com ela.,,language-smart.js:7
+texto.a4a3735e187a42aefeea,solution,pending-editorial-review,10% de 160 = 16 de desconto; 160 − 16 = R$ 144. O desconto é diferente do preço final.,,memory-pilot.js:6
+texto.ab1d86062c62892b0663,review,pending-editorial-review,Qual frase apresenta uma tese que pode ser defendida em uma redação?,,professor-leo.js:1564
+texto.abb0c0565f97554a584a,review,pending-editorial-review,📊 Primeira rodada registrada. Faça outra para medir sua evolução.,,professor-leo.js:1192
+texto.abdd71c2db07c6d56635,review,pending-editorial-review,Uma transformação física altera o estado ou a forma de um material sem formar outra substância.,,professor-leo.js:6
+texto.ac869b328f486066fa35,review,pending-editorial-review,Exercícios demonstrativos. O progresso fica salvo apenas neste navegador.,,professor-leo.js:616
+texto.ac9b90a2b6b665ca77f1,review,pending-editorial-review,Esta área ainda não possui treino específico no Professor Leo. Consulte o plano para seguir a atividade.,,professor-leo.js:1452
+texto.adc9a52caf9da04807d9,review,pending-editorial-review,Evaporar muda apenas o estado físico da água.,,professor-leo.js:1582
+texto.add028343c80198402a3,review,pending-editorial-review,Assembleias são espaços de participação coletiva.,,professor-leo.js:1582
+texto.add33d095cefc8bd41b2,review,pending-editorial-review,Monte seu plano de estudos no Decola para ver aqui a próxima atividade da semana.,,professor-leo.js:1469
+texto.adddc0c358485009242f,review,pending-editorial-review,"Um produto aumentou 20% e depois teve desconto de 20%. Em relação ao preço inicial, o valor final:",,professor-leo.js:94
+texto.ae24f55c6de1af7e2f58,review,pending-editorial-review,Dica: 10% é dividir por 10; 20% é o dobro de 10%.,,study-area.js:53
+texto.ae30c34b3d0f515ed4a5,review,pending-editorial-review,A Constituição de 1988 marcou a redemocratização do Brasil. Pense no que uma constituição voltada à cidadania deve garantir às pessoas.,,professor-leo.js:788
+texto.afcc47bb17d516f0b0c4,review,pending-editorial-review,"Em uma turma de 40 alunos, 30% faltaram. Quantos faltaram?",,professor-leo.js:60
+texto.afe8cf41f48ab84ca4b8,review,pending-editorial-review,% na última rodada). Vamos revisar os erros e praticar no seu ritmo.,,professor-leo.js:1514
+texto.aff2d252a7a3e84b5999,review,pending-editorial-review,Mesmo cansado expressa uma dificuldade superada.,,professor-leo.js:1582
+texto.b165bb911fce2e7d8a4d,review,pending-editorial-review,Resultados registrados neste navegador. Sua conta e a sincronização entre dispositivos ainda serão implementadas.,,study-area.js:672
+texto.b24ae04ae854363154e9,review,pending-editorial-review,Sem rodadas concluídas. Faça um treino para começar o gráfico.,,professor-leo.js:1153
+texto.b2a478b84cae2cb1e64a,review,pending-editorial-review,"Acompanhe Matemática, Português e Ciências Humanas no mesmo lugar. Dados demonstrativos guardados somente neste navegador.",,professor-leo.js:1086
+texto.b38f892335d17d22ddfa,review,pending-editorial-review, erro(s) aguardando reforço. A nota original é preservada.,,professor-leo.js:1218
+texto.b41311f3d7eb7a1bfb13,solution,pending-editorial-review,Cada caderno custa R$ 8; cinco custam 5 × 8 = R$ 40.,,professor-leo.js:1559
+texto.b46542f1c18f8df42831,review,pending-editorial-review,"Marina chegou à estação e viu o trem se afastando. Em seguida, consultou o próximo horário.",,professor-leo.js:626
+texto.b54ce7a6b8ac4b2e53b9,solution,pending-editorial-review,“Abrir janelas” é uma metáfora para conhecer outras ideias e perspectivas.,,language-smart.js:6
+texto.b5bb54263beac293c4c2,review,pending-editorial-review,"Na expressão “abrir janelas”, o autor emprega uma linguagem...",,language-smart.js:6
+texto.b5d02eb9727b599957b0,review,pending-editorial-review,Um tênis de R$ 200 tem desconto de 10%. Qual o preço final?,,professor-leo.js:1582
+texto.b5d200011ae537eddfe3,review,pending-editorial-review,Identifique o tema histórico ou social e compare as alternativas com o conceito estudado.,,professor-leo.js:798
+texto.b69bf3fa4f67fb57eefd,review,pending-editorial-review,🎯 Próximo passo: revisar os erros e fazer uma nova rodada. Média das últimas ,,professor-leo.js:1201
+texto.b6cb089141c5fcf98e89,review,pending-editorial-review,"Porcentagem é uma razão com base 100. Para calcular 25% de um valor, multiplique por 25 e divida por 100.",,study-area.js:32
+texto.b74733b8e97457a96582,review,pending-editorial-review,Acompanhe a recuperação dos erros do simulado. Cada conteúdo avança por 3 desafios; os resultados originais não mudam.,,professor-leo.js:1708
+texto.b7caeace310cdf1bc0f3,review,pending-editorial-review,Um livro de R$ 120 está com 25% de desconto. Qual é o preço final?,,professor-leo.js:1555
+texto.b7d94803b5540f16d153,review,pending-editorial-review,Compare a ação esperada em um dia chuvoso com o que realmente aconteceu. Uma dificuldade impediu a ação ou foi superada?,,professor-leo.js:781
+texto.b9c8114b6382ab8c1108,review,pending-editorial-review,3. Faça a conexão: qual princípio aparece nos dois contextos? Pense antes de olhar as alternativas.,,professor-leo.js:839
+texto.ba858651360e71ccc0fc,review,pending-editorial-review,"Em questões de interpretação, diferencie o que está escrito do que você supõe. Busque palavras que sustentem a resposta.",,professor-leo.js:4
+texto.ba9a5240f571a6d5b398,review,pending-editorial-review," Pode explicar passo a passo, com uma dica para eu aprender?",,professor-leo.js:422
+texto.bb3c3e2a52044332f2ad,review,pending-editorial-review,Júlia pegou um livro emprestado e prometeu devolvê-lo na sexta-feira.,,professor-leo.js:628
+texto.bb45adfa6f1779eed03c,review,pending-editorial-review,"Todos os lados do quadrado são iguais. Para a área, multiplique lado por lado.",,study-area.js:374
+texto.bc7d8b272a8e21198ce3,hint,pending-editorial-review,Primeiro calcule 10% do preço dividindo por 10. Depois subtraia o desconto do preço original.,,professor-leo.js:66
+texto.bcdc84c0b4579ec877d1,review,pending-editorial-review,Um retângulo mede 6 m por 4 m. Qual é seu perímetro?,,study-area.js:361
+texto.bd98e5f4d167b1f8f892,review,pending-editorial-review,"A biblioteca abre às oito horas. Para mim, é o melhor lugar da cidade para estudar.",,professor-leo.js:627
+texto.bd9f78be1ebea3e01d0e,review,pending-editorial-review,"Linguagens • ENEM • Leia, interprete e aprenda com suas respostas.",,language-smart.js:18
+texto.bdd6f24d9ca36ce73dd8,review,pending-editorial-review,Escolha um treino. Suas respostas e correções ficam salvas neste navegador.,,study-area.js:691
+texto.bf5949c9092194ebeb54,review,pending-editorial-review,"Professor Leo, explique esta questão de interpretação: ",,professor-leo.js:890
+texto.c1b4954fe57f999c8d5f,review,pending-editorial-review,10% de 80 = 8. O novo preço é 80 − 8 = R$ 72.,,professor-leo.js:59
+texto.c1ea402e0183b34eb631,solution,pending-editorial-review,A segunda frase apresenta um posicionamento que pode ser defendido com argumentos.,,professor-leo.js:7
+texto.c34e24433d73cc7c2970,solution,pending-editorial-review,Participar de decisões da comunidade é uma forma de exercer cidadania.,,professor-leo.js:5
+texto.c3ee7d575947b3793ce8,solution,pending-editorial-review,25% de 120 = 30. Novo preço: 120 + 30 = R$ 150.,,study-area.js:58
+texto.c3f402a296a939d2bd13,review,pending-editorial-review,O plebiscito consulta diretamente a população.,,professor-leo.js:1582
+texto.c459a4184c898f77010f,review,pending-editorial-review,"Revisão recomendada: porcentagem, especialmente cálculos com descontos, aumentos e situações do cotidiano. Releia as explicações e tente outra rodada.",,professor-leo.js:474
+texto.c5c73b0dcc80cf4139ff,solution,pending-editorial-review,Apesar de introduz uma concessão: a turma foi mesmo com chuva.,,professor-leo.js:624
+texto.c62000808ac3f91dc16e,review,pending-editorial-review,"Porcentagem de um valor: transforme a taxa em decimal (20% = 0,20) e multiplique pelo total.",,study-area.js:121
+texto.c655869338aca1ab13b3,review,pending-editorial-review,use a ideia explicada acima para resolver a nova situação.,,professor-leo.js:549
+texto.c661b2ae76f5c9b756bd,review,pending-editorial-review,Veja seu desempenho em Matemática e Português e recomendações de estudo.,,professor-leo.js:1777
+texto.c66c3b62cc278db22895,review,pending-editorial-review,20% de 100 é 20. Valor final: 100 + 20 = R$ 120.,,professor-leo.js:68
+texto.c6d9befe0c064ce6c194,review,pending-editorial-review,Exemplo do cotidiano: um jardim retangular de 5 m por 3 m precisa de 16 m de cerca (perímetro) e ocupa 15 m² de terreno (área).,,study-area.js:357
+texto.c7be96ea49a84c87b714,review,pending-editorial-review,"Diferencie o fim legal da escravidão da garantia concreta de trabalho, terra, educação e inclusão social.",,professor-leo.js:792
+texto.c887c994e53b37eff506,review,pending-editorial-review,🏅 Revisões programadas concluídas. Continue praticando regularmente.,,professor-leo.js:1676
+texto.c982d42f28da217fe86b,solution,pending-editorial-review,Conselhos comunitários permitem participação nas decisões coletivas.,,professor-leo.js:1557
+texto.cab680a88b750f646771,review,pending-editorial-review,Os movimentos sociais contribuem para a democracia principalmente ao:,,professor-leo.js:904
+texto.cb03cf535ff3e89f0dcc,review,pending-editorial-review,Excelente resultado! Que tal um desafio mais elaborado?,,professor-leo.js:592
+texto.cbb3df076ac5676146e8,review,pending-editorial-review,Ainda que apresenta uma condição que não impede a ação.,,professor-leo.js:1582
+texto.ccc778441ce231e9fa81,review,pending-editorial-review,Fração de uma quantidade: divida pelo denominador e multiplique pelo numerador.,,study-area.js:223
+texto.ce837c4abd2686d1b8b9,review,pending-editorial-review,"“Mesmo cansado, estudou.” A expressão indica:",,professor-leo.js:1582
+texto.ceaf4bc01825c461ee51,review,pending-editorial-review,"Para deixar x sozinho, subtraia 7 dos dois lados.",,study-area.js:274
+texto.cedd50442266d86c193d,review,pending-editorial-review,Desconto: calcule a porcentagem e subtraia do preço original.,,study-area.js:122
+texto.cf1520440c7b235b6424,review,pending-editorial-review,Você acertou tudo na primeira tentativa. Continue praticando para consolidar frações.,,study-area.js:219
+texto.cfa7f2176717c963214e,review,pending-editorial-review,"No trecho “Apesar da chuva, a turma foi à escola”, a expressão “apesar de” indica:",,professor-leo.js:4
+texto.d046772b37a66e7c9f4d,review,pending-editorial-review,“A biblioteca possui 200 livros” pode ser conferido; “é a melhor biblioteca do mundo” expressa julgamento.,,professor-leo.js:820
+texto.d25f77e4aca0fe3a8c00,review,pending-editorial-review,"Se 3 cadernos custam R$ 24, quanto custam 5 cadernos iguais?",,professor-leo.js:1559
+texto.d294ffa30dabed868010,review,pending-editorial-review,"“Ainda que chova, haverá prova.” O sentido é:",,professor-leo.js:1582
+texto.d2ae0828fd96a836b2fc,review,pending-editorial-review,Imagine uma escola que garante a todos os estudantes o direito de participar das decisões e ser tratados com igualdade. Reflita sobre o que torna essas regras inclusivas.,,professor-leo.js:824
+texto.d342c5a1a5babeb4f60c,review,pending-editorial-review,✅ Missão marcada como concluída hoje. Parabéns!,,professor-leo.js:1315; professor-leo.js:1335
+texto.d344adc89bd991a3e9dd,review,pending-editorial-review, Agora escolha novamente a alternativa que parece correta.,,professor-leo.js:299
+texto.d349959776af323f4dcb,review,pending-editorial-review,Uma pizza tem 12 fatias. Ana comeu 2/3 delas. Quantas fatias ela comeu?,,study-area.js:167
+texto.d441d370bda47963916f,review,pending-editorial-review,Ainda não foi dessa vez. Releia o conceito e compare as situações antes de tentar novamente.,,professor-leo.js:980
+texto.d45fdf476ce77984fcb4,review,pending-editorial-review,Cidadania envolve direitos e deveres e a participação das pessoas na vida em sociedade.,,professor-leo.js:5
+texto.d465aa83b4f136798863,review,pending-editorial-review,"Uma equação é uma igualdade com um valor desconhecido, chamado incógnita (x). Para descobrir x, faça a mesma operação nos dois lados da igualdade. Exemplo: x + 7 = 12. Subtraindo 7 dos dois lados, x = 5.",,study-area.js:258
+texto.d5139ab122ec62a1102e,review,pending-editorial-review,"Dica: para calcular o perímetro, some os lados. Para calcular a área de um retângulo, multiplique base pela altura. Para um quadrado, multiplique lado por lado.",,study-area.js:358
+texto.d5672bec31ec49bf0360,review,pending-editorial-review,Parabéns! Você pode avançar para novos desafios.,,professor-leo.js:519
+texto.d6b5bb92d69c1d4a571e,review,pending-editorial-review,Reutilizar reduz a necessidade de novos materiais.,,professor-leo.js:1582
+texto.d73dc5be5360c228072e,review,pending-editorial-review,"Dica: para encontrar uma fração de uma quantidade, divida pelo denominador e multiplique pelo numerador.",,study-area.js:162
+texto.d850ceb043c9a1bbdd46,review,pending-editorial-review,"Mostre outro exemplo parecido para eu tentar, sem dar a resposta primeiro.",,professor-leo.js:1961
+texto.d877ee7098874493cbae,review,pending-editorial-review,📖 Missão iniciada. Conclua a recuperação para finalizar automaticamente.,,professor-leo.js:1315
+texto.d9151a692b0ef36e2272,review,pending-editorial-review,Você está evoluindo! Agora pratique um problema intermediário.,,professor-leo.js:592
+texto.d9c881278ef2808481e6,solution,pending-editorial-review,Área do retângulo = base × altura = 5 × 3 = 15 m².,,study-area.js:362
+texto.dcdec084773ea0be119d,hint,pending-editorial-review,25% significa um quarto. Divida o total por 4.,,professor-leo.js:65
+texto.dd9b8ee63243a2d4769d,review,pending-editorial-review," Parabéns! Excelente raciocínio. Continue assim, você está avançando rumo à aprovação! ",,professor-leo.js:379
+texto.de4a81810d7f4a751a56,review,pending-editorial-review,"Resultados demonstrativos salvos neste navegador, separados dos resultados de Matemática.",,professor-leo.js:896
+texto.def5610168b49514d0f2,hint,pending-editorial-review,A turma foi à escola mesmo com uma condição contrária.,,professor-leo.js:4
+texto.df9619d1a416858cfc05,review,pending-editorial-review,Não foi possível apagar os dados deste desafio.,,memory-pilot.js:54
+texto.dfaa57208d447238df3a,solution,pending-editorial-review,Reutilizar garrafas reduz a geração de resíduos.,,professor-leo.js:1573
+texto.e1881bb6da237c0fe14d,hint,pending-editorial-review,Compare “ficar mais caro” com “ficar mais barato”. Qual operação representa cada situação?,,memory-pilot.js:7
+texto.e24719e4b0e3a2614186,review,pending-editorial-review,"O perímetro é a soma dos lados de uma figura. A área mede sua superfície. Para um retângulo, área = base × altura.",,study-area.js:35
+texto.e354ce93b04962313e05,review,pending-editorial-review,Uma frase informa um horário verificável; a outra faz uma avaliação pessoal. Identifique qual depende do gosto de alguém.,,professor-leo.js:784
+texto.e37e1e9468334ab41c85,review,pending-editorial-review,"Uma fração representa partes iguais de um todo. O numerador mostra quantas partes usamos; o denominador mostra em quantas partes o todo foi dividido. Para calcular 3/4 de 20, dividimos 20 por 4 e multiplicamos por 3: 15.",,study-area.js:160
+texto.e38457ea07604b1331fc,review,pending-editorial-review,Todos os ex-escravizados receberam terras e renda,,professor-leo.js:906
+texto.e3c6e0d1043490878923,review,pending-editorial-review,Questão extra de aprendizagem: não altera a nota do treino.,,professor-leo.js:455
+texto.e48554a25ede6159d0e2,review,pending-editorial-review,Conclua uma rodada para começar a acompanhar seu progresso em Matemática.,,professor-leo.js:196
+texto.e4bda40cb702923c5077,review,pending-editorial-review,4. Aplique o que aprendeu na nova questão abaixo. A dica é opcional e não altera sua nota original.,,professor-leo.js:841
+texto.e52b5187549e4200999c,solution,pending-editorial-review,"Congelar muda o estado físico da água, sem formar outra substância.",,professor-leo.js:1570
+texto.e5cbc2a386f3f1025407,review,pending-editorial-review,Um ingresso de R$ 50 teve aumento de 20%. Quanto custa agora?,,professor-leo.js:1582
+texto.e5ccfb7f0fd90846fefb,review,pending-editorial-review,"Uma receita para 4 pessoas usa 300 g de arroz. Para 10 pessoas, quanto usar?",,professor-leo.js:1582
+texto.e651fc79acca1ea40be2,review,pending-editorial-review,Comece um treino para receber orientações personalizadas com base nos seus acertos.,,professor-leo.js:1514
+texto.e766be7754ad75c89f5b,review,pending-editorial-review,Reivindicar direitos e ampliar o debate público,,professor-leo.js:904
+texto.e7aa9760ee81c620f5b9,review,pending-editorial-review,Não foi possível recuperar os dados deste desafio.,,memory-pilot.js:52
+texto.e8286a0d38cb9a444d8d,review,pending-editorial-review,"Em 2x + 6 = 20, primeiro subtraia 6 e depois divida por 2.",,study-area.js:322
+texto.e8b6754781d27ae412a1,review,pending-editorial-review,Moradores discutem prioridades do bairro em uma assembleia. Isso é:,,professor-leo.js:1582
+texto.e8b7e87e421614143f09,review,pending-editorial-review,"Antes de decidir sobre uma proposta importante, o governo consulta os eleitores diretamente. Esse mecanismo é:",,professor-leo.js:911
+texto.e9bce4bae49c20164631,review,pending-editorial-review,"A ideia principal resume todo o texto, não apenas um detalhe.",,professor-leo.js:642
+texto.eae1de7ee7517f59a55b,review,pending-editorial-review,"Se errar, receba dicas e faça uma segunda tentativa antes de ver a resolução. Seus resultados desta aula ficam salvos somente neste navegador.",,study-area.js:145; study-area.js:246; study-area.js:344; study-area.js:442; study-area.js:535
+texto.eb60adaeb8be37f2ecac,solution,pending-editorial-review,Subtraia 7 dos dois lados: x = 12 − 7 = 5. Conferindo: 5 + 7 = 12.,,study-area.js:263
+texto.ebd38c757cf715ed22bf,solution,pending-editorial-review,Demonstrou: identificou a subtração indevida e justificou R$ 120. Parcialmente: respondeu R$ 120 sem explicar. Precisa de apoio: aceitou R$ 80 como aumento.,,memory-pilot.js:7
+texto.ec1539cfb6bd93ab9b32,hint,pending-editorial-review,Imagine uma etiqueta: primeiro encontre 10% dividindo por dez; depois tire esse valor.,,professor-leo.js:77
+texto.ec382e297e83afef811b,solution,pending-editorial-review,A distribuição desigual dos serviços evidencia desigualdade socioespacial.,,professor-leo.js:1574
+texto.ec387a3383c6e2c7285a,review,pending-editorial-review,Compare o acesso aos serviços entre bairros bem atendidos e periferias. O crescimento garante igualdade automaticamente?,,professor-leo.js:791
+texto.ecbbfcf86494e98a0b01,review,pending-editorial-review,Uma conta de R$ 200 aumentou 20%. Qual é o total?,,professor-leo.js:85
+texto.ed2c3cad6c763cf40e0a,review,pending-editorial-review,Área do retângulo: multiplique a base pela altura e use unidades quadradas.,,study-area.js:419
+texto.ed6e1e859738b4462a90,review,pending-editorial-review,Aumento significa somar ao valor inicial. Primeiro descubra 25% de 120.,,study-area.js:71
+texto.edb74c1ea5a840c53cae,review,pending-editorial-review,Ainda há tópicos que precisam de revisão. Você pode praticar novamente.,,professor-leo.js:148
+texto.edb9b0abde1cd5b4645d,review,pending-editorial-review,Isolando x: subtraia 7 dos dois lados de x + 7 = 12.,,study-area.js:320
+texto.efda5788d62914ce3285,review,pending-editorial-review,Bairros sem acesso adequado a transporte e saúde revelam:,,professor-leo.js:1574
+texto.f0aa35718ebe8cad8d04,hint,pending-editorial-review,Imagine dez grupos iguais. Três grupos representam 30%.,,professor-leo.js:81
+texto.f0e6efa05b3864b34b39,review,pending-editorial-review,Área do quadrado: multiplique a medida do lado por ela mesma.,,study-area.js:420
+texto.f11ba7c8da521542ca44,review,pending-editorial-review,20% significa 20 de cada 100. Transforme 20% em decimal antes de multiplicar.,,study-area.js:69
+texto.f20c0a9747f1a9fab835,review,pending-editorial-review,Depois multiplique o resultado pelo numerador 3.,,study-area.js:177
+texto.f211142c81cedac5ca10,review,pending-editorial-review,"Em “Apesar do frio, Ana saiu para caminhar”, a dificuldade não impediu a ação. Observe a relação entre as ideias.",,professor-leo.js:817
+texto.f2591bf3d005895c4967,review,pending-editorial-review,O denominador 2 indica duas partes iguais. Divida 36 por 2.,,study-area.js:176
+texto.f2e81d749a8aefc856eb,solution,pending-editorial-review,Reuniões comunitárias permitem que as pessoas participem das decisões.,,professor-leo.js:1569
+texto.f30b6ca2ee1e5e348c1b,review,pending-editorial-review,"Uma mudança na lei pode reconhecer um direito, mas sua efetivação depende de condições reais de acesso a trabalho, educação e serviços.",,professor-leo.js:828
+texto.f41ecd64986a4b7db126,review,pending-editorial-review,Cada dia com missão concluída conta uma vez. Fazer uma pausa não apaga suas conquistas; você pode recomeçar no seu ritmo.,,professor-leo.js:681
+texto.f4e15de50c212aeead5c,solution,pending-editorial-review,Reutilizar embalagens diminui o consumo de recursos e a geração de resíduos.,,professor-leo.js:1561
+texto.f689b5f03caf9a96aff2,review,pending-editorial-review,O Professor Leo pode ajudar você a interpretar o texto passo a passo.,,language-smart.js:68
+texto.f6d59a1e1a1734d0ab2f,review,pending-editorial-review,"“Choveu muito; por isso, a rua alagou.” A expressão indica:",,professor-leo.js:1582
+texto.f703780178f5313a0385,review,pending-editorial-review,Semana de segunda a domingo. Cada dia com missão concluída conta uma vez. Dados salvos somente neste navegador; não altera notas nem o plano de estudos.,,professor-leo.js:1401
+texto.f76fcafd67d18ebe659e,review,pending-editorial-review,A rodada terminou. Explique apenas este item passo a passo.,,memory-pilot.js:59
+texto.f7b2d49f3b4d15445be0,solution,pending-editorial-review,O trecho apresenta três benefícios da leitura.,,professor-leo.js:625
+texto.f854a68d18771e2df011,review,pending-editorial-review,Dica: ideia central é a mensagem principal; metáfora é uma expressão em sentido figurado; inferência é uma conclusão sustentada pelo texto.,,language-smart.js:22
+texto.f885479147ba6b00b003,review,pending-editorial-review,Continue praticando para identificar os próximos conteúdos de reforço.,,professor-leo.js:1286
+texto.f9f3e6288fc32ba1902e,review,pending-editorial-review,Conclua a rodada para registrar seu primeiro resultado.,,professor-leo.js:1001
+texto.fb12720a2616c042c910,solution,pending-editorial-review,25% é uma proporção de 25 em cada 100. A quantidade correspondente depende do total.,,memory-pilot.js:5
+texto.fb73c598bacc66e68276,review,pending-editorial-review,Movimentos sociais costumam ampliar a discussão pública e reivindicar mudanças ou impedir a participação?,,professor-leo.js:790
+texto.fbd00d63d2c6427f489d,review,pending-editorial-review,"Professor Leo, estou na Aula Inteligente de Porcentagem. Aprendi que 20% = 0,20 e que 20% de 150 = 30. Pode me ajudar a compreender porcentagens passo a passo, com perguntas e dicas, sem entregar a resposta imediatamente?",,study-area.js:142
+texto.fcdf07a0a71d6ffcd82b,review,pending-editorial-review,"Para uma redação sobre mobilidade urbana, qual tese é defensável?",,professor-leo.js:1582
+texto.fd66f747b76dbf451f61,hint,pending-editorial-review,O desconto reduz o preço. Descubra quanto vale um décimo.,,professor-leo.js:78
+texto.fd6df8f94f48a7f0ff14,review,pending-editorial-review,Um livro de R$ 90 tem 10% de desconto. Qual é o preço?,,professor-leo.js:77
+texto.fec572335e464fa5b36f,hint,pending-editorial-review,Um aumento de 20% equivale a acrescentar duas partes de 10%.,,professor-leo.js:86
+texto.fee9923f524e8e912780,review,pending-editorial-review,Dados deste desafio incompatíveis. Não serão substituídos automaticamente.,,memory-pilot.js:52
+texto.ff175c0088cfd3ea8a93,review,pending-editorial-review,Conclua o Simulado Inteligente do ENEM para descobrir quais conteúdos precisam de reforço.,,professor-leo.js:1709
