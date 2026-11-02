@@ -137,7 +137,7 @@ try{
  // The transaction rolls back the temporary date adjustment.
  await db.query('BEGIN');
  try{
-   await db.query("update decola.trial_claims set starts_at=clock_timestamp()-interval '169 hours', ends_at=clock_timestamp()-interval '1 hour' where student_id=$1",[people[1].studentId]);
+   await db.query("update decola.trial_claims set starts_at=now()-interval '169 hours', ends_at=now()-interval '1 hour' where student_id=$1",[people[1].studentId]);
    await db.query('SET LOCAL ROLE authenticated');
    await db.query("select set_config('request.jwt.claim.sub',$1,true)",[people[1].userId]);
    const expired=await db.query('select decola.can_study($1) as allowed',[people[1].studentId]);
@@ -164,7 +164,30 @@ try{
  console.log('COMPLETE: synthetic records retained for audit; no automatic deletion');
 }catch(e){
  console.error('FAILED:',e.message);
- if(created.length)console.error('WARNING: partial Auth identities may remain; reconcile in Auth dashboard before retry.');
+ // Compensating cleanup: only IDs created by this process; never touch existing users.
+ if(created.length){
+   console.error('Attempting compensating cleanup of this run only');
+   try{
+     if(db){
+       await db.query('ROLLBACK').catch(()=>{});
+       await db.query('BEGIN');
+       try{
+         await db.query('delete from decola.lesson_progress where student_id in (select id from decola.students where account_id=any($1::uuid[]))',[created]);
+         await db.query('delete from decola.trial_claims where student_id in (select id from decola.students where account_id=any($1::uuid[]))',[created]);
+         await db.query('delete from decola.progress_imports where student_id in (select id from decola.students where account_id=any($1::uuid[]))',[created]);
+         await db.query('delete from decola.paid_periods where student_id in (select id from decola.students where account_id=any($1::uuid[]))',[created]);
+         await db.query('delete from decola.students where account_id=any($1::uuid[])',[created]);
+         await db.query('delete from decola.accounts where id=any($1::uuid[])',[created]);
+         await db.query('COMMIT');
+       }catch(cleanupError){await db.query('ROLLBACK');throw cleanupError;}
+     }
+     for(const id of created){
+       const {error}=await admin.auth.admin.deleteUser(id);
+       if(error)throw error;
+     }
+     console.error('Compensating cleanup completed');
+   }catch(cleanupError){console.error('CLEANUP INCOMPLETE: stop and reconcile synthetic identities manually:',cleanupError.message);}
+ }
  process.exitCode=1;
 }finally{
  if(db)db.release();
