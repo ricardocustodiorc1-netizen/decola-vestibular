@@ -1,0 +1,958 @@
+{
+  "stage": "2D-B read-only preinspection",
+  "date": "2026-11-02",
+  "project": {
+    "id": "yxxrfhobhonigwczzpim",
+    "organizationId": "gfuffaasrxaroosnwujl",
+    "nameMatchesDecolaHomologacao": false,
+    "nameRedacted": "personal identifier omitted",
+    "status": "ACTIVE_HEALTHY",
+    "region": "us-east-1",
+    "postgres": "17.11.0.011"
+  },
+  "organization": {
+    "name": "Decola Vestibular",
+    "plan": "free",
+    "tier": "tier_free"
+  },
+  "migration": {
+    "version": "20261102195940",
+    "name": "subscribers_stage2a_20261102"
+  },
+  "metadata": {
+    "grants": [
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "accounts",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT",
+        "with_hierarchy": "YES"
+      }
+    ],
+    "tables": [
+      {
+        "rls": true,
+        "name": "students",
+        "owner": "postgres",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "name": "trial_claims",
+        "owner": "postgres",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "name": "paid_periods",
+        "owner": "postgres",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "name": "payment_inbox",
+        "owner": "postgres",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "name": "progress_imports",
+        "owner": "postgres",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "name": "accounts",
+        "owner": "postgres",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "name": "lesson_progress",
+        "owner": "postgres",
+        "force_rls": false
+      }
+    ],
+    "policies": [
+      {
+        "cmd": "SELECT",
+        "qual": "((account_id = ( SELECT auth.uid() AS uid)) AND ( SELECT decola.active_account() AS active_account))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "students",
+        "permissive": "PERMISSIVE",
+        "policyname": "own_student",
+        "schemaname": "decola",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "((id = ( SELECT auth.uid() AS uid)) AND ( SELECT decola.active_account() AS active_account))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "accounts",
+        "permissive": "PERMISSIVE",
+        "policyname": "own_account",
+        "schemaname": "decola",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(( SELECT decola.active_account() AS active_account) AND (EXISTS ( SELECT 1\n   FROM decola.students s\n  WHERE ((s.id = lesson_progress.student_id) AND (s.account_id = ( SELECT auth.uid() AS uid))))))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "lesson_progress",
+        "permissive": "PERMISSIVE",
+        "policyname": "own_progress",
+        "schemaname": "decola",
+        "with_check": null
+      }
+    ],
+    "functions": [
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "owner": "postgres",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "decola.assert_student(uuid)",
+        "definition": "CREATE OR REPLACE FUNCTION decola.assert_student(p_student uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n IF NOT EXISTS (\n  SELECT 1 FROM decola.students s\n  JOIN decola.accounts a ON a.id=s.account_id\n  WHERE s.id=p_student AND a.id=auth.uid() AND decola.active_account()\n ) THEN RAISE EXCEPTION 'Resource unavailable' USING ERRCODE='42501'; END IF;\nEND;\n$function$\n",
+        "owner_bypassrls": true,
+        "security_definer": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "decola.active_account()",
+        "definition": "CREATE OR REPLACE FUNCTION decola.active_account()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n SELECT EXISTS (\n  SELECT 1 FROM decola.accounts a JOIN auth.users u ON u.id=a.id\n  WHERE a.id=auth.uid() AND NOT a.disabled AND u.email_confirmed_at IS NOT NULL\n   AND u.deleted_at IS NULL AND (u.banned_until IS NULL OR u.banned_until<=statement_timestamp())\n );\n$function$\n",
+        "owner_bypassrls": true,
+        "security_definer": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "decola.request_trial(uuid)",
+        "definition": "CREATE OR REPLACE FUNCTION decola.request_trial(p_student uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE v_key text; v_now timestamptz; v_record decola.trial_claims;\nBEGIN\n PERFORM decola.assert_student(p_student);\n SELECT eligibility_key INTO v_key FROM decola.students WHERE id=p_student FOR UPDATE;\n v_now:=clock_timestamp();\n INSERT INTO decola.trial_claims(eligibility_key,student_id,starts_at,ends_at)\n VALUES(v_key,p_student,v_now,v_now+interval '168 hours')\n ON CONFLICT(eligibility_key,product) DO NOTHING;\n SELECT * INTO v_record FROM decola.trial_claims WHERE eligibility_key=v_key AND product='decola-monthly-v1';\n RETURN jsonb_build_object('startsAt',v_record.starts_at,'endsAt',v_record.ends_at,'canceledAt',v_record.canceled_at);\nEND;\n$function$\n",
+        "owner_bypassrls": true,
+        "security_definer": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "decola.cancel_trial(uuid)",
+        "definition": "CREATE OR REPLACE FUNCTION decola.cancel_trial(p_student uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n PERFORM decola.assert_student(p_student);\n PERFORM 1 FROM decola.students WHERE id=p_student FOR UPDATE;\n UPDATE decola.trial_claims SET canceled_at=coalesce(canceled_at,clock_timestamp()) WHERE student_id=p_student;\nEND;\n$function$\n",
+        "owner_bypassrls": true,
+        "security_definer": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "decola.can_study(uuid)",
+        "definition": "CREATE OR REPLACE FUNCTION decola.can_study(p_student uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE v_now timestamptz:=clock_timestamp();\nBEGIN\n PERFORM decola.assert_student(p_student);\n RETURN EXISTS(SELECT 1 FROM decola.trial_claims t WHERE t.student_id=p_student AND t.canceled_at IS NULL AND t.starts_at<=v_now AND t.ends_at>v_now)\n OR EXISTS(SELECT 1 FROM decola.paid_periods p WHERE p.student_id=p_student AND p.revoked_at IS NULL AND p.starts_at<=v_now AND p.ends_at>v_now);\nEND;\n$function$\n",
+        "owner_bypassrls": true,
+        "security_definer": true
+      }
+    ],
+    "schema_acl": "{postgres=UC/postgres,authenticated=U/postgres}",
+    "column_grants": [
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "students",
+        "column_name": "account_id",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "column_name": "content_version",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "accounts",
+        "column_name": "disabled",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "accounts",
+        "column_name": "id",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "students",
+        "column_name": "id",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "column_name": "question_id",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "column_name": "revision",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "column_name": "source",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "column_name": "state",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "column_name": "student_id",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "table_name": "lesson_progress",
+        "column_name": "updated_at",
+        "is_grantable": "NO",
+        "table_schema": "decola",
+        "table_catalog": "postgres",
+        "privilege_type": "SELECT"
+      }
+    ]
+  },
+  "compatibility": {
+    "roles": [
+      {
+        "name": "authenticated",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false
+      },
+      {
+        "name": "anon",
+        "login": false,
+        "inherit": true,
+        "bypassrls": false,
+        "superuser": false
+      },
+      {
+        "name": "service_role",
+        "login": false,
+        "inherit": true,
+        "bypassrls": true,
+        "superuser": false
+      },
+      {
+        "name": "authenticator",
+        "login": true,
+        "inherit": false,
+        "bypassrls": false,
+        "superuser": false
+      },
+      {
+        "name": "postgres",
+        "login": true,
+        "inherit": true,
+        "bypassrls": true,
+        "superuser": false
+      }
+    ],
+    "columns": [
+      {
+        "type": "jsonb",
+        "table": "progress_imports",
+        "column": "result",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "paid_periods",
+        "column": "student_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "integer",
+        "table": "paid_periods",
+        "column": "amount_cents",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "paid_periods",
+        "column": "starts_at",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "paid_periods",
+        "column": "ends_at",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "paid_periods",
+        "column": "revoked_at",
+        "schema": "decola",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "payment_inbox",
+        "column": "received_at",
+        "schema": "decola",
+        "default": "clock_timestamp()",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "progress_imports",
+        "column": "student_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "progress_imports",
+        "column": "request_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "users",
+        "column": "id",
+        "schema": "auth",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "progress_imports",
+        "column": "created_at",
+        "schema": "decola",
+        "default": "clock_timestamp()",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "accounts",
+        "column": "id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "boolean",
+        "table": "accounts",
+        "column": "disabled",
+        "schema": "decola",
+        "default": "false",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "lesson_progress",
+        "column": "student_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "jsonb",
+        "table": "lesson_progress",
+        "column": "state",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "bigint",
+        "table": "lesson_progress",
+        "column": "revision",
+        "schema": "decola",
+        "default": "1",
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "lesson_progress",
+        "column": "updated_at",
+        "schema": "decola",
+        "default": "clock_timestamp()",
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "users",
+        "column": "email_confirmed_at",
+        "schema": "auth",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "jsonb",
+        "table": "users",
+        "column": "raw_app_meta_data",
+        "schema": "auth",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "users",
+        "column": "banned_until",
+        "schema": "auth",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "users",
+        "column": "deleted_at",
+        "schema": "auth",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "uuid",
+        "table": "sessions",
+        "column": "id",
+        "schema": "auth",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "sessions",
+        "column": "user_id",
+        "schema": "auth",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "sessions",
+        "column": "not_after",
+        "schema": "auth",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "uuid",
+        "table": "students",
+        "column": "id",
+        "schema": "decola",
+        "default": "gen_random_uuid()",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "students",
+        "column": "account_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "trial_claims",
+        "column": "student_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "trial_claims",
+        "column": "starts_at",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "trial_claims",
+        "column": "ends_at",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "trial_claims",
+        "column": "canceled_at",
+        "schema": "decola",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "uuid",
+        "table": "paid_periods",
+        "column": "id",
+        "schema": "decola",
+        "default": "gen_random_uuid()",
+        "nullable": "NO"
+      },
+      {
+        "type": "character varying",
+        "table": "users",
+        "column": "email",
+        "schema": "auth",
+        "default": null,
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "table": "payment_inbox",
+        "column": "environment",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "payment_inbox",
+        "column": "payload_digest",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "lesson_progress",
+        "column": "content_version",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "paid_periods",
+        "column": "provider",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "paid_periods",
+        "column": "environment",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "paid_periods",
+        "column": "payment_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "payment_inbox",
+        "column": "state",
+        "schema": "decola",
+        "default": "'pending'::text",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "paid_periods",
+        "column": "currency",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "lesson_progress",
+        "column": "source",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "students",
+        "column": "eligibility_key",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "trial_claims",
+        "column": "eligibility_key",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "trial_claims",
+        "column": "product",
+        "schema": "decola",
+        "default": "'decola-monthly-v1'::text",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "lesson_progress",
+        "column": "question_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "progress_imports",
+        "column": "digest",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "payment_inbox",
+        "column": "event_id",
+        "schema": "decola",
+        "default": null,
+        "nullable": "NO"
+      }
+    ],
+    "privileges": [
+      {
+        "role": "authenticated",
+        "table": "students",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": true
+      },
+      {
+        "role": "anon",
+        "table": "students",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": false
+      },
+      {
+        "role": "authenticated",
+        "table": "trial_claims",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": true
+      },
+      {
+        "role": "anon",
+        "table": "trial_claims",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": false
+      },
+      {
+        "role": "authenticated",
+        "table": "paid_periods",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": true
+      },
+      {
+        "role": "anon",
+        "table": "paid_periods",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": false
+      },
+      {
+        "role": "authenticated",
+        "table": "payment_inbox",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": true
+      },
+      {
+        "role": "anon",
+        "table": "payment_inbox",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": false
+      },
+      {
+        "role": "authenticated",
+        "table": "progress_imports",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": true
+      },
+      {
+        "role": "anon",
+        "table": "progress_imports",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": false
+      },
+      {
+        "role": "authenticated",
+        "table": "accounts",
+        "delete": false,
+        "insert": false,
+        "select": true,
+        "update": false,
+        "schema_usage": true
+      },
+      {
+        "role": "anon",
+        "table": "accounts",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": false
+      },
+      {
+        "role": "authenticated",
+        "table": "lesson_progress",
+        "delete": false,
+        "insert": false,
+        "select": true,
+        "update": false,
+        "schema_usage": true
+      },
+      {
+        "role": "anon",
+        "table": "lesson_progress",
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "schema_usage": false
+      }
+    ],
+    "auth_triggers": null,
+    "function_execute": [
+      {
+        "role": "anon",
+        "execute": false,
+        "function": "decola.assert_student(uuid)"
+      },
+      {
+        "role": "authenticated",
+        "execute": false,
+        "function": "decola.assert_student(uuid)"
+      },
+      {
+        "role": "anon",
+        "execute": false,
+        "function": "decola.active_account()"
+      },
+      {
+        "role": "authenticated",
+        "execute": true,
+        "function": "decola.active_account()"
+      },
+      {
+        "role": "anon",
+        "execute": false,
+        "function": "decola.request_trial(uuid)"
+      },
+      {
+        "role": "authenticated",
+        "execute": true,
+        "function": "decola.request_trial(uuid)"
+      },
+      {
+        "role": "anon",
+        "execute": false,
+        "function": "decola.cancel_trial(uuid)"
+      },
+      {
+        "role": "authenticated",
+        "execute": true,
+        "function": "decola.cancel_trial(uuid)"
+      },
+      {
+        "role": "anon",
+        "execute": false,
+        "function": "decola.can_study(uuid)"
+      },
+      {
+        "role": "authenticated",
+        "execute": true,
+        "function": "decola.can_study(uuid)"
+      }
+    ],
+    "api_schema_settings": null
+  },
+  "databaseMeasurement": {
+    "bytes": 11179699,
+    "pretty": "11 MB",
+    "billingUsageEquivalent": false
+  },
+  "limitations": {
+    "authSettings": "not accessible through available connector tools",
+    "remainingQuotas": "not available",
+    "billingInvoices": "not inspected",
+    "apiSchemaExposure": "not confirmed; catalog pgrst settings absent",
+    "realUserSessionTests": "not authorized or performed"
+  },
+  "safety": {
+    "sqlScope": "SELECT on catalogs, information_schema, built-in privilege/metadata functions and database size",
+    "applicationFunctionsExecuted": false,
+    "authUserOrSessionRowsRead": false,
+    "usersCreated": false,
+    "sessionsCreated": false,
+    "writes": false,
+    "credentialsRead": false,
+    "settingsChanged": false
+  },
+  "securityAdvisors": {
+    "severity": "INFO",
+    "name": "rls_enabled_no_policy",
+    "tables": [
+      "paid_periods",
+      "payment_inbox",
+      "progress_imports",
+      "trial_claims"
+    ],
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+  },
+  "referenceSources": [
+    "https://supabase.com/pricing",
+    "https://supabase.com/docs/guides/auth/sessions"
+  ],
+  "readOperations": [
+    "get_project",
+    "get_organization",
+    "get_advisors(security)",
+    "execute_sql(catalog policies,functions,grants)",
+    "list_migrations",
+    "execute_sql(columns,roles,effective privileges,Auth trigger metadata,API schema GUC allowlist)",
+    "execute_sql(constraint definitions)",
+    "execute_sql(database size)"
+  ]
+}
