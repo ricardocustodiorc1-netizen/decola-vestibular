@@ -37,6 +37,8 @@ const people=['horizonte','estrela'].map(label=>({
 for(const p of people)assert(p.password.length>=20,'Passwords must be >=20 characters');
 assert.notEqual(people[0].email,people[1].email,'Emails must differ');
 const created=[];
+// Never retry blindly after partial provisioning: preflight all Auth users first.
+// A failed run requires reconciliation of its synthetic accounts before a retry.
 let db;
 try{
  db=await pool.connect();
@@ -44,6 +46,23 @@ try{
  console.log('Connected to approved database host; role:',identity.rows[0].role);
  const existing=await db.query("select count(*)::int as n from decola.accounts");
  console.log('Existing account count:',existing.rows[0].n);
+ // Verify both synthetic emails are unused BEFORE the first Auth write.
+ let page=1, more=true;
+ while(more){
+   const {data,error}=await admin.auth.admin.listUsers({page,perPage:1000});
+   if(error)throw Error('Auth preflight failed: '+error.message);
+   const users=data.users??[];
+   for(const u of users){
+     if(people.some(p=>p.email.toLowerCase()===u.email?.toLowerCase()))
+       throw Error('Test identity already exists. Reconcile manually; no writes performed.');
+   }
+   more=users.length===1000;
+   page++;
+   if(page>1000)throw Error('Auth preflight pagination exceeded safe bound');
+ }
+ // Abort if any synthetic rows already exist, to avoid cross-run contamination.
+ const fixture=await db.query("select count(*)::int as n from decola.accounts a join auth.users u on u.id=a.id where u.raw_app_meta_data->>'decola_stage'='2b_synthetic'");
+ if(fixture.rows[0].n)throw Error('Existing stage 2B fixtures require manual reconciliation');
  // Auth identities are created via the supported Admin API, not by inserting into auth.users.
  for(const p of people){
    const {data,error}=await admin.auth.admin.createUser({
@@ -114,6 +133,17 @@ try{
    }catch(e){await db.query('ROLLBACK');throw e;}
    console.log('PASS: trial 168h / repeat idempotent / can_study:',p.label);
  }
+ // Simulate expiry WITHOUT changing the clock or persisting altered trial dates.
+ // The transaction rolls back the temporary date adjustment.
+ await db.query('BEGIN');
+ try{
+   await db.query("update decola.trial_claims set starts_at=clock_timestamp()-interval '169 hours', ends_at=clock_timestamp()-interval '1 hour' where student_id=$1",[people[1].studentId]);
+   await db.query('SET LOCAL ROLE authenticated');
+   await db.query("select set_config('request.jwt.claim.sub',$1,true)",[people[1].userId]);
+   const expired=await db.query('select decola.can_study($1) as allowed',[people[1].studentId]);
+   assert.equal(expired.rows[0].allowed,false);
+ }finally{await db.query('ROLLBACK');}
+ console.log('PASS: natural trial expiry simulated in rollback-only transaction');
  // Progress is inserted by the trusted test runner, then verified under RLS.
  const a=people[0],b=people[1];
  await db.query("insert into decola.lesson_progress(student_id,question_id,content_version,state,source) values($1,'2b-synthetic-q1','2b-v1',$2,'server-attempt')",[a.studentId,JSON.stringify({test:true,correct:true})]);
