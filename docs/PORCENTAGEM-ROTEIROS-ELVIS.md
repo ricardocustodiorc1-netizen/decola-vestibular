@@ -32,13 +32,17 @@ Estes roteiros são adaptações pedagógicas propostas, não substituições j�
 
 O JSON e o CSV deste pacote são editoriais e não são importados pelo site. Novos áudios têm `audio: null` e status pendente. Caminhos propostos não indicam arquivos existentes. Aprovar roteiro não autoriza pagamento ou publicação.
 
+## Aprovação condicionada atendida
+
+Os lotes A e B receberam aprovação editorial. D01 e S01 foram ajustados para a nova questão de 20% de 180 (resposta 36), evitando que E01 antecipe a resposta. O áudio E01 existente permanece intacto. Antes de qualquer futura integração, cada MP3 precisa ser conferido auditivamente e a transcrição visível deve coincidir integralmente com a fala real. Esta aprovação não autoriza geração de áudio, integração ou publicação.
+
 ## Roteiros completos
 
 Somente os parágrafos em “Fala” devem ser enviados ao gerador após autorização. Cada dica fala do método, sem número final ou alternativa correta. Cada resolução é um arquivo separado, nunca um trecho oculto no arquivo da dica.
 
 ### H01 — A camiseta e a calculadora em fuga
 
-**Tipo:** historia · **Lote:** A · **Situação:** pending-script-approval.
+**Tipo:** historia · **Lote:** A · **Situação:** editorialmente aprovado; gravação pendente.
 
 **Origem:** `piloto-professor-leo-3-4.html#stage1`.
 
@@ -52,7 +56,7 @@ Era uma manhã aparentemente normal. Um cliente entrou na loja e encontrou uma c
 
 ### C01 — O que significa por cento
 
-**Tipo:** conceito · **Lote:** A · **Situação:** pending-script-approval.
+**Tipo:** conceito · **Lote:** A · **Situação:** editorialmente aprovado; gravação pendente.
 
 **Origem:** `study-area.js:showMathLesson`.
 
@@ -104,7 +108,7 @@ Se quiser, faça uma anotação no seu caderno físico ou no aplicativo que voc�
 
 **Fala:**
 
-Vamos por partes. A pergunta pede vinte por cento de cento e cinquenta. Primeiro, transforme a taxa em uma divisão por cem. Depois, multiplique pelo total. Outra estratégia é descobrir dez por cento e pensar em como chegar a vinte por cento. Qual dessas maneiras você consegue começar?
+Vamos por partes. A pergunta pede vinte por cento de cento e oitenta. Primeiro, transforme a taxa em uma divisão por cem. Depois, multiplique pelo total. Outra estratégia é descobrir dez por cento e pensar em como chegar a vinte por cento. Qual dessas maneiras você consegue começar?
 
 ### S01 — Resolução da questão 1
 
@@ -118,7 +122,7 @@ Vamos por partes. A pergunta pede vinte por cento de cento e cinquenta. Primeiro
 
 **Fala:**
 
-Vinte por cento de cento e cinquenta é trinta. Primeiro, vinte dividido por cem é zero vírgula vinte. Depois, cento e cinquenta vezes zero vírgula vinte é trinta. Você também pode calcular dez por cento: cento e cinquenta dividido por dez é quinze. O dobro de quinze é trinta. Os dois caminhos chegam ao mesmo resultado.
+Vinte por cento de cento e oitenta é trinta e seis. Primeiro, vinte dividido por cem é zero vírgula vinte. Depois, cento e oitenta vezes zero vírgula vinte é trinta e seis. Você também pode calcular dez por cento: cento e oitenta dividido por dez é dezoito. O dobro de dezoito é trinta e seis. Os dois caminhos chegam ao mesmo resultado.
 
 ### D02 — Dica da questão 2 — desconto
 
@@ -340,7 +344,7 @@ Antes de qualquer expansão, conferir auditivamente correspondência integral en
 | --- | --- |
 | Conceito C01 | 15/100 = 0,15; 80 × 0,15 = 12 |
 | Exemplo E01 | 10% de 150 = 15; 20% = 30; 150 − 30 = 120 |
-| S01 | 20% de 150 = 30 |
+| S01 | 20% de 180 = 36 |
 | S02 | 10% de 80 = 8; 80 − 8 = 72 |
 | S03 | 25% de 120 = 30; 120 + 30 = 150 |
 | MR01 | 20% = 20/100; base de comparação não é tamanho obrigatório do total |
