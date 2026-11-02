@@ -11,7 +11,7 @@ async function readObject(req){
  let value;try{value=JSON.parse(Buffer.concat(chunks).toString());}catch{throw Object.assign(Error('Invalid JSON'),{status:400});}
  if(!value||typeof value!=='object'||Array.isArray(value))throw Object.assign(Error('Invalid body'),{status:400});return value;
 }
-export function createHomologationServer({config,sessions,resolvePrincipal=async()=>null,repository=null}={}){
+export function createHomologationServer({config,sessions,resolvePrincipal=async()=>null,repository=null,bearerBridge=null}={}){
  config=validateConfig(config);const secure=config.environment!=='local';
  return createServer(async(req,res)=>{
   try{
@@ -20,6 +20,14 @@ export function createHomologationServer({config,sessions,resolvePrincipal=async
    const path=req.url;
    if(req.method==='GET'&&path==='/health')return reply(res,200,{mode:'local-disconnected',auth:'not-connected',payments:'not-connected'});
    if(['/api/auth/signup','/api/auth/login','/api/auth/recover'].includes(path))return reply(res,503,{error:'auth_not_configured',message:'Autenticação real não conectada. Nenhuma conta ou mensagem criada.'});
+   // Explicitly injected, read-only test port; default server remains disconnected.
+   const progressPath=/^\/api\/students\/([a-f0-9-]{36})\/progress$/.exec(path);
+   if(bearerBridge&&req.headers.authorization&&req.method==='GET'&&(path==='/api/me'||progressPath)){
+    const principal=await bearerBridge.resolve(req.headers.authorization);
+    if(!principal)return reply(res,401,{error:'authentication_required'});
+    if(path==='/api/me')return reply(res,200,{accountId:principal.accountId,mode:'prepared-readonly-bearer-test'});
+    const result=await bearerBridge.progress(principal,progressPath[1]);return reply(res,result.status,result.body);
+   }
    const token=readSessionCookie(req.headers.cookie,{secure});const session=sessions?.resolve(token);
    if(!session)return reply(res,401,{error:'authentication_required'});
    // Always reload verified/disabled state; never use request account/student fields.

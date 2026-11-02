@@ -1,0 +1,10 @@
+{
+  "mode": "offline-only",
+  "ledgerDirectory": ".decola-homologacao/state",
+  "backupDirectory": ".decola-homologacao/backups",
+  "retentionDaysProposed": 30,
+  "automaticDeletion": false,
+  "backupBeforeAndAfterRun": true,
+  "restoreRequiresSourceQuiescence": true,
+  "limits": {"durationMs": 600000, "timeoutMs": 10000, "maxCalls": 40, "maxConcurrency": 2, "maxAttempts": 2}
+}

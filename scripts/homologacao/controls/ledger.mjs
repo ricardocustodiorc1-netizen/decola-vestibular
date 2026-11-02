@@ -20,9 +20,11 @@ export class LocalLedger{
   if(fs.readdirSync(directory).some(name=>!['runs.sqlite','runs.sqlite-wal','runs.sqlite-shm'].includes(name)))throw Error('LEDGER_DIRECTORY_NOT_ISOLATED');
   this.file=path.join(directory,'runs.sqlite');const existed=fs.existsSync(this.file);
   if(fs.existsSync(this.file)&&fs.lstatSync(this.file).isSymbolicLink())throw Error('SYMLINK_FORBIDDEN');
-  fs.chmodSync(directory,0o700);this.db=new DatabaseSync(this.file);fs.chmodSync(this.file,0o600);
+  fs.chmodSync(directory,0o700);this.db=new DatabaseSync(this.file);
+  // Configure lock waiting BEFORE any header/schema write during concurrent opens.
+  this.db.exec('PRAGMA busy_timeout=2000');fs.chmodSync(this.file,0o600);
   if(existed&&this.db.prepare('PRAGMA application_id').get().application_id!==0x4445434f){this.db.close();throw Error('UNRECOGNIZED_LEDGER');}
-  this.db.exec('PRAGMA application_id=1145389903');
+  if(!existed)this.db.exec('PRAGMA application_id=1145389903');
   this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=2000;
    CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY,project TEXT NOT NULL,revision INTEGER NOT NULL,doc TEXT NOT NULL CHECK(json_valid(doc)));
    CREATE TABLE IF NOT EXISTS leases(project TEXT PRIMARY KEY,run_id TEXT NOT NULL,owner TEXT NOT NULL,epoch INTEGER NOT NULL,expires INTEGER NOT NULL);
