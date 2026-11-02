@@ -1,0 +1,8 @@
+# Local test/runtime artifacts; never commit account databases or secrets.
+__pycache__/
+*.py[cod]
+*.sqlite
+*.sqlite3
+.env
+.env.*
+!.env.example
