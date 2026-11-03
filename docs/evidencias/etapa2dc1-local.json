@@ -1,0 +1,109 @@
+{
+  "stage": "2D-C.1",
+  "date": "2026-11-02",
+  "branch": "dev/navegacao-leo-familias-20261031",
+  "base": "f6bf7970a9d5070da3cffa3186869ab202f403f3",
+  "localCodeCommit": "581bedd2e9b18dbdf6698acdec59787d17457ea5",
+  "runtime": {
+    "node": "22.22.0",
+    "npm": "11.9.0"
+  },
+  "tests": {
+    "homologacaoPassed": 113,
+    "nodePassed": 109,
+    "pythonPassed": 20,
+    "passedTotal": 242,
+    "failedFinal": 0,
+    "skippedFinal": 0,
+    "newTests": 31
+  },
+  "evidence": {
+    "sdk": "installed SDK with fake fetch, external sockets forbidden in budget tests",
+    "tls": "real TLS handshake in loopback with ephemeral test CA; untrusted CA and wrong hostname rejected",
+    "sqlite": "real SQLite, 101st call refused, restart/backup/SIGKILL recovery verified",
+    "providerInvocations": "SDK fetch, SQL commands, pool acquisition, HTTP client and backend share counter",
+    "localSecretFixturesOnly": true
+  },
+  "remote": {
+    "supabaseOperations": 0,
+    "accountsCreated": 0,
+    "sessionsCreated": 0,
+    "databaseWrites": 0,
+    "grantsApplied": false,
+    "rolesCreated": false,
+    "transportActivated": false,
+    "realCredentialsUsed": false,
+    "actionsDispatched": false,
+    "servicesProvisioned": false
+  },
+  "residuals": [
+    "persistent host and secure injection not provisioned",
+    "SQL proposals not executed or validated on real Postgres",
+    "RLS provision and session join need separately approved design; grants alone insufficient",
+    "Auth admin API authority not natively scoped to two identities",
+    "offline capability is not a sandbox against hostile JS/operator",
+    "no real Auth/RLS/session homologation"
+  ],
+  "fileSha256": {
+    "scripts/homologacao/adapters/metered-bridge.mjs": "43ebf85903882c639ad4dda3124a5b2868eb11ee9a15de8cedbe578689cc5734",
+    "scripts/homologacao/adapters/offline-metered.mjs": "b4ccda3d802b8d0a22185b8c014227e19e50121502d4f833954504ef82e8560e",
+    "scripts/homologacao/controls/executor.mjs": "d00d2ff44edc049f323f41b2b535c9804cef5f3890639fef23198e5f03308041",
+    "scripts/homologacao/controls/ledger.mjs": "5370ee191a4184aff7cea7832834141595a7d5ce6ccceae1db3491ac88d599a1",
+    "scripts/homologacao/controls/provider-budget.mjs": "504c27da62f2b560cea93150705e4eb4691ef05f3edfe43f85aba1f03931f22d",
+    "scripts/homologacao/controls/storage.mjs": "d3b15ccd0470cc53ac9e6f3609a85292f5c122d1e88e738850335ae104421eb3",
+    "scripts/homologacao/executor/credentials.mjs": "ccd855344de40bd0ad2987ab5c7edb297bdbafedcf61e4b6acdef1879de63aab",
+    "scripts/homologacao/executor/persistent.example.json": "829d0f379fc5b4231a9b99da01d70ce0ce24733de653996b6fa44d719575c6f6",
+    "scripts/homologacao/executor/persistent.mjs": "5834d79946a4681b1d60d43067d3e9c7abba4c948c7d4e6a8d41a3cad9968445",
+    "scripts/homologacao/executor/postgres-security.mjs": "74ebbd64322ef0d00d39dbfd5524b9d9f65f7040d39284878c7d7cef45c9c4a7",
+    "scripts/homologacao/package.json": "42c2c823e8808224fa0d7e9bc93448bdaeee6d5565b8811d1546854400aaf28d",
+    "scripts/homologacao/tests/executor-security.test.mjs": "e6ac84fa1ceba50a7bece81d8b1717b274c887961d1e89e1735ec99852db624f",
+    "scripts/homologacao/tests/metered-backend.test.mjs": "7712d7f9883fa9cec81ed2ec7ea945909c6c1d059e31e991bc768700a8c990c4",
+    "scripts/homologacao/tests/provider-budget.test.mjs": "9dddb260207eb809f1138d34c227128c0dba6fa93dbce27d7d78b527a94379d8"
+  },
+  "commandSummaries": {
+    "homologacao": [
+      "  ...",
+      "1..113",
+      "# tests 113",
+      "# suites 0",
+      "# pass 113",
+      "# fail 0",
+      "# cancelled 0",
+      "# skipped 0",
+      "# todo 0",
+      "# duration_ms 3919.029295"
+    ],
+    "node": [
+      "  ...",
+      "1..109",
+      "# tests 109",
+      "# suites 0",
+      "# pass 109",
+      "# fail 0",
+      "# cancelled 0",
+      "# skipped 0",
+      "# todo 0",
+      "# duration_ms 17786.631194"
+    ],
+    "python": [
+      "....................",
+      "----------------------------------------------------------------------",
+      "Ran 20 tests in 0.135s",
+      "",
+      "OK"
+    ],
+    "preflight": [
+      "",
+      "(node:65) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.",
+      "(Use `node --trace-warnings ...` to show where the warning was created)",
+      "PASS: real dependency imports; no clients constructed",
+      "(node:72) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.",
+      "(Use `node --trace-warnings ...` to show where the warning was created)",
+      "PASS: target checked; no network or writes",
+      "(node:72) ExperimentalWarning: SQLite is an experimental feature and might change at any time",
+      "PASS: wrong-project and both provisioning modes blocked",
+      "PASS: preflight finished; NO Supabase connection or writes"
+    ]
+  },
+  "publishedCodeCommit": "e2ca6fea70a7b7a26d597f4988dd4d25fd1b34bc"
+}

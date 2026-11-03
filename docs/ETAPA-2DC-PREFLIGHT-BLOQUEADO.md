@@ -1,5 +1,7 @@
 # Etapa 2D-C — execução interrompida antes de escritas
 
+> Continuação: [2D-C.1 — controles implementados](ETAPA-2DC1-DESBLOQUEIO-TECNICO.md). Este documento preserva o resultado histórico da tentativa interrompida; contador, TLS e configuração local foram preparados posteriormente, sem liberar execução remota.
+
 02/11/2026. Base `dda96b3`. Branch exclusiva `dev/navegacao-leo-familias-20261031`. Projeto `yxxrfhobhonigwczzpim`, organização `gfuffaasrxaroosnwujl`.
 
 A autorização para duas personas e testes delimitados foi recebida e permanece válida. O preflight encontrou condições de interrupção previstas pelo usuário. Nenhuma conta foi criada e a homologação integrada NÃO foi iniciada/aprovada.
