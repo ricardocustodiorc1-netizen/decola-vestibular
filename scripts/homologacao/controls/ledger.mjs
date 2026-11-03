@@ -111,6 +111,16 @@ export class LocalLedger{
   const auth=d.resources.filter(r=>r.origin==='created'&&r.kind==='auth').map(r=>r.id);
   if(auth.length!==2||resources.length!==4||resources.filter(r=>r.kind==='student').length!==2||resources.filter(r=>r.kind==='account').length!==2||!auth.every(id=>resources.some(r=>r.kind==='account'&&r.id===id))||new Set(resources.map(r=>r.kind+r.id)).size!==4)throw Error('INVALID_LINK_RESULT');
  }
+ claimAuthDispatch(lease,operationId,persona){
+  if(!['horizonte','estrela'].includes(persona))throw Error('INVALID_PERSONA');
+  return this.mutate(lease,d=>{
+   const op=d.operations.find(o=>o.id===operationId);
+   if(!op||op.kind!=='create'||op.key!=='create:'+persona||op.status!=='pending'||op.epoch!==lease.epoch)throw Error('AUTH_OPERATION_REQUIRED');
+   d.authDispatches??=[];
+   if(d.authDispatches.some(x=>x.persona===persona)||d.authDispatches.length>=2)throw Error('AUTH_ALREADY_DISPATCHED');
+   d.authDispatches.push({persona,operationId,epoch:lease.epoch});return {claimed:true};
+  });
+ }
  reserveProvider(lease,{operationId,channel,write=false}){
   if(!['auth','postgres','http'].includes(channel)||typeof write!=='boolean')throw Error('INVALID_PROVIDER_CALL');
   return this.mutate(lease,d=>{

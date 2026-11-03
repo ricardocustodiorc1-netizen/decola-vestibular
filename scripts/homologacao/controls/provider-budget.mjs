@@ -39,3 +39,8 @@ export function meteredPool(pool){
   return {connection:client.connection,query:q=>{const sql=typeof q==='string'?q:q.text;return providerCall('postgres',!/^\s*SELECT\b/i.test(sql)||/\b(request_trial|cancel_trial|set_config)\b/i.test(sql),()=>client.query(q));},release:discard=>client.release(discard)};
  })};
 }
+
+export function claimScopedAuthDispatch(ledger,lease,persona){
+ const c=operations.getStore();if(!c||c.ledger!==ledger||c.lease!==lease||c.signal?.aborted)throw Error('AUTH_OPERATION_REQUIRED');
+ return ledger.claimAuthDispatch(lease,c.operationId,persona);
+}
