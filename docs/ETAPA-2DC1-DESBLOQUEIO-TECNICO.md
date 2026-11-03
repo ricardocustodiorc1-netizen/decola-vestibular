@@ -1,5 +1,7 @@
 # Etapa 2D-C.1 — controles implementados, acesso proposto e decisões
 
+> Continuação local: [2D-C.2 — acesso RLS restrito](ETAPA-2DC2-ACESSO-RLS.md). A proposta antiga de papel/GRANTs foi substituída e não deve ser aplicada. Nenhum SQL foi executado.
+
 02/11/2026. Repositório ricardocustodiorc1-netizen/decola-vestibular, branch exclusiva `dev/navegacao-leo-familias-20261031`, base `f6bf797`. Referência: [preflight bloqueado](ETAPA-2DC-PREFLIGHT-BLOQUEADO.md). Alvo futuro permanece `yxxrfhobhonigwczzpim` / `gfuffaasrxaroosnwujl`.
 
 **Nenhuma operação no Supabase nesta etapa, nem leitura. Nenhuma credencial real usada. Não houve criação de papel, GRANT, usuário, sessão, vínculo, registro ou mudança de configuração. A execução remota continua bloqueada.**

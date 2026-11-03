@@ -1,0 +1,101 @@
+{
+  "stage": "2D-C.2",
+  "clientDate": "2026-11-02",
+  "branch": "dev/navegacao-leo-familias-20261031",
+  "baseCommit": "1d50e5978a6680355ec45dd1d2697a26fff1b162",
+  "localCodeCommit": "aae1519b260247cd1220a5efd85fe7b5c9fbe516",
+  "runtime": "Node 24.22.1",
+  "tests": {
+    "homologacao": 129,
+    "nodeRegression": 109,
+    "pythonSqlite": 20,
+    "totalPassed": 258,
+    "failed": 0,
+    "skipped": 0,
+    "new": 16
+  },
+  "operationalChecks": {
+    "requiredNode22Preflight": "BLOCKED: Node.js 22 required",
+    "nativePostgres17Sql": "NOT EXECUTED: no postgres/psql/docker available",
+    "gitDiffCheck": "passed"
+  },
+  "scope": {
+    "supabaseOperations": 0,
+    "realCredentialsUsed": false,
+    "authUsersCreated": 0,
+    "sessionsCreated": 0,
+    "recordsCreated": 0,
+    "sqlApplied": false,
+    "githubPush": false,
+    "actionsRun": false,
+    "servicesInstalledOrProvisioned": false
+  },
+  "securityModel": [
+    "executor has function-only privileges and no authenticated membership",
+    "two NOLOGIN non-bypass function owners; privileged boolean Auth helpers remain owned by installer postgres",
+    "sealed singleton run with two planned Auth IDs and two student IDs",
+    "broker verifies approved manifest before dispatch",
+    "auth creation dispatch persisted once per persona and parent operation",
+    "active_account session check covers known RLS and trial RPC paths",
+    "SQL proposal not proof of real RLS enforcement",
+    "WSL assessment never asserts actual durability"
+  ],
+  "codeSha256": {
+    "scripts/homologacao/controls/ledger.mjs": "9203440585b958b5f933fb64d7007b79a52bc8e91e4ee2f9e9f42e0b42e6db3c",
+    "scripts/homologacao/controls/provider-budget.mjs": "243ad4c56045b5060440bfb104dde4b4181048be72cba5080a94a3d42bafbb13",
+    "scripts/homologacao/scoped/auth.mjs": "0d8fe25a646c653b788cad88e9c6ec3fe9fa15d0ba042ca4d53e3d3e5200ca75",
+    "scripts/homologacao/scoped/bridge.mjs": "1e1733495b4a3b87a8db7184f45408ff87e248519ef05c7655d02160105e0603",
+    "scripts/homologacao/scoped/plan.mjs": "3f61aac9537662889a3489908000dc23e04ee18d5dcac0e14b0aa0a144352f3c",
+    "scripts/homologacao/scoped/platform.mjs": "6460593d1e2dd61be22923cc89f11d30ab39894b1b6f3d51c030312d3a2cd953",
+    "scripts/homologacao/scoped/postgres.mjs": "ede6302d1a337e85bda2cebeeaca2c0c33c8a4336b297731a0265a6251d25674",
+    "scripts/homologacao/scoped/preflight.mjs": "2b52f65d787b237767fd704e390342721b0c822eab2d304cc1ebbb9adfef18dc",
+    "scripts/homologacao/scoped/wiring.mjs": "c5321b780a61368e8ca0806ff4f896b133ac8ff7d07820324cb4a28806d26557",
+    "scripts/homologacao/tests/scoped-access.test.mjs": "fa0a9ef5d38b27eb44affcc94567b9c21b42fb54004d35db54544fa824e6f8ad"
+  },
+  "proposalSha256": {
+    "docs/propostas/ETAPA-2DC2-ACESSO.sql": "78ca2861d1eba8e49c954dcfde647d5a2f151330c9d27aaddb5e1607b71668a4",
+    "docs/propostas/ETAPA-2DC2-REVERSAO.sql": "0f2a3c84b82b937c56f56d907d8d864deb27a97371c0003d37ea2fc21f847ad7",
+    "docs/propostas/ETAPA-2DC2-RESTAURO-VAZIO.sql": "237ae4e5b12d0a51ef87940290938759e43d278a7be26e40fc5ed50ae649e780"
+  },
+  "outputs": {
+    "homologacao": [
+      "✔ retention never proposes deletion of open/unknown runs; deletion execution blocked (15.40314ms)",
+      "✔ concurrent ledger open waits for existing writer before header/schema initialization (177.313745ms)",
+      "ℹ tests 129",
+      "ℹ suites 0",
+      "ℹ pass 129",
+      "ℹ fail 0",
+      "ℹ cancelled 0",
+      "ℹ skipped 0",
+      "ℹ todo 0",
+      "ℹ duration_ms 3298.991648"
+    ],
+    "node": [
+      "✔ falha no armazenamento mantém navegação em memória sem gravar dados pessoais (1.286632ms)",
+      "✔ catálogo local de migração corresponde à identidade e respostas da aula existente (2.954489ms)",
+      "ℹ tests 109",
+      "ℹ suites 0",
+      "ℹ pass 109",
+      "ℹ fail 0",
+      "ℹ cancelled 0",
+      "ℹ skipped 0",
+      "ℹ todo 0",
+      "ℹ duration_ms 351.807509"
+    ],
+    "python": [
+      "....................",
+      "----------------------------------------------------------------------",
+      "Ran 20 tests in 0.030s",
+      "",
+      "OK"
+    ],
+    "preflight": [
+      "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.",
+      "",
+      "> preflight",
+      "> bash validar-preflight.sh",
+      "",
+      "Node.js 22 required"
+    ]
+  }
+}
