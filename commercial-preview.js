@@ -1,7 +1,7 @@
 // Local commercial rehearsal. No accounts, entitlement, payment, APIs or storage.
 (() => {
  const DAY=86400000;
- const plan=Object.freeze({trialDays:7,priceCents:3990,currency:'BRL',billingPeriod:'month'});
+ const plan=Object.freeze({trialDays:7,priceCents:4990,currency:'BRL',billingPeriod:'month'});
  function trialAt(startAt,now){
   if(!Number.isSafeInteger(now)||now<0)throw new Error('Relógio de teste inválido.');
   if(startAt===null)return Object.freeze({status:'not_started',daysRemaining:null,endsAt:null});
@@ -36,8 +36,8 @@
   const notice=text=>{const node=make('p',text);node.className='commercial-notice';return node;};
   function offer(){
    title.textContent='7 dias grátis · prévia do lançamento';body.replaceChildren();
-   body.append(notice('SIMULAÇÃO LOCAL — não cria conta, não inicia um teste real e não cobra.'),make('p','Plano planejado: sete dias gratuitos e, se você decidir contratar, R$ 39,90 por mês. A proposta de teste sem cartão e contratação posterior ainda precisa ser confirmada antes do lançamento.'));
-   const steps=make('ol');for(const text of ['Criar uma conta e verificar seu contato na versão final. Para menor de idade, seguir o fluxo do responsável.','Pedir o início dos sete dias após a conta estar pronta. O horário e o acesso serão confirmados pelo serviço.','Experimentar aulas, exercícios e Professor Leo conforme os recursos liberados no lançamento.','Ao terminar, decidir se quer contratar por R$ 39,90/mês. Esta prévia não faz conversão nem cobrança automática.'])steps.append(make('li',text));body.append(steps);
+   body.append(notice('SIMULAÇÃO LOCAL — não cria conta, não inicia um teste real e não cobra.'),make('p','Plano planejado: sete dias gratuitos e, se você decidir contratar, R$ 49,90 por mês. A proposta de teste sem cartão e contratação posterior ainda precisa ser confirmada antes do lançamento.'));
+   const steps=make('ol');for(const text of ['Criar uma conta e verificar seu contato na versão final. Para menor de idade, seguir o fluxo do responsável.','Pedir o início dos sete dias após a conta estar pronta. O horário e o acesso serão confirmados pelo serviço.','Experimentar aulas, exercícios e Professor Leo conforme os recursos liberados no lançamento.','Ao terminar, decidir se quer contratar por R$ 49,90/mês. Esta prévia não faz conversão nem cobrança automática.'])steps.append(make('li',text));body.append(steps);
    const status=make('p');status.setAttribute('role','status');status.className='commercial-state';
    const base=Date.UTC(2026,10,2,12);let start=null,clock=base;
    const update=()=>{const state=trialAt(start,clock);status.dataset.trialState=state.status;status.textContent=state.status==='not_started'?'Cenário de teste: ainda não iniciado.':state.status==='trial_expired'?'Cenário de teste: sete dias encerrados. Nenhum pagamento foi processado e seu acesso à demonstração não mudou.':'Cenário de teste: '+state.daysRemaining+' dia(s) restante(s), de sete. Nenhum teste real está ativo.';};
@@ -54,7 +54,7 @@
     ['Como continuar minha aula?','No Meu Decola, use “Continuar estudando”. O progresso é local ao endereço e navegador; confira os avisos de salvamento e guarde uma cópia quando disponível.'],
     ['O Professor Leo não respondeu.','Confira a conexão e use a dica ou resolução local quando oferecida. Uma falha da IA não deve apagar sua tentativa. Não compartilhe credenciais para pedir ajuda.'],
     ['Por que a voz não é sempre Elvis?','O MP3 Elvis está no piloto específico. As respostas dinâmicas usam a voz disponível no navegador. Gravações novas ainda dependem de validação e autorização.'],
-    ['Já existe cobrança ou conta de assinante?','Não. Há uma demonstração com perfis fictícios. Os sete dias e a assinatura de R$ 39,90/mês são planejados; usar a demonstração não ativa uma assinatura.']
+    ['Já existe cobrança ou conta de assinante?','Não. Há uma demonstração com perfis fictícios. Os sete dias e a assinatura de R$ 49,90/mês são planejados; usar a demonstração não ativa uma assinatura.']
    ]){const details=make('details');details.append(make('summary',question),make('p',answer));faq.append(details);}body.append(faq);
    const form=make('form');form.className='commercial-support-form';
    const select=(text,values)=>{const label=make('label',text),node=make('select');node.setAttribute('aria-label',text);for(const [value,name]of Object.entries(values)){const option=make('option',name);option.value=value;node.append(option);}label.append(node);form.append(label);return node;};
